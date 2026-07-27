@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deniz'in Market Görevi — Para Oyunu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#3FAE6B; --red:#FF6B6B; --yellow:#FFC531; --orange:#FF9F43;
+    --ink:#4a3520; --card:#ffffff; --soft:#FFF0D9; --tag:#3FAE6B;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    background:radial-gradient(1100px 700px at 25% 0%, #FFE9C4 0%, #FFDCA0 45%, #FFC978 100%);
+    color:var(--ink); min-height:100vh; overflow-x:hidden;
+    display:flex; align-items:center; justify-content:center; padding:16px;
+  }
+  h1,h2,h3,.display{font-family:'Baloo 2',system-ui,sans-serif;}
+
+  /* uçuşan market ikonları */
+  .sky{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+  .sky i{position:absolute; font-size:26px; opacity:.18; animation:drift 9s linear infinite;}
+  @keyframes drift{from{transform:translateY(20px) rotate(0)}to{transform:translateY(-40px) rotate(20deg)}}
+
+  .stage{position:relative; z-index:2; width:100%; max-width:640px;
+    background:var(--card); border-radius:32px; padding:26px 24px 30px;
+    box-shadow:0 24px 60px rgba(90,50,10,.4), inset 0 0 0 4px #fff;
+    animation:pop .45s cubic-bezier(.2,1.3,.4,1);}
+  @keyframes pop{from{transform:translateY(24px) scale(.94); opacity:0}to{transform:none; opacity:1}}
+
+  .rail{display:flex; align-items:center; gap:10px; margin-bottom:18px;}
+  .track{flex:1; height:16px; border-radius:20px; background:var(--soft); position:relative; overflow:hidden;}
+  .fill{position:absolute; inset:0 auto 0 0; width:0%; border-radius:20px;
+    background:linear-gradient(90deg,var(--yellow),var(--orange),var(--green)); transition:width .5s cubic-bezier(.2,1,.4,1);}
+  .cartmini{font-size:26px;}
+  .scorebox{font-family:'Baloo 2'; font-weight:800; color:var(--green); font-size:20px; white-space:nowrap;}
+
+  .stage-tag{display:inline-block; font-family:'Baloo 2'; font-weight:700; font-size:14px;
+    color:#fff; background:var(--orange); padding:4px 14px; border-radius:999px; margin-bottom:8px;}
+  .scene-emoji{font-size:60px; text-align:center; line-height:1; margin:2px 0 6px; animation:bob 2.4s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  .story{font-size:20px; line-height:1.5; font-weight:700; color:var(--ink); margin-bottom:6px;}
+  .story b{color:var(--red);}
+
+  /* ÜRÜN KARTLARI (görsel) */
+  .shelf{display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin:14px 0 4px;}
+  .prod{background:var(--soft); border-radius:18px; padding:12px 10px 10px; width:96px; text-align:center;
+    box-shadow:0 4px 0 #f0d9ac; position:relative;}
+  .prod .pe{font-size:38px; line-height:1;}
+  .prod .pn{font-weight:800; font-size:13px; color:#6b5334; margin-top:2px;}
+  .pricetag{display:inline-block; margin-top:6px; background:var(--tag); color:#fff; font-family:'Baloo 2';
+    font-weight:800; font-size:15px; padding:2px 12px; border-radius:999px; box-shadow:0 3px 0 rgba(0,0,0,.12);}
+
+  /* MADENİ PARALAR (görsel) */
+  .coins{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:14px 0 4px;}
+  .coin{width:58px; height:58px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:'Baloo 2'; font-weight:800; font-size:16px; color:#5a4318;
+    background:radial-gradient(circle at 35% 30%, #FFE9A8, var(--yellow)); box-shadow:0 4px 0 #d9a520, inset 0 0 0 3px #f0c94a;}
+  .coin.kr{background:radial-gradient(circle at 35% 30%,#E7E7E7,#BFC4CC); box-shadow:0 4px 0 #8b939e, inset 0 0 0 3px #d6dae1; color:#4c525c;}
+
+  .think{background:var(--soft); border-radius:18px; padding:12px 16px; margin:14px 0 6px;
+    font-weight:700; color:#a85a12; font-size:17px; display:flex; gap:10px; align-items:flex-start;}
+  .think::before{content:"🤔"; font-size:20px;}
+  .question{font-family:'Baloo 2'; font-weight:700; font-size:23px; color:var(--ink); margin:16px 0 14px;}
+
+  .opts{display:grid; gap:12px; grid-template-columns:1fr 1fr;}
+  .opt{font-family:'Baloo 2'; font-weight:700; font-size:24px; color:#fff; border:none; cursor:pointer;
+    padding:20px 10px; border-radius:22px; box-shadow:0 6px 0 rgba(0,0,0,.18); transition:transform .12s, filter .12s;}
+  .opt:active{transform:translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,.18);}
+  .opt:hover{filter:brightness(1.06);}
+  .opt.c0{background:var(--red)} .opt.c1{background:var(--green)} .opt.c2{background:var(--orange)} .opt.c3{background:#7C6BFF}
+
+  .padwrap{display:flex; flex-direction:column; align-items:center; gap:14px;}
+  .display-num{font-family:'Baloo 2'; font-weight:800; font-size:42px; color:var(--ink);
+    background:var(--soft); min-width:150px; text-align:center; padding:8px 24px; border-radius:20px; letter-spacing:1px;}
+  .pad{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; width:100%; max-width:300px;}
+  .key{font-family:'Baloo 2'; font-weight:700; font-size:26px; padding:14px 0; border:none; cursor:pointer;
+    border-radius:16px; background:#fff; color:var(--ink); box-shadow:0 4px 0 #f0d9ac, inset 0 0 0 2px #fbeccf;}
+  .key:active{transform:translateY(3px); box-shadow:0 1px 0 #f0d9ac, inset 0 0 0 2px #fbeccf;}
+  .key.act{background:var(--yellow); box-shadow:0 4px 0 #d9a520;}
+
+  .build-btns{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .cell{font-family:'Baloo 2'; font-weight:700; font-size:18px; color:#fff; border:none; cursor:pointer;
+    padding:14px 18px; border-radius:18px; box-shadow:0 5px 0 rgba(0,0,0,.2); display:flex; flex-direction:column; align-items:center; gap:2px;}
+  .cell .ce{font-size:24px;} .cell:active{transform:translateY(3px);}
+  .cell.reset{background:#b7a98f; box-shadow:0 5px 0 #8f8168;}
+  .basket{display:flex; gap:6px; flex-wrap:wrap; justify-content:center; min-height:40px; margin:6px 0;}
+  .chip{font-family:'Baloo 2'; font-weight:700; color:#fff; padding:5px 12px; border-radius:12px; font-size:15px; background:var(--orange);}
+
+  .cta{font-family:'Baloo 2'; font-weight:800; font-size:22px; color:#fff; border:none; cursor:pointer;
+    background:var(--green); padding:14px 34px; border-radius:20px; box-shadow:0 6px 0 #2c854e; margin-top:8px;}
+  .cta:active{transform:translateY(4px); box-shadow:0 2px 0 #2c854e;}
+  .cta.big{display:block; margin:22px auto 0;}
+
+  .feedback{margin-top:16px; text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:22px; min-height:30px;}
+  .feedback.ok{color:var(--green);} .feedback.no{color:var(--red);}
+  .hintline{text-align:center; color:#a9895c; font-weight:700; margin-top:6px; font-size:15px;}
+  .shake{animation:shk .4s;} @keyframes shk{10%,90%{transform:translateX(-2px)}30%,70%{transform:translateX(6px)}50%{transform:translateX(-8px)}}
+
+  .burst{position:fixed; inset:0; pointer-events:none; z-index:9; overflow:hidden;}
+  .burst span{position:absolute; top:40%; font-size:26px; animation:fly 1s ease-out forwards;}
+  @keyframes fly{to{transform:translate(var(--tx),var(--ty)) rotate(var(--r)); opacity:0}}
+
+  .start-title{font-size:38px; text-align:center; color:var(--ink); line-height:1.1; margin:6px 0;}
+  .start-sub{text-align:center; font-weight:700; color:#a9722e; font-size:18px; margin-bottom:6px;}
+  .heroes{font-size:64px; text-align:center; margin:6px 0;}
+
+  @media (max-width:480px){
+    .story{font-size:18px} .question{font-size:20px} .opt{font-size:20px; padding:16px 8px}
+    .start-title{font-size:30px} .scene-emoji{font-size:50px} .prod{width:84px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;}}
+</style>
+</head>
+<body>
+<div class="sky" id="sky"></div>
+<div class="burst" id="burst"></div>
+<div class="stage" id="stage"></div>
+
+<script>
+/* =========================================================
+   ETKİNLİK İÇERİĞİ — kolayca düzenlenebilir.
+   type: choice | input | build
+   gorsel: "prod" (ürün kartları) | "coins" (madeni para) | null
+   ========================================================= */
+const SAHNELER = [
+  {
+    tag:"Görev 1 · Alışveriş", emoji:"🧺",
+    story:"Astronot <b>Deniz</b> bugün markette! Sepete bir <b>elma</b> ve bir <b>ekmek</b> koydu. Fiyatları etiketlerde yazıyor.",
+    gorsel:{tip:"prod", urunler:[{e:"🍎",ad:"Elma",fiyat:6},{e:"🍞",ad:"Ekmek",fiyat:9}]},
+    question:"İkisi toplam kaç ₺ tutar?",
+    hint:"İpucu: 6 + 9. Önce 6'dan 4 ekleyip 10 yap, sonra kalan 5.",
+    type:"input", answer:15,
+    ok:"Harika! 6 ₺ + 9 ₺ = 15 ₺ tuttu! 🧾", think:null
+  },
+  {
+    tag:"Görev 2 · Para üstü", emoji:"💵",
+    story:"Deniz kasada <b>20 ₺</b> uzattı. Alışveriş <b>15 ₺</b> tutmuştu. Kasiyer para üstü verecek.",
+    gorsel:{tip:"coins", paralar:[{v:"20 ₺"}]},
+    question:"Kasiyer kaç ₺ para üstü vermeli?",
+    hint:"Önce tahmin et: 10 ₺'den az mı fazla mı? Sonra çıkar: 20 − 15.",
+    type:"input", answer:5,
+    ok:"Doğru! 20 − 15 = 5 ₺ para üstü. Deniz üstünü aldı! 🪙",
+    think:"Para üstü = verdiğin para − ödediğin tutar. Hep böyle bulunur."
+  },
+  {
+    tag:"Görev 3 · Tam öde", emoji:"🪙",
+    story:"Yeni bir şey aldın: fiyatı <b>12 ₺</b>. Cebinde sadece <b>5 ₺'lik</b> ve <b>1 ₺'lik</b> madeni paralar var.",
+    gorsel:{tip:"coins", paralar:[{v:"5 ₺"},{v:"1 ₺"}]},
+    question:"Tam 12 ₺ olacak şekilde para seç!",
+    hint:"Birden fazla doğru yol var. Kaç farklı yol bulabilirsin? 🎯",
+    type:"build", build:{tip:"coins", degerler:[5,1], hedef:12},
+    ok:"Tam 12 ₺! Kasiyere tam parayı verdin, üstü kalmadı. 👏",
+    think:"Farklı bir yol daha var mı? Örn: 5+5+1+1 mı, yoksa 5+1+1+1+1+1+1+1 mi?"
+  },
+  {
+    tag:"Görev 4 · Kuruş", emoji:"🥮",
+    story:"Deniz bir <b>simit</b> aldı ve iki tane <b>50 kuruşluk</b> ödedi.",
+    gorsel:{tip:"coins", paralar:[{v:"50 kr",kr:true},{v:"50 kr",kr:true}]},
+    question:"İki tane 50 kuruş toplam kaç eder?",
+    hint:"İpucu: 50 + 50 = 100 kuruş. Peki 100 kuruş kaç TL yapar?",
+    type:"choice",
+    options:["50 kuruş","1 TL","2 TL","100 TL"], answer:1,
+    ok:"Süper! 50 + 50 = 100 kuruş = 1 TL. Kuruşlar birleşince TL olur! 🪙",
+    think:"100 kuruş her zaman 1 TL'ye eşittir. Bunu aklında tut."
+  },
+  {
+    tag:"Görev 5 · Yeter mi?", emoji:"🧀",
+    story:"Deniz'in cebinde <b>30 ₺</b> var. <b>Süt 12 ₺</b>, <b>peynir 15 ₺</b>. İkisini de almak istiyor.",
+    gorsel:{tip:"prod", urunler:[{e:"🥛",ad:"Süt",fiyat:12},{e:"🧀",ad:"Peynir",fiyat:15}]},
+    question:"İkisini alırsa cebinde kaç ₺ kalır?",
+    hint:"İki adım: önce topla (12 + 15 = ?), sonra 30'dan çıkar.",
+    type:"input", answer:3,
+    ok:"Müthiş! 12 + 15 = 27, sonra 30 − 27 = 3 ₺ kaldı. Parası yetti! 💰",
+    think:"3 ₺ kaldığına göre paran yetti. Peki bir de çikolata (5 ₺) alabilir miydi? Neden?"
+  },
+  {
+    tag:"Görev 6 · Bütçe", emoji:"🛒",
+    story:"Son görev! Deniz'in tam <b>20 ₺'si</b> var ve hepsini harcamak istiyor. Raftaki ürünlerden seç.",
+    gorsel:{tip:"prod", urunler:[
+      {e:"🍎",ad:"Elma",fiyat:5},{e:"🍞",ad:"Ekmek",fiyat:8},
+      {e:"🥛",ad:"Süt",fiyat:7},{e:"🍫",ad:"Çikolata",fiyat:12},{e:"💧",ad:"Su",fiyat:3}]},
+    question:"Tam 20 ₺'lik bir sepet oluştur!",
+    hint:"Birden çok doğru sepet var. Toplam tam 20 ₺ olmalı — az da olmaz, çok da.",
+    type:"build", build:{tip:"items", urunler:[
+      {e:"🍎",ad:"Elma",fiyat:5},{e:"🍞",ad:"Ekmek",fiyat:8},
+      {e:"🥛",ad:"Süt",fiyat:7},{e:"🍫",ad:"Çikolata",fiyat:12},{e:"💧",ad:"Su",fiyat:3}], hedef:20},
+    ok:"Tam 20 ₺! Bütçeni şaşmadan kullandın. Sen bir market ustasısın! 🎉",
+    think:"Bir de FARKLI ürünlerle 20 ₺ yapabilir misin? Kaç farklı sepet çıkar?"
+  }
+];
+
+let idx=0, score=0, current=null, buildSel=[], typedNum='';
+const stage=document.getElementById('stage');
+const burst=document.getElementById('burst');
+const TOTAL=SAHNELER.length;
+
+(function(){ const em=["🍎","🍞","🥛","🧀","🛒","🪙","🍌","🥕"]; let s='';
+  for(let i=0;i<16;i++){s+=`<i style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*9}s">${em[i%em.length]}</i>`;}
+  document.getElementById('sky').innerHTML=s; })();
+
+function railHTML(){ const pct=Math.round((score/TOTAL)*100);
+  return `<div class="rail"><div class="track"><div class="fill" style="width:${pct}%"></div></div>
+    <span class="cartmini">🛒</span><span class="scorebox">⭐ ${score}/${TOTAL}</span></div>`; }
+
+function gorselHTML(g){
+  if(!g) return '';
+  if(g.tip==="prod"){
+    return `<div class="shelf">`+g.urunler.map(u=>
+      `<div class="prod"><div class="pe">${u.e}</div><div class="pn">${u.ad}</div><div class="pricetag">${u.fiyat} ₺</div></div>`).join('')+`</div>`;
+  }
+  if(g.tip==="coins"){
+    return `<div class="coins">`+g.paralar.map(p=>
+      `<div class="coin ${p.kr?'kr':''}">${p.v}</div>`).join('')+`</div>`;
+  }
+  return '';
+}
+
+function starBurst(){ const emo=["⭐","🪙","🎉","💰","✨"]; let h='';
+  for(let i=0;i<18;i++){ const tx=(Math.random()*2-1)*60+'vw', ty=(Math.random()*-1-0.2)*60+'vh', r=(Math.random()*720-360)+'deg';
+    h+=`<span style="left:${40+Math.random()*20}%;--tx:${tx};--ty:${ty};--r:${r}">${emo[i%emo.length]}</span>`; }
+  burst.innerHTML=h; setTimeout(()=>burst.innerHTML='',1000); }
+
+function showStart(){
+  stage.innerHTML=`<div class="heroes">🧑‍🚀🛒</div>
+    <h1 class="start-title">Deniz'in Market Görevi</h1>
+    <p class="start-sub">Fiyatları topla, para üstü hesapla, bütçeni yönet — alışveriş matematiği!</p>
+    <div class="scene-emoji">🍎🍞🥛🧀</div>
+    <button class="cta big" onclick="startGame()">Alışverişe Başla ▶</button>
+    <p class="hintline">6 görev var. Her doğru cevap sepeti doldurur!</p>`;
+}
+function startGame(){ idx=0; score=0; renderStage(); }
+
+function renderStage(){
+  current=SAHNELER[idx]; let body='';
+  if(current.type==='choice'){
+    body=`<div class="opts">`+current.options.map((o,i)=>
+      `<button class="opt c${i}" onclick="answerChoice(${i},this)">${o}</button>`).join('')+`</div>`;
+  } else if(current.type==='input'){
+    body=`<div class="padwrap"><div class="display-num" id="disp">0</div>
+      <div class="pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="key" onclick="press(${n})">${n}</button>`).join('')}
+      <button class="key act" onclick="press('del')">⌫</button>
+      <button class="key" onclick="press(0)">0</button>
+      <button class="key act" onclick="checkInput()">✓</button></div></div>`;
+  } else if(current.type==='build'){
+    buildSel=[];
+    let btns='';
+    if(current.build.tip==='coins'){
+      btns=current.build.degerler.map(v=>`<button class="cell" style="background:var(--yellow);box-shadow:0 5px 0 #d9a520;color:#5a4318" onclick="addVal(${v})"><span class="ce">🪙</span>${v} ₺</button>`).join('');
+    } else {
+      btns=current.build.urunler.map(u=>`<button class="cell" style="background:var(--orange)" onclick="addItem(${u.fiyat},'${u.e}')"><span class="ce">${u.e}</span>${u.fiyat} ₺</button>`).join('');
+    }
+    body=`<div class="padwrap"><div class="display-num" id="disp">0</div>
+      <div class="basket" id="basket"></div>
+      <div class="build-btns">${btns}<button class="cell reset" onclick="resetBuild()"><span class="ce">↺</span>Sıfırla</button></div>
+      <button class="cta" onclick="checkBuild()">Kontrol Et ✓</button></div>`;
+  }
+  stage.innerHTML=railHTML()+`
+    <span class="stage-tag">${current.tag}</span>
+    <div class="scene-emoji">${current.emoji}</div>
+    <div class="story">${current.story}</div>
+    ${gorselHTML(current.gorsel)}
+    <div class="question">${current.question}</div>
+    ${body}
+    <div class="hintline">${current.hint||''}</div>
+    <div class="feedback" id="fb"></div>`;
+  typedNum='';
+}
+
+function press(k){ const d=document.getElementById('disp');
+  if(k==='del') typedNum=typedNum.slice(0,-1); else if(typedNum.length<3) typedNum+=k;
+  d.textContent=typedNum===''?'0':typedNum; }
+function checkInput(){ if(typedNum==='') return;
+  if(parseInt(typedNum,10)===current.answer) win(); else wrong(); }
+
+function answerChoice(i,btn){ if(i===current.answer) win();
+  else{ btn.classList.add('shake'); setTimeout(()=>btn.classList.remove('shake'),400); wrong(); } }
+
+function addVal(v){ buildSel.push({v, label:v+' ₺'}); refreshBuild(); }
+function addItem(f,e){ buildSel.push({v:f, label:e+f+'₺'}); refreshBuild(); }
+function refreshBuild(){
+  document.getElementById('disp').textContent=buildSel.reduce((a,b)=>a+b.v,0)+' ₺';
+  document.getElementById('basket').innerHTML=buildSel.map(x=>`<span class="chip">${x.label}</span>`).join('');
+}
+function resetBuild(){ buildSel=[]; document.getElementById('disp').textContent='0'; document.getElementById('basket').innerHTML=''; }
+function checkBuild(){ const sum=buildSel.reduce((a,b)=>a+b.v,0); const t=current.build.hedef;
+  if(sum===t) win();
+  else{ const fb=document.getElementById('fb'); fb.className='feedback no';
+    fb.textContent= sum<t?`${sum} ₺ oldu, ${t} ₺'ye az. Biraz daha ekle!`:`${sum} ₺ oldu, ${t} ₺'yi geçtin. Sıfırla ve tekrar dene!`; } }
+
+function wrong(){ const fb=document.getElementById('fb'); fb.className='feedback no';
+  const m=["Yaklaştın! Tekrar dene 💪","Olmadı ama sorun değil, bir daha! 🔁","İpucuna bak ve yeniden dene 👀"];
+  fb.textContent=m[Math.floor(Math.random()*m.length)];
+  typedNum=''; const d=document.getElementById('disp'); if(d&&current.type==='input') d.textContent='0'; }
+
+function win(){ score++; starBurst();
+  const tb=current.think?`<div class="think">${current.think}</div>`:'';
+  const last=idx===TOTAL-1;
+  stage.innerHTML=railHTML()+`
+    <span class="stage-tag" style="background:var(--green)">✓ Doğru!</span>
+    <div class="scene-emoji">${current.emoji}</div>
+    <div class="feedback ok" style="font-size:24px">${current.ok}</div>
+    ${tb}
+    <button class="cta big" onclick="${last?'showEnd()':'next()'}">${last?'Görevi Bitir 🏁':'Devam Et ➜'}</button>`;
+}
+function next(){ idx++; renderStage(); }
+
+function showEnd(){
+  stage.innerHTML=`<div class="heroes">🎉🛒💰</div>
+    <h1 class="start-title">Alışveriş Tamam!</h1>
+    <p class="start-sub">Deniz bütçesini şaşırmadan tüm alışverişini bitirdi.</p>
+    <div class="display-num" style="display:block;margin:14px auto;font-size:32px;">⭐ ${score}/${TOTAL} yıldız</div>
+    <div class="think" style="justify-content:center">Bugün ne öğrendin? Para üstünü nasıl buluyorduk?</div>
+    <button class="cta big" onclick="startGame()">Yeniden Oyna 🔁</button>`;
+  starBurst();
+}
+
+document.addEventListener('keydown',e=>{ if(!current||current.type!=='input') return;
+  if(/[0-9]/.test(e.key)) press(parseInt(e.key,10));
+  else if(e.key==='Backspace') press('del'); else if(e.key==='Enter') checkInput(); });
+
+showStart();
+</script>
+</body>
+</html>
