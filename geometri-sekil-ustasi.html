@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Şekil Ustası — Geometri Oyunu (3. Sınıf)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#FF6B6B; --blue:#4E8CFF; --yellow:#FFC531; --green:#3FAE6B;
+    --purple:#8B6BFF; --orange:#FF9F43; --ink:#22384f; --card:#ffffff; --soft:#E8F4FF;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    background:radial-gradient(1100px 720px at 25% -5%, #A7E3FF 0%, #8ED0FF 40%, #A9F0C4 100%);
+    color:var(--ink); min-height:100vh; overflow-x:hidden;
+    display:flex; align-items:center; justify-content:center; padding:16px;
+  }
+  h1,h2,h3,.display{font-family:'Baloo 2',system-ui,sans-serif;}
+
+  .sky{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+  .sky i{position:absolute; font-size:24px; opacity:.16; animation:drift 11s linear infinite;}
+  @keyframes drift{from{transform:translateY(15px) rotate(-6deg)}to{transform:translateY(-30px) rotate(10deg)}}
+
+  .stage{position:relative; z-index:2; width:100%; max-width:640px;
+    background:var(--card); border-radius:32px; padding:26px 24px 30px;
+    box-shadow:0 22px 54px rgba(30,70,110,.35), inset 0 0 0 4px #fff;
+    animation:pop .45s cubic-bezier(.2,1.3,.4,1);}
+  @keyframes pop{from{transform:translateY(24px) scale(.94); opacity:0}to{transform:none; opacity:1}}
+
+  .rail{display:flex; align-items:center; gap:10px; margin-bottom:18px;}
+  .track{flex:1; height:16px; border-radius:20px; background:var(--soft); position:relative; overflow:hidden;}
+  .fill{position:absolute; inset:0 auto 0 0; width:0%; border-radius:20px;
+    background:linear-gradient(90deg,var(--blue),var(--purple),var(--green)); transition:width .5s cubic-bezier(.2,1,.4,1);}
+  .badgemini{font-size:24px;}
+  .scorebox{font-family:'Baloo 2'; font-weight:800; color:var(--blue); font-size:20px; white-space:nowrap;}
+
+  .stage-tag{display:inline-block; font-family:'Baloo 2'; font-weight:700; font-size:14px;
+    color:#fff; background:var(--blue); padding:4px 14px; border-radius:999px; margin-bottom:8px;}
+  .story{font-size:20px; line-height:1.5; font-weight:700; color:var(--ink); margin-bottom:6px;}
+  .story b{color:var(--red);}
+
+  .figure{display:flex; justify-content:center; align-items:flex-end; gap:16px; margin:14px 0 6px; flex-wrap:wrap;}
+  .figure svg{max-width:100%; height:auto;}
+  .shapecell{text-align:center;}
+  .shapecell .lbl{font-family:'Baloo 2'; font-weight:800; font-size:20px; color:var(--ink); margin-top:4px;}
+
+  .think{background:var(--soft); border-radius:18px; padding:12px 16px; margin:14px 0 6px;
+    font-weight:700; color:#2c6fb0; font-size:17px; display:flex; gap:10px; align-items:flex-start;}
+  .think::before{content:"📐"; font-size:20px;}
+  .question{font-family:'Baloo 2'; font-weight:700; font-size:23px; color:var(--ink); margin:14px 0 12px; text-align:center;}
+
+  .opts{display:grid; gap:12px; grid-template-columns:1fr 1fr;}
+  .opt{font-family:'Baloo 2'; font-weight:700; font-size:22px; color:#fff; border:none; cursor:pointer;
+    padding:18px 10px; border-radius:22px; box-shadow:0 6px 0 rgba(0,0,0,.18); transition:transform .12s, filter .12s;}
+  .opt:active{transform:translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,.18);}
+  .opt:hover{filter:brightness(1.06);}
+  .opt.c0{background:var(--red)} .opt.c1{background:var(--blue)} .opt.c2{background:var(--orange)} .opt.c3{background:var(--purple)}
+
+  .padwrap{display:flex; flex-direction:column; align-items:center; gap:12px;}
+  .display-num{font-family:'Baloo 2'; font-weight:800; font-size:44px; color:var(--ink);
+    background:var(--soft); min-width:150px; text-align:center; padding:8px 24px; border-radius:20px; letter-spacing:2px;}
+  .pad{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; width:100%; max-width:300px;}
+  .key{font-family:'Baloo 2'; font-weight:700; font-size:26px; padding:14px 0; border:none; cursor:pointer;
+    border-radius:16px; background:#fff; color:var(--ink); box-shadow:0 4px 0 #cfe6fb, inset 0 0 0 2px #e8f4ff;}
+  .key:active{transform:translateY(3px); box-shadow:0 1px 0 #cfe6fb, inset 0 0 0 2px #e8f4ff;}
+  .key.act{background:var(--blue); box-shadow:0 4px 0 #2f6fd6; color:#fff;}
+  .key.go{background:var(--green); box-shadow:0 4px 0 #2c854e; color:#fff;}
+
+  .cta{font-family:'Baloo 2'; font-weight:800; font-size:22px; color:#fff; border:none; cursor:pointer;
+    background:var(--green); padding:14px 34px; border-radius:20px; box-shadow:0 6px 0 #2c854e; margin-top:6px;}
+  .cta:active{transform:translateY(4px); box-shadow:0 2px 0 #2c854e;}
+  .cta.big{display:block; margin:22px auto 0;}
+
+  .feedback{margin-top:14px; text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:21px; min-height:28px;}
+  .feedback.ok{color:var(--green);} .feedback.no{color:var(--red);} .feedback.hint{color:var(--blue);}
+  .hintline{text-align:center; color:#5b86ad; font-weight:700; margin-top:8px; font-size:15px;}
+  .shake{animation:shk .4s;} @keyframes shk{10%,90%{transform:translateX(-2px)}30%,70%{transform:translateX(6px)}50%{transform:translateX(-8px)}}
+
+  .burst{position:fixed; inset:0; pointer-events:none; z-index:9; overflow:hidden;}
+  .burst span{position:absolute; top:40%; font-size:26px; animation:fly 1s ease-out forwards;}
+  @keyframes fly{to{transform:translate(var(--tx),var(--ty)) rotate(var(--r)); opacity:0}}
+
+  .start-title{font-size:38px; text-align:center; color:var(--ink); line-height:1.1; margin:6px 0;}
+  .start-sub{text-align:center; font-weight:700; color:#3a7fc0; font-size:18px; margin-bottom:6px;}
+  .heroes{font-size:60px; text-align:center; margin:6px 0;}
+
+  @media (max-width:480px){
+    .story{font-size:18px} .question{font-size:20px} .opt{font-size:19px; padding:16px 8px}
+    .start-title{font-size:30px}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;}}
+</style>
+</head>
+<body>
+<div class="sky" id="sky"></div>
+<div class="burst" id="burst"></div>
+<div class="stage" id="stage"></div>
+
+<script>
+/* ===== küçük SVG şekil yardımcıları (gerçek, sayılabilir köşeler) ===== */
+function dot(x,y,c){ return `<circle cx="${x}" cy="${y}" r="7" fill="#fff" stroke="${c}" stroke-width="4"/>`; }
+
+const SHAPES = {
+  ucgen:`<svg viewBox="0 0 150 135" width="160"><polygon points="75,15 135,120 15,120" fill="var(--red)" stroke="#fff" stroke-width="4"/>
+    ${dot(75,15,'#d94b4b')}${dot(135,120,'#d94b4b')}${dot(15,120,'#d94b4b')}</svg>`,
+  kare:`<svg viewBox="0 0 140 140" width="150"><rect x="20" y="20" width="100" height="100" rx="6" fill="var(--blue)" stroke="#fff" stroke-width="4"/>
+    ${dot(20,20,'#3a6fd0')}${dot(120,20,'#3a6fd0')}${dot(120,120,'#3a6fd0')}${dot(20,120,'#3a6fd0')}</svg>`
+};
+
+function miniShape(kind,color){
+  const c=`var(--${color})`;
+  if(kind==='kare') return `<svg viewBox="0 0 100 100" width="86"><rect x="18" y="18" width="64" height="64" rx="5" fill="${c}" stroke="#fff" stroke-width="3"/></svg>`;
+  if(kind==='dik')  return `<svg viewBox="0 0 110 100" width="94"><rect x="10" y="30" width="90" height="45" rx="5" fill="${c}" stroke="#fff" stroke-width="3"/></svg>`;
+  if(kind==='paralel') return `<svg viewBox="0 0 110 100" width="94"><polygon points="30,25 100,25 75,80 5,80" fill="${c}" stroke="#fff" stroke-width="3"/></svg>`;
+  if(kind==='ucgen') return `<svg viewBox="0 0 100 100" width="86"><polygon points="50,15 88,82 12,82" fill="${c}" stroke="#fff" stroke-width="3"/></svg>`;
+  return '';
+}
+
+/* simetri sahnesi: dikdörtgen + iki aday çizgi (1 dik orta, 2 köşegen) */
+const SIMETRI_SVG = `<svg viewBox="0 0 220 150" width="240">
+  <rect x="20" y="35" width="180" height="80" rx="4" fill="var(--green)" opacity=".85" stroke="#fff" stroke-width="4"/>
+  <line x1="110" y1="20" x2="110" y2="130" stroke="#22384f" stroke-width="3" stroke-dasharray="7 6"/>
+  <text x="118" y="22" font-family="Baloo 2" font-weight="800" font-size="20" fill="#22384f">1</text>
+  <line x1="20" y1="35" x2="200" y2="115" stroke="#d94b4b" stroke-width="3" stroke-dasharray="7 6"/>
+  <text x="150" y="112" font-family="Baloo 2" font-weight="800" font-size="20" fill="#d94b4b">2</text>
+</svg>`;
+
+/* çevre sahnesi: 5x3 birimlik ızgaralı dikdörtgen */
+function cevreSVG(w,h){
+  const u=30, ox=20, oy=20; let g='';
+  for(let i=1;i<w;i++){ g+=`<line x1="${ox+i*u}" y1="${oy}" x2="${ox+i*u}" y2="${oy+h*u}" stroke="#bcdcf5" stroke-width="2"/>`; }
+  for(let j=1;j<h;j++){ g+=`<line x1="${ox}" y1="${oy+j*u}" x2="${ox+w*u}" y2="${oy+j*u}" stroke="#bcdcf5" stroke-width="2"/>`; }
+  return `<svg viewBox="0 0 ${ox*2+w*u} ${oy*2+h*u}" width="${Math.min(300,ox*2+w*u)}">
+    <rect x="${ox}" y="${oy}" width="${w*u}" height="${h*u}" fill="#DFF3FF"/>
+    ${g}
+    <rect x="${ox}" y="${oy}" width="${w*u}" height="${h*u}" fill="none" stroke="var(--blue)" stroke-width="5"/>
+  </svg>`;
+}
+
+const SAHNELER = [
+  {
+    tag:"Görev 1 · Kenarlar", emoji:"🔺",
+    story:"Şekil Ustası Deniz bir <b>üçgen</b> ile başlıyor. Kırmızı noktalar köşeleri gösteriyor.",
+    gorsel:`<div class="figure">${SHAPES.ucgen}</div>`,
+    question:"Bu üçgenin kaç KENARI var?",
+    hint:"Kenar = şeklin düz çizgilerinden her biri. Say bakalım.",
+    type:"input", answer:3,
+    check:function(v){ return v===3?true:(v<3?"Az saydın, tekrar bak ⬆":"Fazla saydın ⬇"); },
+    ok:"Doğru! Üçgenin 3 kenarı var. 🔺",
+    think:"Peki üçgenin kaç KÖŞESİ var? Kenar sayısı ile köşe sayısı aynı mı çıktı?"
+  },
+  {
+    tag:"Görev 2 · Köşeler", emoji:"🟦",
+    story:"Sırada bir <b>kare</b> var. Mavi noktalar köşelerde.",
+    gorsel:`<div class="figure">${SHAPES.kare}</div>`,
+    question:"Karenin kaç KÖŞESİ var?",
+    hint:"Köşeler, iki kenarın birleştiği noktalardır.",
+    type:"input", answer:4,
+    check:function(v){ return v===4?true:(v<4?"Bir köşeyi atladın galiba ⬆":"Fazla oldu ⬇"); },
+    ok:"Süper! Karenin 4 köşesi (ve 4 kenarı) var. 🟦",
+    think:"Kare, dikdörtgen, paralelkenar… hepsinin 4 köşesi var. Bunlara “dörtgen” denir."
+  },
+  {
+    tag:"Görev 3 · Farklı Olan", emoji:"🔎",
+    story:"Deniz dört şekil dizdi. <b>Üçünün ortak bir özelliği</b> var, biri farklı.",
+    gorsel:`<div class="figure">
+      <div class="shapecell">${miniShape('kare','blue')}<div class="lbl">1</div></div>
+      <div class="shapecell">${miniShape('dik','orange')}<div class="lbl">2</div></div>
+      <div class="shapecell">${miniShape('ucgen','red')}<div class="lbl">3</div></div>
+      <div class="shapecell">${miniShape('paralel','purple')}<div class="lbl">4</div></div>
+    </div>`,
+    question:"Köşe sayısına göre hangisi FARKLI?",
+    hint:"Her birinin köşesini say. Üçü aynı sayıda, biri değil.",
+    type:"choice", options:["1","2","3","4"], answer:2,
+    ok:"Doğru! 3 numara (üçgen) farklı — onun 3 köşesi var, diğerlerinin 4. 🔎",
+    think:"1, 2 ve 4'ün ortak özelliği neydi? (Hepsi dörtgen: 4 köşeli.)"
+  },
+  {
+    tag:"Görev 4 · Simetri", emoji:"🪞",
+    story:"Deniz dikdörtgene iki kesikli çizgi çizdi. <b>Biri simetri ekseni, biri değil.</b> (Simetri ekseni: katlayınca iki yarı tam üst üste gelir.)",
+    gorsel:`<div class="figure">${SIMETRI_SVG}</div>`,
+    question:"Hangisi doğru simetri ekseni?",
+    hint:"Çizgiden katladığını hayal et. İki yarı tam çakışıyor mu?",
+    type:"choice", options:["1 (dik orta çizgi)","2 (köşegen)"], answer:0,
+    ok:"Doğru! 1 numara: dik orta çizgi. Katlayınca iki yarı tam çakışır. 🪞",
+    think:"Çok kişi köşegeni de eksen sanır. Ama dikdörtgende köşegenden katlayınca yarılar çakışmaz — dikdörtgenin sadece 2 simetri ekseni vardır."
+  },
+  {
+    tag:"Görev 5 · Cisimler", emoji:"🥫",
+    story:"Deniz mutfakta bir <b>konserve kutusu</b> buldu. Bu, hangi geometrik cisme benzer?",
+    gorsel:`<div class="figure" style="font-size:70px">🥫</div>`,
+    question:"Konserve kutusu hangi cisim?",
+    hint:"Yuvarlak tabanı ve düz yan yüzeyi olan cisim hangisi?",
+    type:"choice", options:["Küp","Silindir","Küre","Koni"], answer:1,
+    ok:"Doğru! Konserve kutusu bir SİLİNDİRDİR (yuvarlak taban + düz yüzey). 🥫",
+    think:"Peki bir top hangi cisme benzer? Ya bir zar? (Küre… küp.)"
+  },
+  {
+    tag:"Görev 6 · Çevre", emoji:"📏",
+    story:"Son görev! Deniz bir bahçeyi çitle çevirecek. Bahçe ızgarada gösterildi — her kenar birim uzunluklarına bölünmüş.",
+    gorsel:`<div class="figure">${cevreSVG(5,3)}</div>`,
+    question:"Bu dikdörtgenin ÇEVRESİ kaç birim?",
+    hint:"Çevre = bütün kenarların toplamı. Dört kenarı da say: 5 + 3 + 5 + 3.",
+    type:"input", answer:16,
+    check:function(v){ return v===16?true:(v<16?"Bir kenarı eksik saydın ⬆":"Fazla oldu, sadece dış kenarları say ⬇"); },
+    ok:"Müthiş! Çevre = 5 + 5 + 3 + 3 = 16 birim. Çit tam yetti! 🏡",
+    think:"Uzun kenarlar 5'er, kısa kenarlar 3'er. Karşılıklı kenarlar hep eşit — dikdörtgende böyledir."
+  }
+];
+
+let idx=0, score=0, current=null, typedNum='';
+const stage=document.getElementById('stage');
+const burst=document.getElementById('burst');
+const TOTAL=SAHNELER.length;
+
+(function(){ const em=["🔺","🟦","⭐","📐","🔵","📏","🔶","🪞"]; let s='';
+  for(let i=0;i<16;i++){s+=`<i style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*11}s">${em[i%em.length]}</i>`;}
+  document.getElementById('sky').innerHTML=s; })();
+
+function railHTML(){ const pct=Math.round((score/TOTAL)*100);
+  return `<div class="rail"><div class="track"><div class="fill" style="width:${pct}%"></div></div>
+    <span class="badgemini">📐</span><span class="scorebox">⭐ ${score}/${TOTAL}</span></div>`; }
+
+function starBurst(){ const emo=["⭐","🔺","🎉","📐","✨"]; let h='';
+  for(let i=0;i<18;i++){ const tx=(Math.random()*2-1)*60+'vw', ty=(Math.random()*-1-0.2)*60+'vh', r=(Math.random()*720-360)+'deg';
+    h+=`<span style="left:${40+Math.random()*20}%;--tx:${tx};--ty:${ty};--r:${r}">${emo[i%emo.length]}</span>`; }
+  burst.innerHTML=h; setTimeout(()=>burst.innerHTML='',1000); }
+
+function showStart(){
+  stage.innerHTML=`<div class="heroes">🧑‍🚀📐</div>
+    <h1 class="start-title">Şekil Ustası</h1>
+    <p class="start-sub">Kenar say, köşe bul, simetriyi keşfet, çevreyi hesapla — geometri macerası!</p>
+    <div class="figure">${miniShape('kare','blue')}${miniShape('ucgen','red')}${miniShape('paralel','purple')}</div>
+    <button class="cta big" onclick="startGame()">Göreve Başla ▶</button>
+    <p class="hintline">6 görev var. Şekilleri dikkatle incele!</p>`;
+}
+function startGame(){ idx=0; score=0; renderStage(); }
+
+function renderStage(){
+  current=SAHNELER[idx]; typedNum='';
+  let body='';
+  if(current.type==='choice'){
+    body=`<div class="opts">`+current.options.map((o,i)=>
+      `<button class="opt c${i}" onclick="answerChoice(${i},this)">${o}</button>`).join('')+`</div>`;
+  } else {
+    body=`<div class="padwrap"><div class="display-num" id="disp">0</div>
+      <div class="pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="key" onclick="press(${n})">${n}</button>`).join('')}
+      <button class="key act" onclick="press('del')">⌫</button>
+      <button class="key" onclick="press(0)">0</button>
+      <button class="key go" onclick="checkNum()">✓</button></div></div>`;
+  }
+  stage.innerHTML=railHTML()+`
+    <span class="stage-tag">${current.tag}</span>
+    <div class="story">${current.story}</div>
+    ${current.gorsel||''}
+    <div class="question">${current.question}</div>
+    ${body}
+    <div class="hintline">${current.hint||''}</div>
+    <div class="feedback" id="fb"></div>`;
+}
+
+function press(k){ const d=document.getElementById('disp');
+  if(k==='del') typedNum=typedNum.slice(0,-1); else if(typedNum.length<3) typedNum+=k;
+  d.textContent=typedNum===''?'0':typedNum; }
+
+function checkNum(){ if(typedNum==='') return;
+  const v=parseInt(typedNum,10); const res=current.check(v);
+  if(res===true) win();
+  else{ const fb=document.getElementById('fb'); fb.className='feedback hint'; fb.textContent=res;
+    typedNum=''; document.getElementById('disp').textContent='0'; } }
+
+function answerChoice(i,btn){ if(i===current.answer) win();
+  else{ btn.classList.add('shake'); setTimeout(()=>btn.classList.remove('shake'),400);
+    const fb=document.getElementById('fb'); fb.className='feedback no';
+    fb.textContent="Olmadı — şekli tekrar incele 👀"; } }
+
+function win(){ score++; starBurst();
+  const tb=current.think?`<div class="think">${current.think}</div>`:'';
+  const last=idx===TOTAL-1;
+  stage.innerHTML=railHTML()+`
+    <span class="stage-tag" style="background:var(--green)">✓ Doğru!</span>
+    ${current.gorsel||''}
+    <div class="feedback ok" style="font-size:23px">${current.ok}</div>
+    ${tb}
+    <button class="cta big" onclick="${last?'showEnd()':'next()'}">${last?'Görevi Bitir 🏁':'Devam Et ➜'}</button>`;
+}
+function next(){ idx++; renderStage(); }
+
+function showEnd(){
+  stage.innerHTML=`<div class="heroes">🎉📐🔺</div>
+    <h1 class="start-title">Geometri Ustası Oldun!</h1>
+    <p class="start-sub">Kenarları, köşeleri, simetriyi ve çevreyi çözdün.</p>
+    <div class="display-num" style="display:block;margin:14px auto;font-size:32px;">⭐ ${score}/${TOTAL}</div>
+    <div class="think" style="justify-content:center">Çevrende hangi eşyalar kareye, hangileri silindire benziyor? Bir bak!</div>
+    <button class="cta big" onclick="startGame()">Yeniden Oyna 🔁</button>`;
+  starBurst();
+}
+
+document.addEventListener('keydown',e=>{ if(!current||current.type!=='input') return;
+  if(/[0-9]/.test(e.key)) press(parseInt(e.key,10));
+  else if(e.key==='Backspace') press('del'); else if(e.key==='Enter') checkNum(); });
+
+showStart();
+</script>
+</body>
+</html>
