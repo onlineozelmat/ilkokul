@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zamanın Kayıp Adası — Matematik Macerası (4. Sınıf)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#FFD24A; --aqua:#33CFC4; --purple:#9B6BFF; --coral:#FF6B6B;
+    --green:#4FCB77; --ink:#0f2a30; --card:#ffffff; --soft:#e7f7f5; --lock:#7d8a93;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    background:radial-gradient(1100px 760px at 30% -8%, #1b5560 0%, #123a44 42%, #0b232c 100%);
+    color:var(--ink); min-height:100vh; overflow-x:hidden;
+    display:flex; align-items:center; justify-content:center; padding:16px;
+  }
+  h1,h2,h3,.display{font-family:'Baloo 2',system-ui,sans-serif;}
+
+  .sky{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+  .sky i{position:absolute; font-size:20px; opacity:.16; animation:drift 12s linear infinite;}
+  @keyframes drift{from{transform:translateY(15px) rotate(-6deg)}to{transform:translateY(-30px) rotate(10deg)}}
+
+  .stage{position:relative; z-index:2; width:100%; max-width:660px;
+    background:var(--card); border-radius:32px; padding:24px 22px 28px;
+    box-shadow:0 24px 60px rgba(5,20,25,.6), inset 0 0 0 4px #fff;
+    animation:pop .45s cubic-bezier(.2,1.3,.4,1);}
+  @keyframes pop{from{transform:translateY(24px) scale(.94); opacity:0}to{transform:none; opacity:1}}
+
+  /* ---------- HARİTA ---------- */
+  .maphead{text-align:center; margin-bottom:6px;}
+  .maphead h1{font-size:30px; color:var(--ink); line-height:1.1;}
+  .maphead p{font-weight:700; color:#3a7f78; font-size:15px; margin-top:2px;}
+  .crystbar{display:flex; gap:6px; justify-content:center; margin:10px 0 4px; font-size:22px;}
+  .crystbar .c{filter:grayscale(1) opacity(.35);} .crystbar .c.on{filter:none; animation:glow 1.6s ease-in-out infinite;}
+  @keyframes glow{50%{transform:scale(1.18)}}
+
+  .path{display:flex; flex-direction:column-reverse; gap:0; align-items:center; margin-top:8px;}
+  .node{width:100%; max-width:420px; display:flex; align-items:center; gap:14px;
+    background:var(--soft); border-radius:20px; padding:14px 16px; margin:7px 0; border:3px solid transparent; transition:.15s;}
+  .node .ico{font-size:34px; width:48px; text-align:center;}
+  .node .info{flex:1;} .node .info .nm{font-family:'Baloo 2'; font-weight:800; font-size:19px; color:var(--ink);}
+  .node .info .ko{font-weight:700; font-size:13px; color:#5a8a85;}
+  .node .st{font-size:24px;}
+  .node.done{background:#e9fbef; border-color:var(--green);}
+  .node.current{background:#fff7df; border-color:var(--gold); cursor:pointer; box-shadow:0 6px 0 #e7bd35;}
+  .node.current:active{transform:translateY(3px); box-shadow:0 3px 0 #e7bd35;}
+  .node.locked{opacity:.6;}
+  .node .go{font-family:'Baloo 2'; font-weight:800; font-size:14px; color:#fff; background:var(--gold);
+    padding:6px 14px; border-radius:999px; box-shadow:0 3px 0 #e7bd35;}
+  .connector{width:4px; height:14px; background:#2f6f68; opacity:.5;}
+
+  /* ---------- BÖLÜM / SORU ---------- */
+  .rail{display:flex; align-items:center; gap:10px; margin-bottom:16px;}
+  .back{font-family:'Baloo 2'; font-weight:800; font-size:14px; cursor:pointer; border:none;
+    background:var(--soft); color:#2f6f68; padding:6px 14px; border-radius:999px;}
+  .track{flex:1; height:14px; border-radius:20px; background:var(--soft); position:relative; overflow:hidden;}
+  .fill{position:absolute; inset:0 auto 0 0; width:0%; border-radius:20px;
+    background:linear-gradient(90deg,var(--aqua),var(--purple),var(--gold)); transition:width .5s;}
+  .scorebox{font-family:'Baloo 2'; font-weight:800; color:var(--purple); font-size:18px; white-space:nowrap;}
+
+  .stage-tag{display:inline-block; font-family:'Baloo 2'; font-weight:700; font-size:14px;
+    color:#fff; background:var(--purple); padding:4px 14px; border-radius:999px; margin-bottom:8px;}
+  .scene-emoji{font-size:54px; text-align:center; line-height:1; margin:2px 0 6px; animation:bob 2.4s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  .story{font-size:19px; line-height:1.5; font-weight:700; color:var(--ink); margin-bottom:6px; text-align:center;}
+  .story b{color:var(--coral);}
+  .question{font-family:'Baloo 2'; font-weight:700; font-size:24px; color:var(--ink); margin:12px 0 12px; text-align:center;}
+
+  .opts{display:grid; gap:12px; grid-template-columns:1fr 1fr;}
+  .opt{font-family:'Baloo 2'; font-weight:700; font-size:24px; color:#fff; border:none; cursor:pointer;
+    padding:20px 10px; border-radius:22px; box-shadow:0 6px 0 rgba(0,0,0,.18); transition:transform .12s, filter .12s;}
+  .opt:active{transform:translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,.18);} .opt:hover{filter:brightness(1.06);}
+  .opt.c0{background:var(--coral)} .opt.c1{background:var(--aqua)} .opt.c2{background:var(--purple)} .opt.c3{background:var(--green)}
+
+  .padwrap{display:flex; flex-direction:column; align-items:center; gap:12px;}
+  .display-num{font-family:'Baloo 2'; font-weight:800; font-size:42px; color:var(--ink);
+    background:var(--soft); min-width:160px; text-align:center; padding:8px 24px; border-radius:20px; letter-spacing:2px;}
+  .pad{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; width:100%; max-width:300px;}
+  .key{font-family:'Baloo 2'; font-weight:700; font-size:26px; padding:14px 0; border:none; cursor:pointer;
+    border-radius:16px; background:#fff; color:var(--ink); box-shadow:0 4px 0 #cbeae7, inset 0 0 0 2px #e7f7f5;}
+  .key:active{transform:translateY(3px); box-shadow:0 1px 0 #cbeae7, inset 0 0 0 2px #e7f7f5;}
+  .key.act{background:var(--aqua); box-shadow:0 4px 0 #22a89f; color:#fff;}
+  .key.go{background:var(--green); box-shadow:0 4px 0 #2c854e; color:#fff;}
+
+  .cta{font-family:'Baloo 2'; font-weight:800; font-size:22px; color:#fff; border:none; cursor:pointer;
+    background:var(--green); padding:14px 34px; border-radius:20px; box-shadow:0 6px 0 #2c854e; margin-top:6px;}
+  .cta:active{transform:translateY(4px); box-shadow:0 2px 0 #2c854e;} .cta.big{display:block; margin:20px auto 0;}
+  .cta.gold{background:var(--gold); color:#5a4200; box-shadow:0 6px 0 #e7bd35;} .cta.gold:active{box-shadow:0 2px 0 #e7bd35;}
+
+  .feedback{margin-top:14px; text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:21px; min-height:26px;}
+  .feedback.ok{color:var(--green);} .feedback.no{color:var(--coral);} .feedback.hint{color:var(--purple);}
+  .hintline{text-align:center; color:#5a8a85; font-weight:700; margin-top:8px; font-size:15px;}
+  .think{background:var(--soft); border-radius:18px; padding:12px 16px; margin:14px 0 6px;
+    font-weight:700; color:#2f6f68; font-size:17px; display:flex; gap:10px; align-items:flex-start;}
+  .think::before{content:"🐢"; font-size:20px;}
+  .shake{animation:shk .4s;} @keyframes shk{10%,90%{transform:translateX(-2px)}30%,70%{transform:translateX(6px)}50%{transform:translateX(-8px)}}
+
+  .burst{position:fixed; inset:0; pointer-events:none; z-index:9; overflow:hidden;}
+  .burst span{position:absolute; top:40%; font-size:26px; animation:fly 1s ease-out forwards;}
+  @keyframes fly{to{transform:translate(var(--tx),var(--ty)) rotate(var(--r)); opacity:0}}
+
+  .start-title{font-size:34px; text-align:center; color:var(--ink); line-height:1.1; margin:6px 0;}
+  .start-sub{text-align:center; font-weight:700; color:#3a7f78; font-size:17px; margin-bottom:6px;}
+  .heroes{font-size:60px; text-align:center; margin:6px 0;}
+  .scroll{background:var(--soft); border-radius:18px; padding:14px 18px; font-weight:700; color:#2f6f68;
+    font-style:italic; font-size:17px; margin:10px 0; text-align:center;}
+
+  @media (max-width:480px){ .story{font-size:17px} .question{font-size:20px} .opt{font-size:20px; padding:16px 8px}
+    .start-title{font-size:28px} .maphead h1{font-size:24px} }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;}}
+</style>
+</head>
+<body>
+<div class="sky" id="sky"></div>
+<div class="burst" id="burst"></div>
+<div class="stage" id="stage"></div>
+
+<script>
+/* =========================================================================
+   BÖLGELER — her bölge bir kristal. stages doluysa oynanır; locked:true ise kilitli.
+   (Şimdilik yalnızca İşlem Ormanı tam; diğerleri onayınla açılacak.)
+   ========================================================================= */
+/* ---- görsel yardımcılar (kesir çubuğu, şekiller) ---- */
+function fracBar(n,k,color,w){ w=w||280; const H=50,cw=w/n; let c='';
+  for(let i=0;i<n;i++){ c+=`<rect x="${i*cw}" y="0" width="${cw}" height="${H}" fill="${i<k?('var(--'+color+')'):'#eef7f5'}" stroke="#2f6f68" stroke-width="2"/>`; }
+  return `<svg viewBox="0 0 ${w} ${H}" width="${Math.min(w,300)}">${c}</svg>`; }
+function labBar(lab,n,k,color){ return `<div style="text-align:center;margin:2px 0"><div style="font-family:'Baloo 2';font-weight:800;color:#2f6f68;font-size:16px;margin-bottom:2px">${lab}</div>${fracBar(n,k,color)}</div>`; }
+function rectSVG(w,h,lw,lh,color){ const s=20,ox=34,oy=26,W=w*s,H=h*s; color=color||'aqua';
+  return `<svg viewBox="0 0 ${W+ox*2} ${H+oy*2}" width="${Math.min(250,W+ox*2)}">
+    <rect x="${ox}" y="${oy}" width="${W}" height="${H}" fill="#e7f7f5" stroke="var(--${color})" stroke-width="5"/>
+    <text x="${ox+W/2}" y="${oy-7}" font-family="Baloo 2" font-weight="800" font-size="17" fill="#2f6f68" text-anchor="middle">${lw}</text>
+    <text x="${ox+W+7}" y="${oy+H/2+6}" font-family="Baloo 2" font-weight="800" font-size="17" fill="#2f6f68">${lh}</text>
+  </svg>`; }
+function triSVG(a,b,c){ return `<svg viewBox="0 0 210 155" width="220">
+  <polygon points="105,18 188,132 22,132" fill="#e7f7f5" stroke="var(--purple)" stroke-width="5"/>
+  <text x="158" y="76" font-family="Baloo 2" font-weight="800" font-size="16" fill="#2f6f68">${a}</text>
+  <text x="30" y="76" font-family="Baloo 2" font-weight="800" font-size="16" fill="#2f6f68">${b}</text>
+  <text x="105" y="150" font-family="Baloo 2" font-weight="800" font-size="16" fill="#2f6f68" text-anchor="middle">${c}</text>
+</svg>`; }
+
+const REGIONS = [
+  {
+    name:"İşlem Ormanı", emoji:"🌳", konu:"Toplama · Çıkarma · Çarpma · Bölme",
+    intro:"Saat Ağaçları durmuş! Ağaçların üzerindeki işlemleri çözersen yeniden tik tak etmeye başlarlar.",
+    stages:[
+      { tag:"Saat Ağacı 1", emoji:"➕", story:"İlk ağacın üzerinde bir <b>toplama</b> var. Doğru sayıyı seç.",
+        question:"348 + 275 = ?", type:"choice", options:["623","615","523","633"], answer:0,
+        ok:"Tik tak! 348 + 275 = 623. Ağaç canlandı! 🌳",
+        think:"Elde var mı? Birler 8+5=13 → 1 elde. Onlar 4+7+1=12 → 1 elde. Yüzler 3+2+1=6." },
+      { tag:"Saat Ağacı 2", emoji:"➖", story:"İkinci ağaçta bir <b>çıkarma</b> var. Sıfırların olması onluk bozmayı zorlaştırır!",
+        question:"600 − 247 = ?", type:"input", answer:353,
+        hint:"İpucu: 600'den bozarken iki basamağı birden düşün.",
+        check:v=>v===353?true:(v<353?"Az geldi, tekrar bak ⬆":"Çok, bir daha dene ⬇"),
+        ok:"Süper! 600 − 247 = 353. İkinci ağaç uyandı! 🌳",
+        think:"Sıfırlı çıkarma en çok hata yapılan yer. Tahmin: 600−250=350 civarı olmalıydı, 353 mantıklı." },
+      { tag:"Saat Ağacı 3", emoji:"✖️", story:"Üçüncü ağaçta bir <b>çarpma</b> var.",
+        question:"23 × 4 = ?", type:"input", answer:92,
+        hint:"İpucu: (20 × 4) + (3 × 4) = 80 + 12.",
+        check:v=>v===92?true:(v<92?"Az ⬆":"Çok ⬇"),
+        ok:"Harika! 23 × 4 = 92. Ağaç ışıldadı! 🌳",
+        think:"Çarpmayı parçalara böldün mü? 20×4 ve 3×4 ayrı hesaplayıp topladın mı?" },
+      { tag:"Saat Ağacı 4", emoji:"➗", story:"Dördüncü ağaçta bir <b>bölme</b> var.",
+        question:"72 ÷ 6 = ?", type:"input", answer:12,
+        hint:"İpucu: 6 ile hangi sayıyı çarpınca 72 eder?",
+        check:v=>v===12?true:(v*6<72?"Az ⬆":"Çok ⬇"),
+        ok:"Müthiş! 72 ÷ 6 = 12. Ağaç meyve verdi! 🌳",
+        think:"Bölme, çarpmanın tersi: 6 × 12 = 72 olduğu için 72 ÷ 6 = 12." },
+      { tag:"Son Ağaç · Eksik İşlem", emoji:"🍎", story:"Son ağaçta bir sayı silinmiş. <b>Eksik sayıyı</b> bul ki ağaç tamamlansın.",
+        question:"8 × ? = 56", type:"input", answer:7,
+        hint:"Dene: 8 × 6 = 48 (az), 8 × 7 = ? Ayarla.",
+        check:v=>v===7?true:(v*8<56?"8 × "+v+" = "+(v*8)+", az ⬆":"8 × "+v+" = "+(v*8)+", çok ⬇"),
+        ok:"Orman canlandı! 8 × 7 = 56. İlk Zaman Kristali senin! 💎",
+        think:"Bu da gizli bir bölme: 56 ÷ 8 = 7. Çarpma tablosunu bilmek buraya yarıyor." }
+    ]
+  },
+  {
+    name:"Kesir Bataklığı", emoji:"🐸", konu:"Basit kesir · Bütün-parça · Karşılaştırma · Denk kesir",
+    stages:[
+      { tag:"Köprü 1 · Parça", emoji:"🍕", story:"Bataklık köprüsü kırık! Doğru kesre basarsan köprü oluşur.",
+        gorsel:labBar("Boyalı kısım ne kadar?",4,1,'coral'),
+        question:"Boyalı kısım kaçta kaç?", type:"choice", options:["1/4","1/2","3/4","1/3"], answer:0,
+        ok:"Köprü oluştu! 4 eş parçadan 1 tanesi → 1/4. 🌉",
+        think:"Payda (alt sayı) = kaç eş parça. Pay (üst sayı) = kaç tanesini aldık." },
+      { tag:"Köprü 2 · Parça", emoji:"🍫", story:"Sıradaki köprü daha çok parçaya bölünmüş.",
+        gorsel:labBar("Boyalı kısım ne kadar?",8,3,'purple'),
+        question:"Boyalı kısım kaçta kaç?", type:"choice", options:["3/8","5/8","3/5","8/3"], answer:0,
+        ok:"Bravo! 8 parçadan 3'ü boyalı → 3/8. 🌉",
+        think:"8 eş parça olduğu için payda 8. Boyalı 3 parça olduğu için pay 3." },
+      { tag:"Köprü 3 · Karşılaştırma", emoji:"⚖️", story:"İki kesir var. <b>Büyük olana</b> basarsan köprü oluşur.",
+        gorsel:labBar("A",2,1,'aqua')+labBar("B",4,1,'coral'),
+        question:"Hangisi daha büyük?", type:"choice", options:["A: 1/2","B: 1/4"], answer:0,
+        ok:"Doğru! Aynı bütünde 1/2 > 1/4. Çubuklardan da görülüyor. 🌉",
+        think:"Payda büyüdükçe parçalar küçülür. Yani 1/4 parçası, 1/2 parçasından küçüktür." },
+      { tag:"Köprü 4 · Denk Kesir", emoji:"🟰", story:"Bu köprü, <b>denk (eşit) kesir</b> ister.",
+        gorsel:labBar("Bu kesir: 2/4",4,2,'purple'),
+        question:"2/4 kesrine DENK olan hangisi?", type:"choice", options:["1/2","1/3","3/4","2/3"], answer:0,
+        ok:"Muhteşem! 2/4 = 1/2 (ikisi de bütünün yarısı). 🌉",
+        think:"Denk kesirler farklı yazılır ama aynı büyüklüktedir. 2/4 çubuğu tam yarıyı kaplıyor." },
+      { tag:"Son Köprü · En Büyük", emoji:"👑", story:"Bataklığın son köprüsü! En büyük kesre bas, kristali al.",
+        gorsel:labBar("1/2",2,1,'aqua')+labBar("1/4",4,1,'coral')+labBar("1/8",8,1,'purple'),
+        question:"Hangisi en büyük?", type:"choice", options:["1/2","1/4","1/8"], answer:0,
+        ok:"Bataklık aşıldı! 1/2 en büyük parça. İkinci Zaman Kristali senin! 💎",
+        think:"Pay aynı (hepsi 1) olunca, payda küçük olan büyüktür: 1/2 > 1/4 > 1/8." }
+    ]
+  },
+  {
+    name:"Problem Vadisi", emoji:"🏡", konu:"Çok adımlı problem çözme",
+    stages:[
+      { tag:"Köylü · Manav", emoji:"🍎", story:"“24 elmam vardı, <b>8'ini sattım</b>. Kaç elmam kaldı?”",
+        question:"Kaç elma kaldı?", type:"input", answer:16,
+        hint:"Kalan = başlangıç − satılan. 24 − 8.",
+        check:v=>v===16?true:(v<16?"Az ⬆":"Çok ⬇"),
+        ok:"Köylü yardım etti! 24 − 8 = 16 elma kaldı. 🍎",
+        think:"Tek adımlı problem: elinden çıkanı çıkardın." },
+      { tag:"Köylü · Depo", emoji:"📦", story:"“Depoda <b>100 kg</b> elma vardı. Sabah <b>35 kg</b>, öğleden sonra <b>28 kg</b> sattım. Kaç kg kaldı?”",
+        question:"Kaç kg kaldı?", type:"input", answer:37,
+        hint:"İki adım: önce iki satışı topla (35 + 28), sonra 100'den çıkar.",
+        check:v=>v===37?true:(v<37?"Fazla çıkarmışsın ⬆":"Az çıkarmışsın ⬇"),
+        ok:"Doğru! 35 + 28 = 63, sonra 100 − 63 = 37 kg. 📦",
+        think:"Çok adımlı problem: önce toplam satışı bul, sonra çıkar. Sıra önemli." },
+      { tag:"Köylü · Öğretmen", emoji:"🍬", story:"“<b>48 şekeri 6 çocuğa</b> eşit paylaştırdım. Her çocuğa kaç düştü?”",
+        question:"Her çocuğa kaç şeker?", type:"input", answer:8,
+        hint:"Eşit paylaştırma = bölme. 48 ÷ 6.",
+        check:v=>v===8?true:(v*6<48?"Az ⬆":"Çok ⬇"),
+        ok:"Süper! 48 ÷ 6 = 8 şeker. 🍬",
+        think:"“Eşit paylaştırma” gördüğünde bölme yaparsın." },
+      { tag:"Köylü · Sürücü", emoji:"🚌", story:"“<b>3 otobüs</b> geldi, her otobüste <b>24 kişi</b> var. Toplam kaç kişi?”",
+        question:"Toplam kaç kişi?", type:"input", answer:72,
+        hint:"Eşit gruplar = çarpma. 3 × 24.",
+        check:v=>v===72?true:(v<72?"Az ⬆":"Çok ⬇"),
+        ok:"Doğru! 3 × 24 = 72 kişi. 🚌",
+        think:"“Her ... de aynı sayıda” gördüğünde çarpma düşün." },
+      { tag:"Köylü · Okur", emoji:"📖", story:"“<b>120 sayfalık</b> kitabın <b>45 sayfasını</b> okudum. Kaç sayfa kaldı?”",
+        question:"Kaç sayfa kaldı?", type:"input", answer:75,
+        hint:"Kalan = toplam − okunan. 120 − 45.",
+        check:v=>v===75?true:(v<75?"Az ⬆":"Çok ⬇"),
+        ok:"Vadi açıldı! 120 − 45 = 75 sayfa. Üçüncü Zaman Kristali senin! 💎",
+        think:"Problemde hangi işlem? “Kaç kaldı” çoğu zaman çıkarmadır." }
+    ]
+  },
+  {
+    name:"Geometri Dağları", emoji:"⛰️", konu:"Şekiller · Çevre",
+    stages:[
+      { tag:"Kapı 1 · Kare Çevre", emoji:"🟦", story:"Dağ kapısı bir <b>kare</b>. Açmak için çevresini bul. (Çevre = tüm kenarların toplamı.)",
+        gorsel:rectSVG(6,6,'6 cm','6 cm','aqua'),
+        question:"Bir kenarı 6 cm olan karenin çevresi kaç cm?", type:"input", answer:24,
+        hint:"Karenin 4 kenarı da eşit: 6 + 6 + 6 + 6 (veya 6 × 4).",
+        check:v=>v===24?true:(v<24?"Az ⬆":"Çok ⬇"),
+        ok:"Kapı açıldı! 6 × 4 = 24 cm. 🟦",
+        think:"Karede dört kenar eşit olduğu için çevre = kenar × 4." },
+      { tag:"Kapı 2 · Dikdörtgen Çevre", emoji:"🟨", story:"İkinci kapı bir <b>dikdörtgen</b>.",
+        gorsel:rectSVG(8,5,'8 cm','5 cm','gold'),
+        question:"Kenarları 8 cm ve 5 cm olan dikdörtgenin çevresi?", type:"input", answer:26,
+        hint:"Karşılıklı kenarlar eşit: 8 + 5 + 8 + 5 (veya (8+5)×2).",
+        check:v=>v===26?true:(v<26?"Az ⬆":"Çok ⬇"),
+        ok:"Doğru! (8 + 5) × 2 = 26 cm. 🟨",
+        think:"Dikdörtgende karşılıklı kenarlar eşittir; iki farklı kenarı toplayıp 2 ile çarparsın." },
+      { tag:"Kapı 3 · Üçgen Çevre", emoji:"🔺", story:"Üçüncü kapı bir <b>üçgen</b>. Kenarları farklı uzunlukta.",
+        gorsel:triSVG('7 cm','5 cm','6 cm'),
+        question:"Kenarları 5, 7 ve 6 cm olan üçgenin çevresi?", type:"input", answer:18,
+        hint:"Üç kenarı topla: 5 + 7 + 6.",
+        check:v=>v===18?true:(v<18?"Az ⬆":"Çok ⬇"),
+        ok:"Süper! 5 + 7 + 6 = 18 cm. 🔺",
+        think:"Çevre her zaman bütün kenarların toplamıdır — şekil ne olursa olsun." },
+      { tag:"Kapı 4 · Şekli Tanı", emoji:"🔷", story:"Bu kapıda bir şekil var. Adını bilirsen açılır.",
+        gorsel:`<svg viewBox="0 0 130 125" width="130"><polygon points="65,12 120,52 98,116 32,116 10,52" fill="var(--purple)" stroke="#fff" stroke-width="4"/></svg>`,
+        question:"Bu şeklin adı nedir?", type:"choice", options:["Beşgen","Altıgen","Kare","Üçgen"], answer:0,
+        ok:"Doğru! 5 kenarı ve 5 köşesi var → BEŞGEN. 🔷",
+        think:"Kenar sayısı şekle ad verir: 3 üçgen, 4 dörtgen, 5 beşgen, 6 altıgen." },
+      { tag:"Son Kapı · Karşılaştır", emoji:"⚖️", story:"Son kapı! <b>Çevresi daha uzun</b> olan şekle git.",
+        gorsel:rectSVG(7,2,'7 cm','2 cm','aqua')+rectSVG(4,4,'4 cm','4 cm','coral'),
+        question:"Hangisinin çevresi daha uzun? (A: mavi 7×2, B: kırmızı 4×4)",
+        type:"choice", options:["A (mavi)","B (kırmızı)","Eşit"], answer:0,
+        ok:"Dağlar aşıldı! A: (7+2)×2 = 18 cm, B: (4+4)×2 = 16 cm → A daha uzun. Dördüncü Zaman Kristali senin! 💎",
+        think:"Her iki çevreyi de hesaplayıp karşılaştırdın: 18 > 16. Şeklin “büyük görünmesi” değil, çevre hesabı belirler." }
+    ]
+  },
+  {
+    name:"Zaman Kalesi", emoji:"🏰", konu:"Final: mantık · işlem · kesir · problem · geometri",
+    stages:[
+      { tag:"Kaos'un Bulmacası 1 · Örüntü", emoji:"🔮", story:"Kaos zamanı durdurmaya çalışıyor! İlk bulmaca bir <b>sayı örüntüsü</b>.",
+        question:"2, 4, 8, 16, ? — sıradaki sayı?", type:"input", answer:32,
+        hint:"Her sayı bir öncekinin kaç katı? Kuralı bul.",
+        check:v=>v===32?true:"Kurala tekrar bak: her adımda 2 ile çarpılıyor.",
+        ok:"Kristal parladı! Her sayı 2 katı: 16 × 2 = 32. 🔮",
+        think:"Örüntüde kural bulmak = kaç eklendiğine ya da kaçla çarpıldığına bakmak." },
+      { tag:"Kaos'un Bulmacası 2 · İşlem", emoji:"➕", story:"İkinci bulmaca büyük bir <b>toplama</b>.",
+        question:"125 + 375 = ?", type:"input", answer:500,
+        hint:"Sondan başla: 5+5=10 (elde 1)…",
+        check:v=>v===500?true:(v<500?"Az ⬆":"Çok ⬇"),
+        ok:"Güçlendi! 125 + 375 = 500. ➕",
+        think:"125 ile 375 birbirini tamamlıyor: 25+75=100, 100+400=500." },
+      { tag:"Kaos'un Bulmacası 3 · Kesir", emoji:"🍰", story:"Üçüncü bulmaca <b>kesir</b>. En büyük olana bas.",
+        gorsel:labBar("3/4",4,3,'aqua')+labBar("1/2",2,1,'coral'),
+        question:"Hangisi daha büyük?", type:"choice", options:["3/4","1/2"], answer:0,
+        ok:"Işıldadı! 3/4 > 1/2 (çubuklardan da belli). 🍰",
+        think:"3/4, yarıdan fazladır; 1/2 tam yarı. Yani 3/4 daha büyük." },
+      { tag:"Kaos'un Bulmacası 4 · Problem", emoji:"✏️", story:"Dördüncü bulmaca çok adımlı bir <b>problem</b>: “Her kutuda 8 kalem var, 5 kutu aldım, sonra 12 kalem kullandım. Kaç kalem kaldı?”",
+        question:"Kaç kalem kaldı?", type:"input", answer:28,
+        hint:"İki adım: önce toplam kalem (8 × 5), sonra kullanılanı çıkar (− 12).",
+        check:v=>v===28?true:(v<28?"Az ⬆":"Çok ⬇"),
+        ok:"Neredeyse bitti! 8 × 5 = 40, 40 − 12 = 28. ✏️",
+        think:"Önce çarpma sonra çıkarma — işlem sırasını doğru kurdun." },
+      { tag:"Son Bulmaca · Geometri", emoji:"🏰", story:"Kaos'un SON bulmacası! Kalenin kapısı bir <b>kare</b>. Çevresini bul, zamanı kurtar!",
+        gorsel:rectSVG(7,7,'7 cm','7 cm','gold'),
+        question:"Bir kenarı 7 cm olan karenin çevresi?", type:"input", answer:28,
+        hint:"7 × 4.",
+        check:v=>v===28?true:(v<28?"Az ⬆":"Çok ⬇"),
+        ok:"KAOS YENİLDİ! 7 × 4 = 28 cm. Beşinci kristal birleşti — zaman geri döndü! 💎",
+        think:null }
+    ]
+  }
+];
+
+let view='intro', crystals=0, curRegion=0, sidx=0, current=null, typedNum='';
+const stage=document.getElementById('stage'), burst=document.getElementById('burst');
+
+(function(){ const em=["⏳","💎","🐢","🌴","⭐","🗺️","🔆","🕰️"]; let s='';
+  for(let i=0;i<16;i++){s+=`<i style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*12}s">${em[i%em.length]}</i>`;}
+  document.getElementById('sky').innerHTML=s; })();
+
+function burstFx(set){ const emo=set||["💎","⭐","✨","🎉","⏳"]; let h='';
+  for(let i=0;i<18;i++){ const tx=(Math.random()*2-1)*60+'vw', ty=(Math.random()*-1-0.2)*60+'vh', r=(Math.random()*720-360)+'deg';
+    h+=`<span style="left:${40+Math.random()*20}%;--tx:${tx};--ty:${ty};--r:${r}">${emo[i%emo.length]}</span>`; }
+  burst.innerHTML=h; setTimeout(()=>burst.innerHTML='',1000); }
+
+/* ---------- GİRİŞ ---------- */
+function showIntro(){
+  view='intro';
+  stage.innerHTML=`<div class="heroes">🧭🐢</div>
+    <h1 class="start-title">Zamanın Kayıp Adası</h1>
+    <div class="scroll">"Zaman Kristali parçalandı. Matematiğin gücü kayboluyor. Onu yalnızca doğru hesaplamalar yapabilen biri yeniden birleştirebilir."</div>
+    <p class="start-sub">Bilge Kaplumbağa Kronos: “Her doğru cevap zamanı biraz daha onarır.” Beş bölgedeki kristal parçasını topla, zamanı geri getir!</p>
+    <button class="cta gold big" onclick="showMap()">Adaya Ayak Bas ▶</button>`;
+}
+
+/* ---------- HARİTA ---------- */
+function showMap(){
+  view='map';
+  let crys=''; for(let i=0;i<5;i++) crys+=`<span class="c ${i<crystals?'on':''}">💎</span>`;
+  let nodes='';
+  REGIONS.forEach((r,i)=>{
+    const done = i<crystals;
+    const isCurrent = i===crystals && !r.locked && r.stages;
+    const lockedFuture = i>crystals || (r.locked && i!==crystals);
+    let cls = done?'done':(isCurrent?'current':'locked');
+    let right = done?'<span class="st">💎</span>' : (isCurrent?'<span class="go">GİR ▶</span>' : '<span class="st">🔒</span>');
+    if(r.locked && i===crystals) right='<span class="st">🔒</span>'; // sıradaki ama henüz yapılmadı
+    const onclick = isCurrent?`onclick="enterRegion(${i})"`:'';
+    nodes += (i>0?'<div class="connector"></div>':'') +
+      `<div class="node ${cls}" ${onclick}>
+        <div class="ico">${r.emoji}</div>
+        <div class="info"><div class="nm">${r.name}</div><div class="ko">${r.konu}</div></div>
+        ${right}
+      </div>`;
+  });
+  const allInfo = crystals>=1 && REGIONS[crystals] && REGIONS[crystals].locked
+    ? `<p class="hintline">Sıradaki bölge (${REGIONS[crystals].name}) yapım aşamasında — onayınla eklenecek. 🛠️</p>` : '';
+  stage.innerHTML=`
+    <div class="maphead">
+      <h1>🗺️ Zamanın Kayıp Adası</h1>
+      <p>Topladığın kristaller</p>
+      <div class="crystbar">${crys}</div>
+    </div>
+    <div class="path">${nodes}</div>
+    ${allInfo}`;
+}
+
+/* ---------- BÖLGEYE GİR ---------- */
+function enterRegion(i){ curRegion=i; sidx=0; view='region'; renderStage(); }
+
+function railHTML(){ const R=REGIONS[curRegion]; const pct=Math.round((sidx/R.stages.length)*100);
+  return `<div class="rail"><button class="back" onclick="showMap()">🗺️ Harita</button>
+    <div class="track"><div class="fill" style="width:${pct}%"></div></div>
+    <span class="scorebox">${R.emoji} ${sidx}/${R.stages.length}</span></div>`; }
+
+function renderStage(){
+  current=REGIONS[curRegion].stages[sidx]; typedNum='';
+  let body='';
+  if(current.type==='choice'){
+    body=`<div class="opts">`+current.options.map((o,k)=>
+      `<button class="opt c${k}" onclick="answerChoice(${k},this)">${o}</button>`).join('')+`</div>`;
+  } else {
+    body=`<div class="padwrap"><div class="display-num" id="disp">0</div>
+      <div class="pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="key" onclick="press(${n})">${n}</button>`).join('')}
+      <button class="key act" onclick="press('del')">⌫</button>
+      <button class="key" onclick="press(0)">0</button>
+      <button class="key go" onclick="checkNum()">✓</button></div></div>`;
+  }
+  stage.innerHTML=railHTML()+`
+    <span class="stage-tag">${current.tag}</span>
+    <div class="scene-emoji">${current.emoji}</div>
+    <div class="story">${current.story}</div>
+    ${current.gorsel?`<div style="display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:18px;margin:10px 0">${current.gorsel}</div>`:''}
+    <div class="question">${current.question}</div>
+    ${body}
+    <div class="hintline">${current.hint||''}</div>
+    <div class="feedback" id="fb"></div>`;
+}
+
+function press(k){ const d=document.getElementById('disp');
+  if(k==='del') typedNum=typedNum.slice(0,-1); else if(typedNum.length<4) typedNum+=k;
+  d.textContent=typedNum===''?'0':typedNum; }
+
+function checkNum(){ if(typedNum==='') return; const v=parseInt(typedNum,10);
+  const res = current.check ? current.check(v) : (v===current.answer);
+  if(res===true){ winStage(); }
+  else{ const fb=document.getElementById('fb'); fb.className='feedback hint';
+    fb.textContent = (typeof res==='string')?res:"Tekrar dene 💪";
+    typedNum=''; document.getElementById('disp').textContent='0'; } }
+
+function answerChoice(k,btn){ if(k===current.answer) winStage();
+  else{ btn.classList.add('shake'); setTimeout(()=>btn.classList.remove('shake'),400);
+    const fb=document.getElementById('fb'); fb.className='feedback no'; fb.textContent="Olmadı — tekrar bak 👀"; } }
+
+function winStage(){ burstFx(["⭐","🌳","✨","🍎"]);
+  const tb=current.think?`<div class="think">${current.think}</div>`:'';
+  const R=REGIONS[curRegion]; const last=sidx===R.stages.length-1;
+  stage.innerHTML=railHTML()+`
+    <span class="stage-tag" style="background:var(--green)">✓ Doğru!</span>
+    <div class="scene-emoji">${current.emoji}</div>
+    <div class="feedback ok" style="font-size:22px">${current.ok}</div>
+    ${tb}
+    <button class="cta ${last?'gold ':''}big" onclick="${last?'finishRegion()':'nextStage()'}">${last?'Kristali Al 💎':'Sıradaki Ağaç ➜'}</button>`;
+}
+function nextStage(){ sidx++; renderStage(); }
+
+function finishRegion(){
+  if(curRegion===crystals) crystals++;      // yeni bölge tamamlandı
+  burstFx(["💎","⭐","✨","🎉"]);
+  if(crystals>=5){ showFinale(); return; }  // tüm kristaller toplandı
+  const R=REGIONS[curRegion];
+  stage.innerHTML=`<div class="heroes">💎✨</div>
+    <h1 class="start-title">${R.name} Tamamlandı!</h1>
+    <p class="start-sub">Bir Zaman Kristali daha topladın. Kronos gururlu!</p>
+    <div class="crystbar" style="font-size:30px">${Array.from({length:5},(_,i)=>`<span class="c ${i<crystals?'on':''}">💎</span>`).join('')}</div>
+    <button class="cta gold big" onclick="showMap()">🗺️ Haritaya Dön</button>`;
+}
+
+function showFinale(){
+  view='finale';
+  stage.innerHTML=`<div class="heroes">💎✨🌈</div>
+    <h1 class="start-title">Zaman Geri Döndü!</h1>
+    <div class="crystbar" style="font-size:30px">💎💎💎💎💎</div>
+    <div class="scroll">Kristal gökyüzüne yükseldi. Adadaki saatler yeniden çalışmaya başladı, çiçekler açtı, nehirler aktı.</div>
+    <p class="start-sub">Bilge Kaplumbağa Kronos: <b>“Zamanı kurtaran sihir değil, matematikti.”</b></p>
+    <div class="stage-tag" style="display:block;text-align:center;background:var(--gold);color:#5a4200;font-size:20px;padding:10px;margin:10px auto;max-width:320px">🏆 Unvan: Zaman Koruyucusu</div>
+    <button class="cta gold big" onclick="crystals=0;showIntro();">Yeniden Oyna 🔁</button>`;
+  burstFx(["💎","⭐","🌈","🎉","⏳"]);
+}
+
+showIntro();
+</script>
+</body>
+</html>
