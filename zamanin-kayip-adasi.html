@@ -393,13 +393,11 @@ function renderStage(){
       <button class="key go" onclick="checkNum()">✓</button></div></div>`;
   }
   stage.innerHTML=railHTML()+`
-    <span class="stage-tag">${current.tag}</span>
     <div class="scene-emoji">${current.emoji}</div>
     <div class="story">${current.story}</div>
     ${current.gorsel?`<div style="display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:18px;margin:10px 0">${current.gorsel}</div>`:''}
     <div class="question">${current.question}</div>
     ${body}
-    <div class="hintline">${current.hint||''}</div>
     <div class="feedback" id="fb"></div>`;
 }
 
