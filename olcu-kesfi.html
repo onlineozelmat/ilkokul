@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deniz'in Ölçü Keşfi — Ölçüler (4. Sınıf)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#4CA85E; --earth:#C98A3C; --sky:#4EC5FF; --water:#2FB6C4;
+    --sun:#FFC531; --coral:#FF7A6B; --purple:#8B6BFF; --ink:#234a2e; --card:#ffffff; --soft:#EDF6EA;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    background:radial-gradient(1100px 720px at 25% -8%, #CDEBB8 0%, #A6DE9B 42%, #7FC9C0 100%);
+    color:var(--ink); min-height:100vh; overflow-x:hidden;
+    display:flex; align-items:center; justify-content:center; padding:16px;
+  }
+  h1,h2,h3,.display{font-family:'Baloo 2',system-ui,sans-serif;}
+
+  .sky{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+  .sky i{position:absolute; font-size:23px; opacity:.16; animation:drift 12s linear infinite;}
+  @keyframes drift{from{transform:translateY(15px) rotate(-6deg)}to{transform:translateY(-30px) rotate(10deg)}}
+
+  .stage{position:relative; z-index:2; width:100%; max-width:640px;
+    background:var(--card); border-radius:32px; padding:24px 22px 28px;
+    box-shadow:0 22px 54px rgba(30,80,40,.32), inset 0 0 0 4px #fff;
+    animation:pop .45s cubic-bezier(.2,1.3,.4,1);}
+  @keyframes pop{from{transform:translateY(24px) scale(.94); opacity:0}to{transform:none; opacity:1}}
+
+  .rail{display:flex; align-items:center; gap:10px; margin-bottom:16px;}
+  .track{flex:1; height:15px; border-radius:20px; background:var(--soft); position:relative; overflow:hidden;}
+  .fill{position:absolute; inset:0 auto 0 0; width:0%; border-radius:20px;
+    background:linear-gradient(90deg,var(--green),var(--sun),var(--water)); transition:width .5s;}
+  .badgemini{font-size:24px;}
+  .scorebox{font-family:'Baloo 2'; font-weight:800; color:var(--green); font-size:20px; white-space:nowrap;}
+
+  .scene-emoji{font-size:52px; text-align:center; line-height:1; margin:2px 0 4px; animation:bob 2.4s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  .story{font-size:19px; line-height:1.5; font-weight:700; color:var(--ink); margin-bottom:4px; text-align:center;}
+  .story b{color:var(--coral);}
+  .question{font-family:'Baloo 2'; font-weight:700; font-size:23px; color:var(--ink); margin:12px 0 12px; text-align:center;}
+
+  .opts{display:grid; gap:12px; grid-template-columns:1fr 1fr;}
+  .opt{font-family:'Baloo 2'; font-weight:700; font-size:21px; color:#fff; border:none; cursor:pointer;
+    padding:18px 10px; border-radius:22px; box-shadow:0 6px 0 rgba(0,0,0,.18); transition:transform .12s, filter .12s;}
+  .opt:active{transform:translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,.18);} .opt:hover{filter:brightness(1.06);}
+  .opt.c0{background:var(--coral)} .opt.c1{background:var(--sky)} .opt.c2{background:var(--purple)} .opt.c3{background:var(--green)}
+
+  .padwrap{display:flex; flex-direction:column; align-items:center; gap:12px;}
+  .display-num{font-family:'Baloo 2'; font-weight:800; font-size:42px; color:var(--ink);
+    background:var(--soft); min-width:160px; text-align:center; padding:8px 20px; border-radius:20px; letter-spacing:1px;}
+  .unit{font-size:22px; color:#6a8a5a;}
+  .pad{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; width:100%; max-width:300px;}
+  .key{font-family:'Baloo 2'; font-weight:700; font-size:26px; padding:14px 0; border:none; cursor:pointer;
+    border-radius:16px; background:#fff; color:var(--ink); box-shadow:0 4px 0 #cfe8cb, inset 0 0 0 2px #edf6ea;}
+  .key:active{transform:translateY(3px); box-shadow:0 1px 0 #cfe8cb, inset 0 0 0 2px #edf6ea;}
+  .key.act{background:var(--green); box-shadow:0 4px 0 #3a874a; color:#fff;}
+  .key.go{background:var(--sun); box-shadow:0 4px 0 #d9a520; color:#5a4200;}
+
+  .cta{font-family:'Baloo 2'; font-weight:800; font-size:22px; color:#fff; border:none; cursor:pointer;
+    background:var(--green); padding:14px 34px; border-radius:20px; box-shadow:0 6px 0 #3a874a; margin-top:6px;}
+  .cta:active{transform:translateY(4px); box-shadow:0 2px 0 #3a874a;} .cta.big{display:block; margin:20px auto 0;}
+  .cta.sun{background:var(--sun); color:#5a4200; box-shadow:0 6px 0 #d9a520;} .cta.sun:active{box-shadow:0 2px 0 #d9a520;}
+
+  .feedback{margin-top:14px; text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:21px; min-height:26px;}
+  .feedback.ok{color:var(--green);} .feedback.no{color:var(--coral);} .feedback.hint{color:var(--water);}
+  .think{background:var(--soft); border-radius:18px; padding:12px 16px; margin:14px 0 6px;
+    font-weight:700; color:#3a7a4a; font-size:17px; display:flex; gap:10px; align-items:flex-start;}
+  .think::before{content:"🧭"; font-size:20px;}
+  .shake{animation:shk .4s;} @keyframes shk{10%,90%{transform:translateX(-2px)}30%,70%{transform:translateX(6px)}50%{transform:translateX(-8px)}}
+
+  .burst{position:fixed; inset:0; pointer-events:none; z-index:9; overflow:hidden;}
+  .burst span{position:absolute; top:40%; font-size:26px; animation:fly 1s ease-out forwards;}
+  @keyframes fly{to{transform:translate(var(--tx),var(--ty)) rotate(var(--r)); opacity:0}}
+
+  .start-title{font-size:34px; text-align:center; color:var(--ink); line-height:1.1; margin:6px 0;}
+  .start-sub{text-align:center; font-weight:700; color:#4a8a5a; font-size:17px; margin-bottom:6px;}
+  .heroes{font-size:60px; text-align:center; margin:6px 0;}
+
+  @media (max-width:480px){ .story{font-size:17px} .question{font-size:20px} .opt{font-size:18px; padding:16px 8px}
+    .start-title{font-size:28px} }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;}}
+</style>
+</head>
+<body>
+<div class="sky" id="sky"></div>
+<div class="burst" id="burst"></div>
+<div class="stage" id="stage"></div>
+
+<script>
+/* ---- görsel yardımcılar ---- */
+function routeSVG(segs){ const total=segs.reduce((a,s)=>a+s.m,0), W=300,H=34; let x=0,parts='',labels='';
+  const cols=['green','earth','sky','water'];
+  segs.forEach((s,i)=>{ const w=W*s.m/total;
+    parts+=`<rect x="${x}" y="16" width="${w}" height="${H}" fill="var(--${cols[i%cols.length]})" stroke="#fff" stroke-width="2"/>`;
+    labels+=`<text x="${x+w/2}" y="11" text-anchor="middle" font-family="Baloo 2" font-weight="800" font-size="13" fill="#3a5a3a">${s.lbl}</text>`;
+    x+=w; });
+  return `<svg viewBox="0 0 ${W} ${H+20}" width="300">${labels}${parts}</svg>`; }
+
+function clockSVG(h,m){ const cx=80,cy=80,r=68; let t='';
+  for(let i=0;i<12;i++){ const a=i*30*Math.PI/180, x1=cx+Math.sin(a)*r,y1=cy-Math.cos(a)*r,x2=cx+Math.sin(a)*(r-9),y2=cy-Math.cos(a)*(r-9);
+    t+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#3a7a4a" stroke-width="${i%3===0?4:2}"/>`; }
+  const nums=[[12,0],[3,90],[6,180],[9,270]].map(([n,d])=>{const a=d*Math.PI/180,x=cx+Math.sin(a)*(r-22),y=cy-Math.cos(a)*(r-22)+6;
+    return `<text x="${x}" y="${y}" text-anchor="middle" font-family="Baloo 2" font-weight="800" font-size="16" fill="#234a2e">${n}</text>`;}).join('');
+  const ha=((h%12)+m/60)*30*Math.PI/180, ma=m*6*Math.PI/180;
+  const hx=cx+Math.sin(ha)*38,hy=cy-Math.cos(ha)*38,mx=cx+Math.sin(ma)*56,my=cy-Math.cos(ma)*56;
+  return `<svg viewBox="0 0 160 160" width="158"><circle cx="${cx}" cy="${cy}" r="${r}" fill="#fff" stroke="var(--sun)" stroke-width="6"/>
+    ${t}${nums}<line x1="${cx}" y1="${cy}" x2="${hx}" y2="${hy}" stroke="var(--ink)" stroke-width="6" stroke-linecap="round"/>
+    <line x1="${cx}" y1="${cy}" x2="${mx}" y2="${my}" stroke="var(--coral)" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="${cx}" cy="${cy}" r="5" fill="var(--ink)"/></svg>`; }
+
+function bottleSVG(frac,label,color){ color=color||'water'; const H=110,W=56,fh=H*frac;
+  return `<div style="text-align:center"><svg viewBox="0 0 ${W+16} ${H+16}" width="80">
+    <rect x="${W/2-8}" y="2" width="20" height="10" rx="2" fill="var(--${color})"/>
+    <rect x="8" y="12" width="${W}" height="${H}" rx="12" fill="#f0f9fb" stroke="var(--${color})" stroke-width="4"/>
+    <rect x="12" y="${12+H-fh}" width="${W-8}" height="${fh}" rx="8" fill="var(--${color})" opacity=".5"/>
+  </svg><div style="font-family:'Baloo 2';font-weight:800;color:#2c7a6a;font-size:15px">${label}</div></div>`; }
+
+const SAHNELER = [
+  { emoji:"🗺️",
+    story:"<b>Deniz</b> bir keşif yürüyüşüne çıkıyor! Rota üç bölümden oluşuyor. Toplam mesafeyi bulup çantasını hazırlamalı.",
+    gorsel:routeSVG([{m:2000,lbl:'2 km'},{m:800,lbl:'800 m'},{m:1500,lbl:'1 km 500 m'}]),
+    question:"Rotanın tamamı kaç METRE?", type:"input", unit:"m", answer:4300,
+    check:v=>v===4300?true:(v<4300?"Bir bölümü eksik/yanlış çevirmiş olabilirsin ⬆":"Fazla ⬇"),
+    ok:"Doğru! 2000 + 800 + 1500 = 4300 m. Rota hazır! 🗺️",
+    think:"Bir de düşün: 4300 m kaç km kaç metre eder? (4 km 300 m.) Aynı mesafeyi iki farklı birimle söyleyebilir misin?" },
+
+  { emoji:"🥾",
+    story:"Deniz bir süre yürüdü. Toplam rota <b>4300 m</b>, şimdiye kadar <b>2 km 600 m</b> yürüdü.",
+    question:"Kaç METRE yolu kaldı?", type:"input", unit:"m", answer:1700,
+    check:v=>v===1700?true:(v<1700?"Az ⬆":"Çok ⬇"),
+    ok:"Süper! 2 km 600 m = 2600 m. 4300 − 2600 = 1700 m kaldı. 🥾",
+    think:"Ya toplam rota 5 km olsaydı, aynı noktada kaç metre kalırdı? (5000 − 2600 = 2400 m.)" },
+
+  { emoji:"⛰️",
+    story:"Önünde dik bir yokuş var. Deniz her <b>1 km'yi yaklaşık 15 dakikada</b> yürüyor. Yokuş <b>3 km</b>.",
+    question:"Yokuş kaç DAKİKA sürer?", type:"input", unit:"dk", answer:45,
+    check:v=>v===45?true:(v<45?"Az ⬆":"Çok ⬇"),
+    ok:"Harika! Her km 15 dk → 3 × 15 = 45 dakika. ⛰️",
+    think:"45 dakika, yarım saatten fazla. Ya yokuş 4 km olsaydı? (4 × 15 = 60 dk = tam 1 saat.)" },
+
+  { emoji:"⏰",
+    story:"Deniz yürüyüşe saat <b>09:20'de</b> başladı. Tüm rota <b>2 saat 25 dakika</b> sürüyor.",
+    gorsel:clockSVG(9,20),
+    question:"Deniz varış noktasına kaçta ulaşır?", type:"choice",
+    options:["11:45","11:20","12:45","11:05"], answer:0,
+    ok:"Doğru! 09:20 + 2 saat = 11:20, + 25 dk = 11:45. ⏰",
+    think:"Ya 40 dakika mola verseydi? O zaman kaçta varırdı? (11:45 + 40 dk = 12:25.)" },
+
+  { emoji:"💧",
+    story:"Deniz yanına <b>2 litre</b> su aldı. Her molada <b>250 mL</b> içiyor.",
+    gorsel:bottleSVG(1,'2 L','water'),
+    question:"Su kaç MOLAYA yeter?", type:"input", unit:"mola", answer:8,
+    check:v=>v===8?true:(v<8?"Az ⬆":"Çok ⬇"),
+    ok:"Müthiş! 2 L = 2000 mL. 2000 ÷ 250 = 8 mola. 💧",
+    think:"Litreyi mL'ye çevirmeden bölemezdin. Ya 3 litre alsaydı kaç molaya yeterdi? (3000 ÷ 250 = 12.)" },
+
+  { emoji:"🧴",
+    story:"Yolda bir arkadaşıyla karşılaştı. İkisi matarasındaki suyu karşılaştırıyor.",
+    gorsel:bottleSVG(0.75,"Deniz: 1 L 500 mL",'water')+bottleSVG(0.7,"Arkadaşı: 1400 mL",'earth'),
+    question:"Kimin matarasında daha ÇOK su var?", type:"choice",
+    options:["Deniz","Arkadaşı","İkisi eşit"], answer:0,
+    ok:"Doğru! 1 L 500 mL = 1500 mL. 1500 > 1400, yani Deniz'de daha çok su var.",
+    think:"Karşılaştırmak için ikisini AYNI birime çevirdin (mL). Farklı birimleri doğrudan karşılaştırmak yanıltır." },
+
+  { emoji:"🏁",
+    story:"Son bölüm <b>2 km</b>. Deniz km'yi <b>15 dakikada</b> yürüyor. Elinde son <b>500 mL</b> su var ve her km'de <b>200 mL</b> içiyor.",
+    question:"Son bölümü kaç DAKİKADA bitirir?", type:"input", unit:"dk", answer:30,
+    check:v=>v===30?true:(v<30?"Az ⬆":"Çok ⬇"),
+    ok:"Keşif tamamlandı! 2 × 15 = 30 dakika. Ve su? 2 × 200 = 400 mL ≤ 500 mL — tam yetti! 🏁",
+    think:"Bir görevde üç ölçüyü birden kullandın: uzunluk (2 km), zaman (30 dk), sıvı (400 mL). Gerçek planlama böyle olur." }
+];
+
+let idx=0, score=0, current=null, typedNum='';
+const stage=document.getElementById('stage'), burst=document.getElementById('burst');
+const TOTAL=SAHNELER.length;
+
+(function(){ const em=["🧭","🥾","⛰️","💧","🗺️","⏰","🌲","🧴"]; let s='';
+  for(let i=0;i<16;i++){s+=`<i style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*12}s">${em[i%em.length]}</i>`;}
+  document.getElementById('sky').innerHTML=s; })();
+
+function railHTML(){ const pct=Math.round((score/TOTAL)*100);
+  return `<div class="rail"><div class="track"><div class="fill" style="width:${pct}%"></div></div>
+    <span class="badgemini">🧭</span><span class="scorebox">⭐ ${score}/${TOTAL}</span></div>`; }
+
+function burstFx(){ const emo=["⭐","🧭","🎉","🗺️","✨"]; let h='';
+  for(let i=0;i<18;i++){ const tx=(Math.random()*2-1)*60+'vw', ty=(Math.random()*-1-0.2)*60+'vh', r=(Math.random()*720-360)+'deg';
+    h+=`<span style="left:${40+Math.random()*20}%;--tx:${tx};--ty:${ty};--r:${r}">${emo[i%emo.length]}</span>`; }
+  burst.innerHTML=h; setTimeout(()=>burst.innerHTML='',1000); }
+
+function showStart(){
+  stage.innerHTML=`<div class="heroes">🧭🗺️</div>
+    <h1 class="start-title">Deniz'in Ölçü Keşfi</h1>
+    <p class="start-sub">Bir keşif yürüyüşü! Uzunluk, zaman ve sıvı ölçülerini gerçek bir görevde kullan — bildiklerini uygula, birleştir, uzat.</p>
+    <div class="scene-emoji">🥾⏰💧</div>
+    <button class="cta sun big" onclick="startGame()">Keşfe Başla ▶</button>
+    <p class="hintline" style="text-align:center;color:#4a8a5a;font-weight:700;margin-top:8px;font-size:15px">7 görev. Birimleri sen çevireceksin — hazır ipucu yok! 🧭</p>`;
+}
+function startGame(){ idx=0; score=0; renderStage(); }
+
+function renderStage(){
+  current=SAHNELER[idx]; typedNum='';
+  let body='';
+  if(current.type==='choice'){
+    body=`<div class="opts">`+current.options.map((o,k)=>
+      `<button class="opt c${k}" onclick="answerChoice(${k},this)">${o}</button>`).join('')+`</div>`;
+  } else {
+    body=`<div class="padwrap"><div class="display-num"><span id="disp">0</span> <span class="unit">${current.unit||''}</span></div>
+      <div class="pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="key" onclick="press(${n})">${n}</button>`).join('')}
+      <button class="key act" onclick="press('del')">⌫</button>
+      <button class="key" onclick="press(0)">0</button>
+      <button class="key go" onclick="checkNum()">✓</button></div></div>`;
+  }
+  stage.innerHTML=railHTML()+`
+    <div class="scene-emoji">${current.emoji}</div>
+    <div class="story">${current.story}</div>
+    ${current.gorsel?`<div style="display:flex;justify-content:center;align-items:flex-end;flex-wrap:wrap;gap:22px;margin:12px 0">${current.gorsel}</div>`:''}
+    <div class="question">${current.question}</div>
+    ${body}
+    <div class="feedback" id="fb"></div>`;
+}
+
+function press(k){ const d=document.getElementById('disp');
+  if(k==='del') typedNum=typedNum.slice(0,-1); else if(typedNum.length<4) typedNum+=k;
+  d.textContent=typedNum===''?'0':typedNum; }
+
+function checkNum(){ if(typedNum==='') return; const v=parseInt(typedNum,10);
+  const res=current.check?current.check(v):(v===current.answer);
+  if(res===true) win();
+  else{ const fb=document.getElementById('fb'); fb.className='feedback hint';
+    fb.textContent=(typeof res==='string')?res:"Tekrar dene 💪"; typedNum=''; document.getElementById('disp').textContent='0'; } }
+
+function answerChoice(k,btn){ if(k===current.answer) win();
+  else{ btn.classList.add('shake'); setTimeout(()=>btn.classList.remove('shake'),400);
+    const fb=document.getElementById('fb'); fb.className='feedback no'; fb.textContent="Olmadı — tekrar düşün 🧭"; } }
+
+function win(){ score++; burstFx();
+  const tb=current.think?`<div class="think">${current.think}</div>`:'';
+  const last=idx===TOTAL-1;
+  stage.innerHTML=railHTML()+`
+    <div class="scene-emoji">${current.emoji}</div>
+    ${current.gorsel?`<div style="display:flex;justify-content:center;align-items:flex-end;gap:22px;margin:8px 0">${current.gorsel}</div>`:''}
+    <div class="feedback ok" style="font-size:22px">${current.ok}</div>
+    ${tb}
+    <button class="cta ${last?'sun ':''}big" onclick="${last?'showEnd()':'next()'}">${last?'Keşfi Bitir 🏁':'Devam Et ➜'}</button>`;
+}
+function next(){ idx++; renderStage(); }
+
+function showEnd(){
+  stage.innerHTML=`<div class="heroes">🎉🧭🏔️</div>
+    <h1 class="start-title">Keşif Tamamlandı!</h1>
+    <p class="start-sub">Uzunluk, zaman ve sıvı ölçülerini gerçek bir görevde kullandın, birimler arası çeviri yaptın, üçünü birden planladın.</p>
+    <div class="display-num" style="display:block;margin:14px auto;font-size:32px;">⭐ ${score}/${TOTAL}</div>
+    <div class="think" style="justify-content:center">Şimdi sen bir rota tasarla: kaç km, ne kadar sürer, ne kadar su gerekir? Kendi keşfini planla!</div>
+    <button class="cta sun big" onclick="startGame()">Yeniden Oyna 🔁</button>`;
+  burstFx();
+}
+
+document.addEventListener('keydown',e=>{ if(!current||current.type!=='input') return;
+  if(/[0-9]/.test(e.key)) press(parseInt(e.key,10));
+  else if(e.key==='Backspace') press('del'); else if(e.key==='Enter') checkNum(); });
+
+showStart();
+</script>
+</body>
+</html>
