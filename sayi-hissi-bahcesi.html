@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sayı Hissi Bahçesi — 1. Sınıf</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pink:#FF6B9D; --sky:#4EC5FF; --sun:#FFC531; --green:#5FCB77;
+    --purple:#9B6BFF; --coral:#FF7A6B; --dot:#FF5C7A; --ink:#3a2a5a; --card:#ffffff; --soft:#f1ecff;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    background:radial-gradient(1100px 720px at 25% -8%, #FFE3F1 0%, #E7E0FF 42%, #CFF3FF 100%);
+    color:var(--ink); min-height:100vh; overflow-x:hidden;
+    display:flex; align-items:center; justify-content:center; padding:16px;
+  }
+  h1,h2,h3{font-family:'Baloo 2',system-ui,sans-serif;}
+  .sky{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+  .sky i{position:absolute; font-size:24px; opacity:.2; animation:bob 4s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+  .stage{position:relative; z-index:2; width:100%; max-width:600px;
+    background:var(--card); border-radius:34px; padding:24px 22px 28px;
+    box-shadow:0 22px 54px rgba(90,40,110,.32), inset 0 0 0 5px #fff; animation:pop .4s cubic-bezier(.2,1.3,.4,1);}
+  @keyframes pop{from{transform:translateY(20px) scale(.95); opacity:0}to{transform:none; opacity:1}}
+
+  .heroes{font-size:58px; text-align:center; margin:4px 0;}
+  .title{font-size:34px; text-align:center; color:var(--ink); line-height:1.1; margin:4px 0;}
+  .sub{text-align:center; font-weight:800; color:#7a5aa8; font-size:17px; margin-bottom:6px;}
+
+  .menu{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;}
+  .mcard{cursor:pointer; border:none; border-radius:24px; padding:18px 10px; color:#fff;
+    font-family:'Baloo 2'; font-weight:800; box-shadow:0 6px 0 rgba(0,0,0,.18); transition:.12s;}
+  .mcard:active{transform:translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,.18);}
+  .mcard .mi{font-size:40px; display:block;} .mcard .mt{font-size:19px; margin-top:4px;}
+  .m0{background:var(--pink)} .m1{background:var(--sky)} .m2{background:var(--sun);color:#5a4200}
+  .m3{background:var(--green)} .m4{background:var(--purple)} .m5{background:var(--coral)}
+
+  .top{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+  .back{font-family:'Baloo 2'; font-weight:800; font-size:15px; cursor:pointer; border:none;
+    background:var(--soft); color:#7a5aa8; padding:8px 16px; border-radius:999px;}
+  .stars{margin-left:auto; font-size:20px; font-weight:800; color:var(--sun); font-family:'Baloo 2';}
+  .prog{text-align:center; font-family:'Baloo 2'; font-weight:800; color:#9a8ac0; font-size:15px; margin-bottom:4px;}
+
+  .soru{font-family:'Baloo 2'; font-weight:800; font-size:28px; color:var(--ink); text-align:center; margin:6px 0 12px;}
+
+  .visual{display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:12px; margin:6px 0 16px; min-height:120px;}
+
+  /* nokta */
+  .dotwrap{display:grid; gap:12px; justify-content:center; padding:14px; background:var(--soft); border-radius:24px;}
+  .dot{width:34px; height:34px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #ff9db4, var(--dot));
+    box-shadow:0 3px 0 #d13b57; animation:pop .3s ease;}
+
+  /* onluk çerçeve */
+  .frame{display:grid; grid-template-columns:repeat(5,1fr); gap:6px; background:#fff; border:4px solid var(--purple);
+    border-radius:16px; padding:8px;}
+  .cell{width:44px; height:44px; border:2px solid #d9cffb; border-radius:10px; display:flex; align-items:center; justify-content:center;}
+  .cell.full::after{content:''; width:30px; height:30px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #ffd27a, var(--sun)); box-shadow:0 2px 0 #d9a520;}
+
+  /* karşılaştırma panelleri */
+  .panels{display:grid; grid-template-columns:1fr 1fr; gap:14px; width:100%;}
+  .panel{cursor:pointer; border:4px solid var(--soft); border-radius:22px; padding:14px 8px; min-height:150px;
+    display:flex; flex-wrap:wrap; gap:6px; align-content:center; justify-content:center; background:#fff; transition:.12s;}
+  .panel:active{transform:scale(.97);}
+  .panel .obj{font-size:30px; line-height:1;}
+
+  /* TERAZİ */
+  .terazi{width:100%; max-width:440px; margin:0 auto;}
+  .beam-wrap{position:relative; height:150px;}
+  .pivot{position:absolute; left:50%; bottom:0; transform:translateX(-50%);
+    width:0;height:0;border-left:26px solid transparent;border-right:26px solid transparent;border-bottom:70px solid var(--purple);}
+  .beam{position:absolute; left:50%; top:34px; width:340px; height:12px; background:var(--purple); border-radius:8px;
+    transform:translateX(-50%) rotate(0deg); transform-origin:center; transition:transform .5s cubic-bezier(.3,1.2,.4,1);}
+  .pan{position:absolute; top:24px; width:130px; cursor:pointer; transition:transform .5s cubic-bezier(.3,1.2,.4,1);}
+  .pan.l{left:2px;} .pan.r{right:2px;}
+  .pan .rope{width:2px;height:26px;background:#b9a9e6;margin:0 auto;}
+  .pan .dish{background:#fff;border:4px solid var(--sun);border-radius:0 0 70px 70px;border-top:none;
+    min-height:74px;padding:8px 6px 12px;display:flex;flex-wrap:wrap;gap:3px;align-content:flex-start;justify-content:center;
+    box-shadow:0 4px 0 #e0b93a;}
+  .pan .dish .obj{font-size:22px;line-height:1;}
+  .pan:active{transform:scale(.97) translateY(3px);}
+  /* eğim durumları: sol ağır / sağ ağır / denge */
+  .beam.solAgir{transform:translateX(-50%) rotate(-11deg);}
+  .beam.sagAgir{transform:translateX(-50%) rotate(11deg);}
+  .pan.l.solAgir{transform:translateY(34px);} .pan.r.solAgir{transform:translateY(-34px);}
+  .pan.l.sagAgir{transform:translateY(-34px);} .pan.r.sagAgir{transform:translateY(34px);}
+
+  /* büyük sayı */
+  .bignum{font-family:'Baloo 2'; font-weight:800; font-size:92px; color:var(--purple);
+    background:var(--soft); border-radius:24px; padding:6px 40px; animation:pop .3s ease;}
+
+  /* cevap seçenekleri */
+  .opts{display:grid; grid-template-columns:1fr 1fr; gap:14px; max-width:340px; margin:0 auto;}
+  .opt{font-family:'Baloo 2'; font-weight:800; font-size:40px; color:#fff; border:none; cursor:pointer;
+    padding:16px 0; border-radius:22px; box-shadow:0 6px 0 rgba(0,0,0,.18); transition:.12s;}
+  .opt:active{transform:translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,.18);}
+  .opt.o0{background:var(--pink)} .opt.o1{background:var(--sky)} .opt.o2{background:var(--green)} .opt.o3{background:var(--purple)}
+  .opt.wrong{opacity:.3;}
+
+  .msg{margin-top:14px; text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:22px; min-height:26px;}
+  .msg.ok{color:var(--green);} .msg.no{color:var(--coral);}
+
+  .cta{font-family:'Baloo 2'; font-weight:800; font-size:22px; color:#fff; border:none; cursor:pointer;
+    background:var(--green); padding:14px 30px; border-radius:22px; box-shadow:0 6px 0 #3f9e4c; margin-top:8px;}
+  .cta:active{transform:translateY(4px); box-shadow:0 2px 0 #3f9e4c;} .cta.big{display:block; margin:18px auto 0;}
+  .cta.sun{background:var(--sun);color:#5a4200;box-shadow:0 6px 0 #d9a520}
+
+  .burst{position:fixed; inset:0; pointer-events:none; z-index:9; overflow:hidden;}
+  .burst span{position:absolute; top:40%; font-size:28px; animation:fly 1s ease-out forwards;}
+  @keyframes fly{to{transform:translate(var(--tx),var(--ty)) rotate(var(--r)); opacity:0}}
+
+  .adult{text-align:center; color:#9a8ac0; font-weight:700; font-size:13px; margin-top:12px;}
+  @media (max-width:480px){ .title{font-size:28px} .soru{font-size:23px} .opt{font-size:34px} .bignum{font-size:72px} .mcard .mt{font-size:16px} }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;}}
+</style>
+</head>
+<body>
+<div class="sky" id="sky"></div>
+<div class="burst" id="burst"></div>
+<div class="stage" id="stage"></div>
+
+<script>
+const ROUNDS = 6;
+let act=null, ri=0, stars=0, round=null, tries=0;
+const stage=document.getElementById('stage'), burst=document.getElementById('burst');
+
+(function(){ const em=["⭐","🌸","🍎","🎈","🦋","🌟","🐞","🍀"]; let s='';
+  for(let i=0;i<14;i++){s+=`<i style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*4}s">${em[i%em.length]}</i>`;}
+  document.getElementById('sky').innerHTML=s; })();
+
+function rnd(a,b){ return a+Math.floor(Math.random()*(b-a+1)); }
+function burstFx(set){ const emo=set||["⭐","🌸","🎉","✨"]; let h='';
+  for(let i=0;i<16;i++){ const tx=(Math.random()*2-1)*55+'vw', ty=(Math.random()*-1-0.2)*55+'vh', r=(Math.random()*720-360)+'deg';
+    h+=`<span style="left:${40+Math.random()*20}%;--tx:${tx};--ty:${ty};--r:${r}">${emo[i%emo.length]}</span>`; }
+  burst.innerHTML=h; setTimeout(()=>burst.innerHTML='',1000); }
+
+function secenekler(dogru,min,max){ const set=new Set([dogru]);
+  const near=[dogru-1,dogru+1,dogru-2,dogru+2].filter(x=>x>=min&&x<=max);
+  for(const x of near){ if(set.size>=4) break; set.add(x); }
+  while(set.size<4){ const x=rnd(min,max); set.add(x); }
+  return [...set].sort(()=>Math.random()-0.5); }
+
+function dotsHTML(n){ const cols=Math.min(5,n); let d='';
+  for(let i=0;i<n;i++) d+='<div class="dot"></div>';
+  return `<div class="dotwrap" style="grid-template-columns:repeat(${cols},1fr)">${d}</div>`; }
+function frameHTML(k){ let c='';
+  for(let i=0;i<10;i++) c+=`<div class="cell ${i<k?'full':''}"></div>`;
+  return `<div class="frame">${c}</div>`; }
+function objs(n,e){ let s=''; for(let i=0;i<n;i++) s+=`<span class="obj">${e}</span>`; return s; }
+
+/* ---------- ETKİNLİKLER ---------- */
+const ETKINLIKLER = [
+  { id:0, ad:"Kaç Tane?", ic:"🔴", uret(){ const n=rnd(2,10);
+      return { type:'sayi', visual:dotsHTML(n), soru:"Kaç tane var?", dogru:n, opts:secenekler(n,1,10) }; } },
+
+  { id:1, ad:"Onluk Çerçeve", ic:"🟡", uret(){ const k=rnd(1,10);
+      return { type:'sayi', visual:frameHTML(k), soru:"Kaç tane dolu?", dogru:k, opts:secenekler(k,1,10) }; } },
+
+  { id:2, ad:"Teraziyi Dengele", ic:"⚖️", uret(){
+      const fark=rnd(1,5); const kucuk=rnd(2,7); const buyuk=kucuk+fark;
+      const azSol = Math.random()<0.5;   // az olan taraf sol mu?
+      const sol = azSol?kucuk:buyuk, sag = azSol?buyuk:kucuk;
+      const e=["🍎","🍓","🌸","🎈","🐞"][rnd(0,4)];
+      return { type:'terazi', sol, sag, e, azTaraf: azSol?'sol':'sag', fark,
+        dogru:fark, opts:secenekler(fark,1,8),
+        soru:"Terazi dengelensin diye AZ olan tarafa kaç tane eklemeli?" }; } },
+
+  { id:3, ad:"1 Fazlası/Eksiği", ic:"➕", uret(){ const n=rnd(2,18), art=Math.random()<0.5;
+      const dogru = art? n+1 : n-1;
+      return { type:'sayi', visual:`<div class="bignum">${n}</div>`,
+        soru: art? "1 FAZLASI kaç?" : "1 EKSİĞİ kaç?", dogru, opts:secenekler(dogru,1,20) }; } },
+
+  { id:4, ad:"Sayı Dostları", ic:"🤝", uret(){ const k=rnd(1,9); const dogru=10-k;
+      return { type:'sayi', visual:frameHTML(k),
+        soru:"10 olması için kaç tane daha gerek?", dogru, opts:secenekler(dogru,1,10) }; } },
+
+  { id:5, ad:"2 Eksiği/Fazlası", ic:"✌️", uret(){ const n=rnd(3,18), art=Math.random()<0.5;
+      const dogru = art? n+2 : n-2;
+      return { type:'sayi', visual:`<div class="bignum">${n}</div>`,
+        soru: art? "2 FAZLASI kaç?" : "2 EKSİĞİ kaç?", dogru, opts:secenekler(dogru,1,20) }; } }
+];
+
+/* ---------- MENÜ ---------- */
+function showMenu(){ act=null;
+  stage.innerHTML=`
+    <div class="heroes">🌷🔢🦋</div>
+    <h1 class="title">Sayı Hissi Bahçesi</h1>
+    <p class="sub">Bir etkinlik seç ve dokunarak oyna!</p>
+    <div class="menu">
+      ${ETKINLIKLER.map(e=>`<button class="mcard m${e.id}" onclick="startAct(${e.id})">
+        <span class="mi">${e.ic}</span><span class="mt">${e.ad}</span></button>`).join('')}
+    </div>
+    <p class="adult">👩‍🏫 Yetişkin için: soruları sesli okuyabilir, çocuğu “önce bir bak, sonra say” diye yönlendirebilirsiniz.</p>`;
+}
+
+function startAct(i){ act=ETKINLIKLER[i]; ri=0; stars=0; nextRound(); }
+
+function nextRound(){ round=act.uret(); tries=0; renderRound(); }
+
+function renderRound(){
+  let answerArea='';
+  if(round.type==='sayi'){
+    answerArea=`<div class="opts">${round.opts.map((o,k)=>`<button class="opt o${k}" onclick="cevap(${o},this)">${o}</button>`).join('')}</div>`;
+  } else { // TERAZİ dengeleme (fark bulma)
+    const durum = round.sol>round.sag ? 'solAgir' : 'sagAgir';
+    answerArea=`<div class="terazi"><div class="beam-wrap">
+      <div class="beam ${durum}" id="beam"></div>
+      <div class="pan l ${durum}" id="panL"><div class="rope"></div><div class="dish" id="dishL">${objs(round.sol,round.e)}</div></div>
+      <div class="pan r ${durum}" id="panR"><div class="rope"></div><div class="dish" id="dishR">${objs(round.sag,round.e)}</div></div>
+      <div class="pivot"></div>
+    </div></div>
+    <p class="adult" style="margin-top:2px">Ağır taraf aşağıda. Az olan tarafı eşitlersek terazi düzleşir.</p>
+    <div class="opts">${round.opts.map((o,k)=>`<button class="opt o${k}" onclick="dengele(${o},this)">${o}</button>`).join('')}</div>`;
+  }
+  stage.innerHTML=`
+    <div class="top"><button class="back" onclick="showMenu()">🏡 Menü</button>
+      <span class="stars">⭐ ${stars}</span></div>
+    <div class="prog">${act.ad} — ${ri+1}/${ROUNDS}</div>
+    <div class="soru">${round.soru}</div>
+    ${round.visual?`<div class="visual">${round.visual}</div>`:''}
+    ${answerArea}
+    <div class="msg" id="msg"></div>`;
+}
+
+function dogruCevap(){ stars++; burstFx(); ri++;
+  const msg=document.getElementById('msg'); msg.className='msg ok';
+  msg.textContent=["Aferin! 🎉","Harika! ⭐","Çok güzel! 🌸","Süper! 👏"][rnd(0,3)];
+  setTimeout(()=>{ if(ri<ROUNDS) nextRound(); else bitir(); }, 850);
+}
+function yanlis(){ tries++; const msg=document.getElementById('msg'); msg.className='msg no';
+  msg.textContent = tries>=2 ? "Birlikte sayalım… 👀" : "Bir daha bak 🙂"; }
+
+function cevap(v,btn){ if(v===round.dogru){ dogruCevap(); }
+  else{ btn.classList.add('wrong'); btn.disabled=true; yanlis(); } }
+function dengele(v,btn){
+  if(v!==round.dogru){ btn.classList.add('wrong'); btn.disabled=true; yanlis(); return; }
+  // doğru: az olan tarafa 'fark' kadar nesne ekle, iki kefeyi eşitle, teraziyi düzleştir
+  const dishId = round.azTaraf==='sol' ? 'dishL' : 'dishR';
+  const dish=document.getElementById(dishId);
+  if(dish){ let ek=''; for(let i=0;i<round.fark;i++) ek+=`<span class="obj" style="filter:drop-shadow(0 0 4px var(--green))">${round.e}</span>`;
+    dish.innerHTML += ek; }
+  ['beam','panL','panR'].forEach(id=>{const el=document.getElementById(id); if(el) el.classList.remove('solAgir','sagAgir');});
+  // butonları kilitle ki denge görülsün
+  document.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+  const msg=document.getElementById('msg'); msg.className='msg ok'; msg.textContent="Denge sağlandı! ⚖️✨";
+  stars++; burstFx(); ri++;
+  setTimeout(()=>{ if(ri<ROUNDS) nextRound(); else bitir(); }, 1100);
+}
+
+function bitir(){ burstFx(["⭐","🌟","🎉","🏆"]);
+  stage.innerHTML=`
+    <div class="heroes">🏆🌸🎉</div>
+    <h1 class="title">Aferin!</h1>
+    <p class="sub">${act.ad} etkinliğini tamamladın!</p>
+    <div class="bignum" style="display:block;width:fit-content;margin:14px auto;color:var(--sun)">⭐ ${stars}/${ROUNDS}</div>
+    <button class="cta sun" onclick="startAct(${act.id})" style="margin:6px auto;display:block">Tekrar oyna 🔁</button>
+    <button class="cta" onclick="showMenu()" style="margin:6px auto;display:block">Başka etkinlik 🏡</button>`;
+}
+
+showMenu();
+</script>
+</body>
+</html>
