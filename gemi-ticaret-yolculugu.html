@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaptan Deniz'in Ticaret Yolculuğu — 4. Sınıf</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sea1:#2FA9D8; --sea2:#1E7FB0; --sun:#FFC531; --coral:#FF7A6B; --sand:#F4D9A0;
+    --green:#4FCB77; --purple:#8B6BFF; --ink:#123246; --card:#ffffff; --soft:#E7F6FD;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    background:radial-gradient(1100px 720px at 25% -8%, #BEE9FA 0%, #8FD6F0 42%, #63BEE0 100%);
+    color:var(--ink); min-height:100vh; overflow-x:hidden;
+    display:flex; align-items:center; justify-content:center; padding:16px;
+  }
+  h1,h2,h3{font-family:'Baloo 2',system-ui,sans-serif;}
+  .clouds{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+  .clouds i{position:absolute; font-size:30px; opacity:.5; animation:float 16s linear infinite;}
+  @keyframes float{from{transform:translateX(-60px)}to{transform:translateX(110vw)}}
+
+  .stage{position:relative; z-index:2; width:100%; max-width:660px;
+    background:var(--card); border-radius:32px; padding:22px 20px 26px;
+    box-shadow:0 22px 54px rgba(10,50,70,.4), inset 0 0 0 4px #fff; animation:pop .4s cubic-bezier(.2,1.3,.4,1);}
+  @keyframes pop{from{transform:translateY(20px) scale(.95); opacity:0}to{transform:none; opacity:1}}
+
+  /* ---------- DENİZ + GEMİ ---------- */
+  .sea{position:relative; height:140px; border-radius:22px; overflow:hidden; margin-bottom:14px;
+    background:linear-gradient(180deg,#8fd8f2 0%, var(--sea1) 45%, var(--sea2) 100%);}
+  .sea .wave{position:absolute; bottom:0; left:0; width:200%; height:26px;
+    background:repeating-linear-gradient(90deg, rgba(255,255,255,.35) 0 14px, transparent 14px 34px);
+    animation:wv 3s linear infinite;}
+  @keyframes wv{to{transform:translateX(-34px)}}
+  .port{position:absolute; bottom:8px; transform:translateX(-50%); text-align:center; width:60px;}
+  .port .pin{font-size:26px; filter:drop-shadow(0 2px 2px rgba(0,0,0,.25));}
+  .port .pl{font-family:'Baloo 2'; font-weight:800; font-size:11px; color:#0d3a52; background:rgba(255,255,255,.8);
+    border-radius:8px; padding:0 5px; display:inline-block; margin-top:1px;}
+  .port.done .pin{filter:grayscale(.2) drop-shadow(0 2px 2px rgba(0,0,0,.25));}
+  .port.now .pin{animation:bob 1.2s ease-in-out infinite;}
+  @keyframes bob{50%{transform:translateY(-5px)}}
+  .ship{position:absolute; bottom:44px; left:6%; transform:translateX(-50%); font-size:40px; z-index:3;
+    transition:left 1.8s cubic-bezier(.4,.1,.4,1); animation:sail 1.6s ease-in-out infinite;}
+  @keyframes sail{0%,100%{transform:translateX(-50%) rotate(-4deg) translateY(0)}50%{transform:translateX(-50%) rotate(4deg) translateY(-4px)}}
+
+  /* ---------- GÖREV ---------- */
+  .porttag{display:inline-block; font-family:'Baloo 2'; font-weight:800; font-size:14px; color:#fff;
+    background:var(--sea2); padding:4px 14px; border-radius:999px; margin-bottom:6px;}
+  .scene{font-size:44px; text-align:center; margin:2px 0 4px;}
+  .story{font-size:18px; line-height:1.5; font-weight:700; color:var(--ink); text-align:center;}
+  .story b{color:var(--coral);}
+  .goods{display:flex; justify-content:center; flex-wrap:wrap; gap:12px; margin:12px 0 4px;}
+  .good{background:var(--soft); border-radius:16px; padding:10px 10px 8px; width:92px; text-align:center; box-shadow:0 4px 0 #cbe7f4;}
+  .good .ge{font-size:34px;} .good .gn{font-weight:800; font-size:12px; color:#2c6f8a;}
+  .tag{display:inline-block; margin-top:5px; background:var(--green); color:#fff; font-family:'Baloo 2'; font-weight:800;
+    font-size:14px; padding:1px 10px; border-radius:999px;}
+  .crates{font-size:30px; letter-spacing:2px; text-align:center; line-height:1.3; margin:8px 0;}
+  .question{font-family:'Baloo 2'; font-weight:700; font-size:22px; color:var(--ink); text-align:center; margin:12px 0 12px;}
+
+  .padwrap{display:flex; flex-direction:column; align-items:center; gap:12px;}
+  .display-num{font-family:'Baloo 2'; font-weight:800; font-size:40px; color:var(--ink);
+    background:var(--soft); min-width:150px; text-align:center; padding:8px 22px; border-radius:20px;}
+  .pad{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; width:100%; max-width:300px;}
+  .key{font-family:'Baloo 2'; font-weight:700; font-size:26px; padding:14px 0; border:none; cursor:pointer;
+    border-radius:16px; background:#fff; color:var(--ink); box-shadow:0 4px 0 #cbe7f4, inset 0 0 0 2px #e7f6fd;}
+  .key:active{transform:translateY(3px); box-shadow:0 1px 0 #cbe7f4, inset 0 0 0 2px #e7f6fd;}
+  .key.act{background:var(--sea1); box-shadow:0 4px 0 #1a86b6; color:#fff;}
+  .key.go{background:var(--sun); box-shadow:0 4px 0 #d9a520; color:#5a4200;}
+
+  .cta{font-family:'Baloo 2'; font-weight:800; font-size:22px; color:#fff; border:none; cursor:pointer;
+    background:var(--sea2); padding:14px 30px; border-radius:20px; box-shadow:0 6px 0 #135f83; margin-top:6px;}
+  .cta:active{transform:translateY(4px); box-shadow:0 2px 0 #135f83;} .cta.big{display:block; margin:16px auto 0;}
+  .cta.sun{background:var(--sun);color:#5a4200;box-shadow:0 6px 0 #d9a520}
+
+  .feedback{margin-top:12px; text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:20px; min-height:24px;}
+  .feedback.ok{color:var(--green);} .feedback.no{color:var(--coral);} .feedback.hint{color:var(--sea2);}
+  .think{background:var(--soft); border-radius:16px; padding:12px 14px; margin:12px 0 4px;
+    font-weight:700; color:#2c6f8a; font-size:16px; display:flex; gap:8px; align-items:flex-start;}
+  .think::before{content:"⚓"; font-size:18px;}
+
+  .burst{position:fixed; inset:0; pointer-events:none; z-index:9; overflow:hidden;}
+  .burst span{position:absolute; top:40%; font-size:26px; animation:fly 1.1s ease-out forwards;}
+  @keyframes fly{to{transform:translate(var(--tx),var(--ty)) rotate(var(--r)); opacity:0}}
+
+  .start-title{font-size:32px; text-align:center; color:var(--ink); line-height:1.1; margin:6px 0;}
+  .start-sub{text-align:center; font-weight:700; color:#2c6f8a; font-size:17px; margin-bottom:6px;}
+  .heroes{font-size:56px; text-align:center; margin:4px 0;}
+
+  @media (max-width:480px){ .story{font-size:16px} .question{font-size:19px} .start-title{font-size:26px}
+    .ship{font-size:32px} .good{width:80px} }
+  @media (prefers-reduced-motion:reduce){*{animation:none !important; transition:left .3s !important;}}
+</style>
+</head>
+<body>
+<div class="clouds" id="clouds"></div>
+<div class="burst" id="burst"></div>
+<div class="stage" id="stage"></div>
+
+<script>
+/* 0 = başlangıç limanı (görev yok). 1..6 = ticaret limanları. */
+const PORTS = [
+  { ad:"Başlangıç", pin:"🏠" },
+
+  { ad:"Baharat Limanı", pin:"🌶️", scene:"⚓🌶️",
+    story:"İlk limana geldik! Ambarda çuvallar var ama tam sayılmamış. Kaptan yaklaşık sayıyı istiyor.",
+    gorsel:`<div class="crates">🧺🧺🧺🧺🧺🧺🧺🧺</div><div class="story"><b>386 çuval</b> baharat var.</div>`,
+    question:"386'yı en yakın YÜZLÜĞE yuvarla:", cevap:400,
+    ok:"⚓ 386 → 400 (yüzlüğe yuvarlandı). Yelken aç!",
+    think:"Onlar basamağı 8 (5'ten büyük) olduğu için yukarı, 400'e yuvarlanır." },
+
+  { ad:"Çarşı Limanı", pin:"🛍️", scene:"🛍️",
+    story:"Çarşıda üç ürün aldın. Fiyatlar etiketlerde.",
+    gorsel:`<div class="goods">
+      <div class="good"><div class="ge">🧂</div><div class="gn">Baharat</div><div class="tag">45 ₺</div></div>
+      <div class="good"><div class="ge">🧵</div><div class="gn">Kumaş</div><div class="tag">120 ₺</div></div>
+      <div class="good"><div class="ge">🍵</div><div class="gn">Çay</div><div class="tag">60 ₺</div></div></div>`,
+    question:"Üçünün toplamı kaç ₺?", cevap:225,
+    ok:"⚓ 45 + 120 + 60 = 225 ₺. Alışveriş tamam!",
+    think:"Basamakları düzgün alt alta topla: önce birler, sonra onlar, sonra yüzler." },
+
+  { ad:"Kasa Limanı", pin:"💰", scene:"💰",
+    story:"Kasaya <b>300 ₺</b> uzattın, alışveriş <b>225 ₺</b> tutmuştu.",
+    gorsel:`<div class="scene">💵➡️🧾</div>`,
+    question:"Kaç ₺ para üstü alırsın?", cevap:75,
+    ok:"⚓ 300 − 225 = 75 ₺ para üstü. Cebe koy!",
+    think:"Para üstü = verdiğin para − ödediğin tutar." },
+
+  { ad:"Ambar Limanı", pin:"📦", scene:"📦",
+    story:"Gemide <b>480 sandık</b> vardı. Bu limanda <b>150 sandık sattın</b>, <b>90 sandık aldın</b>.",
+    gorsel:`<div class="crates">📦📦📦📦📦📦</div>`,
+    question:"Şimdi gemide kaç sandık var?", cevap:420,
+    ok:"⚓ 480 − 150 = 330, sonra 330 + 90 = 420 sandık.",
+    think:"İki adım: önce satılanı çıkar, sonra alınanı ekle. Sıraya dikkat." },
+
+  { ad:"Meyve Limanı", pin:"🍊", scene:"🍊",
+    story:"Portakal yüklüyorsun. Her kasada <b>24 portakal</b> var ve <b>6 kasa</b> aldın.",
+    gorsel:`<div class="crates">🧺🧺🧺🧺🧺🧺</div><div class="story">6 kasa × 24 portakal</div>`,
+    question:"Toplam kaç portakal?", cevap:144,
+    ok:"⚓ 24 × 6 = 144 portakal. Ambar doldu!",
+    think:"24 × 6 = (20×6) + (4×6) = 120 + 24 = 144." },
+
+  { ad:"Hazine Limanı", pin:"🏴‍☠️", scene:"🏴‍☠️",
+    story:"Son liman! <b>128 altın</b> kazandın ve <b>8 tayfaya</b> eşit paylaştıracaksın.",
+    gorsel:`<div class="scene">🪙🪙🪙 ➗ 👥</div>`,
+    question:"Her tayfaya kaç altın düşer?", cevap:16,
+    ok:"⚓ 128 ÷ 8 = 16 altın. Herkese eşit pay!",
+    think:"Bölme = eşit paylaştırma. 8 × 16 = 128 olduğu için 128 ÷ 8 = 16." }
+];
+
+let pi=0, typedNum='', current=null, busy=false, sailTimer=null;
+const stage=document.getElementById('stage'), burst=document.getElementById('burst');
+
+(function(){ let s=''; for(let i=0;i<6;i++) s+=`<i style="top:${5+Math.random()*30}%;animation-delay:${Math.random()*16}s">☁️</i>`;
+  document.getElementById('clouds').innerHTML=s; })();
+
+function leftPct(i){ return 6 + i*(88/(PORTS.length-1)); }
+function burstFx(set){ const emo=set||["⭐","⚓","🎉","✨","🪙"]; let h='';
+  for(let i=0;i<18;i++){ const tx=(Math.random()*2-1)*55+'vw', ty=(Math.random()*-1-0.2)*55+'vh', r=(Math.random()*720-360)+'deg';
+    h+=`<span style="left:${40+Math.random()*20}%;--tx:${tx};--ty:${ty};--r:${r}">${emo[i%emo.length]}</span>`; }
+  burst.innerHTML=h; setTimeout(()=>burst.innerHTML='',1100); }
+
+/* ---------- DENİZ ÇİZ ---------- */
+function seaHTML(){
+  let ports=''; PORTS.forEach((p,i)=>{ const cls=i<pi?'done':(i===pi?'now':'');
+    ports+=`<div class="port ${cls}" style="left:${leftPct(i)}%"><div class="pin">${p.pin}</div><div class="pl">${i===0?'🏠':i}</div></div>`; });
+  return `<div class="sea"><div class="wave"></div>${ports}<div class="ship" id="ship" style="left:${leftPct(pi)}%">⛵</div></div>`;
+}
+
+function showStart(){
+  stage.innerHTML=`
+    ${seaHTML()}
+    <div class="heroes">🧑‍✈️⛵</div>
+    <h1 class="start-title">Kaptan Deniz'in Ticaret Yolculuğu</h1>
+    <p class="start-sub">Altı limanı gez, alışveriş yap, matematiği çöz! Her doğru cevap gemiyi bir sonraki limana götürür. ⚓</p>
+    <button class="cta sun big" onclick="denizeAc()">Denize Aç ▶</button>`;
+}
+
+function denizeAc(){ clearTimeout(sailTimer); pi=0; stage.innerHTML=seaHTML()+`<div id="task"></div>`;
+  // ilk limana yelken aç
+  setTimeout(()=>gotoPort(1), 300);
+}
+
+function gotoPort(i){
+  pi=i; busy=true;                       // yol alırken giriş KAPALI
+  clearTimeout(sailTimer);
+  const ship=document.getElementById('ship');
+  if(ship) ship.style.left=leftPct(i)+'%';
+  refreshPorts();
+  const task=document.getElementById('task');
+  if(!task) return;
+  task.innerHTML=`<div class="feedback hint" style="margin-top:18px">⛵ ${PORTS[i].ad}'na doğru yelken açıldı…</div>`;
+  sailTimer=setTimeout(()=>showTask(i), 1900);
+}
+
+function refreshPorts(){
+  document.querySelectorAll('.port').forEach((el,idx)=>{ el.classList.remove('done','now');
+    if(idx<pi) el.classList.add('done'); else if(idx===pi) el.classList.add('now'); });
+}
+
+function showTask(i){ current=PORTS[i]; typedNum=''; busy=false;
+  const t=document.getElementById('task');
+  if(!t) return;
+  t.innerHTML=`
+    <div style="text-align:center"><span class="porttag">${PORTS[i].pin} ${PORTS[i].ad} (${i}/6)</span></div>
+    <div class="scene">${current.scene||''}</div>
+    <div class="story">${current.story}</div>
+    ${current.gorsel||''}
+    <div class="question">${current.question}</div>
+    <div class="padwrap"><div class="display-num" id="disp">0</div>
+      <div class="pad">${[1,2,3,4,5,6,7,8,9].map(k=>`<button class="key" onclick="press(${k})">${k}</button>`).join('')}
+      <button class="key act" onclick="press('del')">⌫</button>
+      <button class="key" onclick="press(0)">0</button>
+      <button class="key go" onclick="kontrol()">✓</button></div></div>
+    <div class="feedback" id="fb"></div>`;
+}
+
+function press(k){ if(busy) return; const d=document.getElementById('disp'); if(!d) return;
+  if(k==='del') typedNum=typedNum.slice(0,-1); else if(typedNum.length<4) typedNum+=k;
+  d.textContent=typedNum===''?'0':typedNum; }
+
+function kontrol(){ if(busy||typedNum==='') return; if(!document.getElementById('disp')) return; const v=parseInt(typedNum,10);
+  const fb=document.getElementById('fb');
+  if(v===current.cevap){
+    busy=true; burstFx(["⚓","⭐","✨","🪙"]);
+    const tb=current.think?`<div class="think">${current.think}</div>`:'';
+    const son = pi===PORTS.length-1;
+    document.getElementById('task').innerHTML=`
+      <div style="text-align:center"><span class="porttag" style="background:var(--green)">✓ Doğru!</span></div>
+      <div class="scene">${current.scene||''}</div>
+      <div class="feedback ok" style="font-size:21px">${current.ok}</div>
+      ${tb}
+      <button class="cta ${son?'sun ':''}big" onclick="${son?'finale()':'gotoPort('+(pi+1)+')'}">${son?'Yolculuğu Bitir 🏁':'Sonraki Limana ⛵'}</button>`;
+  } else {
+    fb.className='feedback hint';
+    fb.textContent = v<current.cevap ? "Az geldi, tekrar dene ⬆" : "Çok geldi, tekrar dene ⬇";
+    typedNum=''; document.getElementById('disp').textContent='0';
+  }
+}
+
+function finale(){ clearTimeout(sailTimer); pi=PORTS.length-1; burstFx(["🏆","🪙","⭐","🎉","⚓"]);
+  stage.innerHTML=seaHTML()+`
+    <div class="heroes">🏆⛵🪙</div>
+    <h1 class="start-title">Yolculuk Tamamlandı!</h1>
+    <p class="start-sub">Altı limanı da geçtin: yuvarladın, alışveriş yaptın, para üstü hesapladın, yük saydın, çarptın ve eşit paylaştırdın. Gerçek bir kaptansın!</p>
+    <div class="think" style="justify-content:center">Kendi rotanı düşün: Hangi limanda en çok zorlandın? Neden?</div>
+    <button class="cta sun big" onclick="showStart()">Yeniden Yola Çık 🔁</button>`;
+}
+
+document.addEventListener('keydown',e=>{ if(!current||busy) return; if(!document.getElementById('disp')) return;
+  if(/[0-9]/.test(e.key)) press(parseInt(e.key,10));
+  else if(e.key==='Backspace') press('del'); else if(e.key==='Enter') kontrol(); });
+
+showStart();
+</script>
+</body>
+</html>
