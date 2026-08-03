@@ -42,6 +42,10 @@
   .chip-f.active{background:var(--star); color:var(--ink);}
 
   .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:22px;}
+  .gradehdr{color:#fff; font-family:'Baloo 2',system-ui,sans-serif; font-weight:800; font-size:26px;
+    margin:30px 0 14px; text-shadow:0 3px 0 rgba(0,0,0,.28); display:flex; align-items:center; gap:10px;}
+  .gradehdr::after{content:''; flex:1; height:3px; border-radius:3px; background:rgba(255,255,255,.25);}
+  .gradehdr:first-child{margin-top:6px;}
 
   .game{background:var(--card); border-radius:26px; overflow:hidden; box-shadow:0 18px 40px rgba(10,4,40,.45);
     display:flex; flex-direction:column; transition:transform .18s, box-shadow .18s;}
@@ -163,14 +167,6 @@ const OYUNLAR = [
     dosya:"aklindan-sayi-tut.html"
   },
   {
-    baslik:"Kibrit Oyunu (Nim)",
-    emoji:"🔥",
-    sinif:"3-4. Sınıf",
-    konular:["Strateji","Mantık","Kalan"],
-    aciklama:"Sırayla 1-3 kibrit al, son kibriti alan kazanır! Bilgisayarı yenmenin sırrını keşfet.",
-    dosya:"kibrit-oyunu.html"
-  },
-  {
     baslik:"Sayı Hissi Bahçesi",
     emoji:"🌷",
     sinif:"1. Sınıf",
@@ -189,7 +185,9 @@ const OYUNLAR = [
 
 const grid=document.getElementById('grid');
 const filterBar=document.getElementById('filters');
-let aktifKonu="Hepsi";
+let aktifSinif="Hepsi";
+// "3-4. Sınıf" -> [3,4], "2. Sınıf" -> [2]
+function siniflar(o){ return (String(o.sinif).match(/\d/g)||[]).map(Number); }
 
 function kart(o){
   return `<div class="game" data-konular="${o.konular.join('|')}">
@@ -211,22 +209,26 @@ function soonKart(){
 }
 
 function render(){
-  const gorunen = OYUNLAR.filter(o => aktifKonu==="Hepsi" || o.konular.includes(aktifKonu));
-  let html = gorunen.map(kart).join('');
-  // grid boş kalmasın diye: en az 3 kutu olacak şekilde "yakında" ekle
-  const bosluk = Math.max(0, 3 - gorunen.length);
-  for(let i=0;i<bosluk;i++) html += soonKart();
-  grid.innerHTML = html;
+  grid.style.display='block';
+  const tumSiniflar=[1,2,3,4,5,6,7,8].filter(g=>OYUNLAR.some(o=>siniflar(o).includes(g)));
+  const goster = aktifSinif==="Hepsi" ? tumSiniflar : [parseInt(aktifSinif,10)];
+  let html='';
+  for(const g of goster){
+    const liste=OYUNLAR.filter(o=>siniflar(o).includes(g));
+    if(!liste.length) continue;
+    html += `<h2 class="gradehdr">🎒 ${g}. Sınıf</h2><div class="grid">${liste.map(kart).join('')}</div>`;
+  }
+  grid.innerHTML = html || `<p style="color:#cfc2ff;text-align:center;font-weight:700">Bu sınıfta henüz oyun yok.</p>`;
 }
 
-/* filtre çubuğu sadece 3+ oyun olunca anlamlı — o zaman görünür */
+/* üstteki filtre: sınıfa göre */
 function buildFilters(){
-  if(OYUNLAR.length < 3){ filterBar.style.display='none'; return; }
-  const konular = ["Hepsi", ...new Set(OYUNLAR.flatMap(o=>o.konular))];
-  filterBar.innerHTML = konular.map(k=>
-    `<button class="chip-f${k===aktifKonu?' active':''}" onclick="setFilter('${k}')">${k}</button>`).join('');
+  const tumSiniflar=[1,2,3,4,5,6,7,8].filter(g=>OYUNLAR.some(o=>siniflar(o).includes(g)));
+  const secenekler=["Hepsi", ...tumSiniflar.map(g=>g+". Sınıf")];
+  filterBar.innerHTML = secenekler.map(k=>
+    `<button class="chip-f${k===aktifSinif?' active':''}" onclick="setFilter('${k}')">${k}</button>`).join('');
 }
-function setFilter(k){ aktifKonu=k; buildFilters(); render(); }
+function setFilter(k){ aktifSinif=k; buildFilters(); render(); }
 
 buildFilters();
 render();
