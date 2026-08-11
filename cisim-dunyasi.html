@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cisim Dünyası — Geometrik Cisimler (3. Sınıf)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#4E8CFF; --green:#3FAE6B; --pink:#FF6B9D; --purple:#8B6BFF; --orange:#FF9F43;
+    --sun:#FFC531; --coral:#FF7A6B; --ink:#243a5e; --card:#ffffff; --soft:#EDF2FF;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    background:radial-gradient(1100px 720px at 25% -8%, #DCE8FF 0%, #C3D6FF 42%, #AFE6D2 100%);
+    color:var(--ink); min-height:100vh; overflow-x:hidden;
+    display:flex; align-items:center; justify-content:center; padding:16px;
+  }
+  h1,h2,h3{font-family:'Baloo 2',system-ui,sans-serif;}
+  .sky{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+  .sky i{position:absolute; font-size:22px; opacity:.16; animation:bob 4s ease-in-out infinite;}
+  @keyframes bob{50%{transform:translateY(-9px)}}
+
+  .stage{position:relative; z-index:2; width:100%; max-width:620px;
+    background:var(--card); border-radius:32px; padding:24px 22px 28px;
+    box-shadow:0 22px 54px rgba(30,50,110,.32), inset 0 0 0 4px #fff; animation:pop .4s cubic-bezier(.2,1.3,.4,1);}
+  @keyframes pop{from{transform:translateY(20px) scale(.95); opacity:0}to{transform:none; opacity:1}}
+
+  .rail{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+  .track{flex:1; height:15px; border-radius:20px; background:var(--soft); position:relative; overflow:hidden;}
+  .fill{position:absolute; inset:0 auto 0 0; width:0%; border-radius:20px;
+    background:linear-gradient(90deg,var(--blue),var(--purple),var(--green)); transition:width .4s;}
+  .scorebox{font-family:'Baloo 2'; font-weight:800; color:var(--blue); font-size:20px; white-space:nowrap;}
+
+  .gorsel{display:flex; justify-content:center; align-items:center; margin:6px 0 4px; min-height:120px;}
+  .gorsel .emoji{font-size:74px;}
+  .soru{font-family:'Baloo 2'; font-weight:700; font-size:23px; color:var(--ink); text-align:center; margin:10px 0 14px;}
+
+  .opts{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .opt{font-family:'Baloo 2'; font-weight:700; font-size:22px; color:#fff; border:none; cursor:pointer;
+    padding:18px 10px; border-radius:20px; box-shadow:0 6px 0 rgba(0,0,0,.18); transition:.12s;}
+  .opt:active{transform:translateY(4px);} .opt:hover{filter:brightness(1.05);}
+  .opt.o0{background:var(--blue)} .opt.o1{background:var(--green)} .opt.o2{background:var(--orange)} .opt.o3{background:var(--purple)}
+
+  .cisimler{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .cisim{cursor:pointer; border:4px solid var(--soft); border-radius:20px; background:#fff; padding:6px; text-align:center; transition:.12s;}
+  .cisim:hover{border-color:#cdd9ff;} .cisim:active{transform:scale(.96);}
+
+  .feedback{margin-top:14px; text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:21px; min-height:26px;}
+  .feedback.ok{color:var(--green);} .feedback.no{color:var(--coral);}
+  .think{background:var(--soft); border-radius:18px; padding:12px 16px; margin:14px 0 6px;
+    font-weight:700; color:#3a5fb0; font-size:16px; display:flex; gap:8px; align-items:flex-start;}
+  .think::before{content:"📦"; font-size:18px;}
+  .shake{animation:shk .4s;} @keyframes shk{10%,90%{transform:translateX(-2px)}30%,70%{transform:translateX(6px)}50%{transform:translateX(-8px)}}
+
+  .cta{font-family:'Baloo 2'; font-weight:800; font-size:22px; color:#fff; border:none; cursor:pointer;
+    background:var(--green); padding:14px 30px; border-radius:20px; box-shadow:0 6px 0 #2c854e; margin-top:6px;}
+  .cta:active{transform:translateY(4px); box-shadow:0 2px 0 #2c854e;} .cta.big{display:block; margin:16px auto 0;}
+  .cta.sun{background:var(--sun);color:#5a4200;box-shadow:0 6px 0 #d9a520}
+
+  .burst{position:fixed; inset:0; pointer-events:none; z-index:9; overflow:hidden;}
+  .burst span{position:absolute; top:40%; font-size:26px; animation:fly 1s ease-out forwards;}
+  @keyframes fly{to{transform:translate(var(--tx),var(--ty)) rotate(var(--r)); opacity:0}}
+
+  .start-title{font-size:32px; text-align:center; color:var(--ink); line-height:1.1; margin:6px 0;}
+  .start-sub{text-align:center; font-weight:700; color:#3a5fb0; font-size:17px; margin-bottom:6px;}
+  .heroes{display:flex; justify-content:center; gap:6px; margin:6px 0;}
+
+  @media (max-width:480px){ .soru{font-size:20px} .opt{font-size:19px} .start-title{font-size:26px} }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;}}
+</style>
+</head>
+<body>
+<div class="sky" id="sky"></div>
+<div class="burst" id="burst"></div>
+<div class="stage" id="stage"></div>
+
+<script>
+/* ---- geometrik cisim çizimleri (SVG) ---- */
+function s_kup(c){c=c||'var(--blue)';const x=34,y=52,s=50,dx=24,dy=-20;
+ return `<svg viewBox="0 0 130 130" width="116">
+  <polygon points="${x},${y} ${x+dx},${y+dy} ${x+s+dx},${y+dy} ${x+s},${y}" fill="${c}" opacity=".6" stroke="#1f3a63" stroke-width="2.5"/>
+  <polygon points="${x+s},${y} ${x+s+dx},${y+dy} ${x+s+dx},${y+dy+s} ${x+s},${y+s}" fill="${c}" opacity=".42" stroke="#1f3a63" stroke-width="2.5"/>
+  <polygon points="${x},${y} ${x+s},${y} ${x+s},${y+s} ${x},${y+s}" fill="${c}" opacity=".92" stroke="#1f3a63" stroke-width="2.5"/></svg>`;}
+function s_prizma(c){c=c||'var(--orange)';const x=24,y=56,w=62,hh=40,dx=22,dy=-18;
+ return `<svg viewBox="0 0 130 130" width="116">
+  <polygon points="${x},${y} ${x+dx},${y+dy} ${x+w+dx},${y+dy} ${x+w},${y}" fill="${c}" opacity=".6" stroke="#7a4a12" stroke-width="2.5"/>
+  <polygon points="${x+w},${y} ${x+w+dx},${y+dy} ${x+w+dx},${y+dy+hh} ${x+w},${y+hh}" fill="${c}" opacity=".42" stroke="#7a4a12" stroke-width="2.5"/>
+  <polygon points="${x},${y} ${x+w},${y} ${x+w},${y+hh} ${x},${y+hh}" fill="${c}" opacity=".92" stroke="#7a4a12" stroke-width="2.5"/></svg>`;}
+function s_silindir(c){c=c||'var(--green)';const cx=65,topY=30,botY=100,rx=30,ry=10;
+ return `<svg viewBox="0 0 130 130" width="116">
+  <path d="M${cx-rx},${topY} L${cx-rx},${botY} A${rx},${ry} 0 0 0 ${cx+rx},${botY} L${cx+rx},${topY} Z" fill="${c}" opacity=".82" stroke="#1c5a3a" stroke-width="2.5"/>
+  <ellipse cx="${cx}" cy="${topY}" rx="${rx}" ry="${ry}" fill="#bfe6cf" stroke="#1c5a3a" stroke-width="2.5"/></svg>`;}
+function s_koni(c){c=c||'var(--pink)';const cx=65,apexY=24,baseY=100,rx=30,ry=10;
+ return `<svg viewBox="0 0 130 130" width="116">
+  <path d="M${cx},${apexY} L${cx-rx},${baseY} A${rx},${ry} 0 0 0 ${cx+rx},${baseY} Z" fill="${c}" opacity=".85" stroke="#a83a6a" stroke-width="2.5"/>
+  <path d="M${cx-rx},${baseY} A${rx},${ry} 0 0 1 ${cx+rx},${baseY}" fill="#ffd0e4" stroke="#a83a6a" stroke-width="2.5"/></svg>`;}
+function s_kure(c){c=c||'var(--purple)';const cx=65,cy=64,r=38;
+ return `<svg viewBox="0 0 130 130" width="116">
+  <circle cx="${cx}" cy="${cy}" r="${r}" fill="${c}" opacity=".85" stroke="#5a3fb0" stroke-width="2.5"/>
+  <ellipse cx="${cx}" cy="${cy}" rx="${r}" ry="12" fill="none" stroke="#5a3fb0" stroke-width="2" opacity=".5" stroke-dasharray="4 4"/>
+  <ellipse cx="${cx-12}" cy="${cy-14}" rx="10" ry="6" fill="#fff" opacity=".45"/></svg>`;}
+
+/* ---- SORULAR ---- */
+const SORULAR = [
+  { gorsel:s_kup(), soru:"Bu cismin adı nedir?", opts:["Küp","Silindir","Küre","Koni"], dogru:0,
+    ok:"Doğru! Bu bir KÜP. 🧊", think:"Küpün 6 yüzü, 8 köşesi vardır ve tüm yüzleri karedir." },
+
+  { gorsel:s_silindir(), soru:"Bu cismin adı nedir?", opts:["Silindir","Koni","Küp","Küre"], dogru:0,
+    ok:"Süper! Bu bir SİLİNDİR. 🥫", think:"Silindirin yuvarlak iki tabanı vardır (konserve kutusu gibi)." },
+
+  { gorsel:s_koni(), soru:"Bu cismin adı nedir?", opts:["Piramit","Koni","Silindir","Küp"], dogru:1,
+    ok:"Harika! Bu bir KONİ. 🍦", think:"Koninin yuvarlak bir tabanı ve sivri bir tepesi vardır (külah gibi)." },
+
+  { gorsel:'<span class="emoji">⚽</span>', soru:"Bir top hangi cisme benzer?", opts:["Küp","Küre","Silindir","Koni"], dogru:1,
+    ok:"Doğru! Top her yönden yuvarlaktır → KÜRE.", think:"Küre; dünya, top, misket gibi her yönden yuvarlak cisimlerdir." },
+
+  { gorsel:'<span class="emoji">🍦</span>', soru:"Dondurma külahı hangi cisme benzer?", opts:["Koni","Küre","Küp","Silindir"], dogru:0,
+    ok:"Aferin! Külah bir KONİdir.", think:"Sivri tepe + yuvarlak taban = koni." },
+
+  { gorsel:s_kup(), soru:"Küpün kaç YÜZÜ var?", opts:["4","6","8","12"], dogru:1,
+    ok:"Doğru! Küpün 6 yüzü vardır. 🎲", think:"Bir zarın 6 yüzü olması gibi, küpün de 6 yüzü vardır." },
+
+  { gorsel:s_kup(), soru:"Küpün kaç KÖŞESİ var?", opts:["6","8","4","10"], dogru:1,
+    ok:"Süper! Küpün 8 köşesi vardır.", think:"Köşeler, kenarların birleştiği sivri noktalardır; küpte 8 tane." },
+
+  { gorsel:s_kup(), soru:"Küpün yüzleri hangi şekildir?", opts:["Üçgen","Kare","Daire","Dikdörtgen"], dogru:1,
+    ok:"Doğru! Küpün 6 yüzü de KAREdir. ◼️", think:"Bir cismin yüzleri düz şekillerdir. Küpün yüzleri hep kare." },
+
+  { cisimler:[s_kure(),s_silindir(),s_koni(),s_kup()], soru:"Hangi cisim HİÇ yuvarlanmaz?", dogru:3,
+    ok:"Doğru! KÜP yuvarlanmaz — tüm yüzleri düzdür.", think:"Küre, silindir ve koni yuvarlanır. Küpün yuvarlak yüzeyi olmadığı için yuvarlanmaz." }
+];
+
+let idx=0, score=0, current=null;
+const stage=document.getElementById('stage'), burst=document.getElementById('burst');
+const TOTAL=SORULAR.length;
+
+(function(){ const em=["🧊","🥫","🍦","⚽","📦","🔺","🔵","🎲"]; let s='';
+  for(let i=0;i<14;i++) s+=`<i style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*4}s">${em[i%em.length]}</i>`;
+  document.getElementById('sky').innerHTML=s; })();
+
+function burstFx(){ const emo=["⭐","📦","🎉","✨"]; let h='';
+  for(let i=0;i<16;i++){ const tx=(Math.random()*2-1)*55+'vw', ty=(Math.random()*-1-0.2)*55+'vh', r=(Math.random()*720-360)+'deg';
+    h+=`<span style="left:${40+Math.random()*20}%;--tx:${tx};--ty:${ty};--r:${r}">${emo[i%emo.length]}</span>`; }
+  burst.innerHTML=h; setTimeout(()=>burst.innerHTML='',1000); }
+
+function showStart(){
+  stage.innerHTML=`
+    <div class="heroes">${s_kup()}${s_silindir()}${s_koni()}</div>
+    <h1 class="start-title">Cisim Dünyası</h1>
+    <p class="start-sub">Geometrik cisimleri tanı: küp, silindir, koni, küre! Yüzlerini, köşelerini keşfet. 📦</p>
+    <button class="cta sun big" onclick="startGame()">Başla ▶</button>`;
+}
+function startGame(){ idx=0; score=0; renderSoru(); }
+
+function railHTML(){ const pct=Math.round((score/TOTAL)*100);
+  return `<div class="rail"><div class="track"><div class="fill" style="width:${pct}%"></div></div>
+    <span class="scorebox">📦 ${score}/${TOTAL}</span></div>`; }
+
+function renderSoru(){ current=SORULAR[idx];
+  let body='';
+  if(current.cisimler){
+    body=`<div class="cisimler">${current.cisimler.map((svg,k)=>
+      `<div class="cisim" onclick="cevap(${k},this)">${svg}</div>`).join('')}</div>`;
+  } else {
+    body=`<div class="opts">${current.opts.map((o,k)=>
+      `<button class="opt o${k}" onclick="cevap(${k},this)">${o}</button>`).join('')}</div>`;
+  }
+  stage.innerHTML=railHTML()+`
+    ${current.gorsel?`<div class="gorsel">${current.gorsel}</div>`:''}
+    <div class="soru">${current.soru}</div>
+    ${body}
+    <div class="feedback" id="fb"></div>`;
+}
+
+function cevap(k,el){ if(k===current.dogru) win();
+  else{ el.classList.add('shake'); setTimeout(()=>el.classList.remove('shake'),400);
+    const fb=document.getElementById('fb'); fb.className='feedback no'; fb.textContent="Olmadı — cisme tekrar bak 👀"; } }
+
+function win(){ score++; burstFx();
+  const tb=current.think?`<div class="think">${current.think}</div>`:'';
+  const last=idx===TOTAL-1;
+  stage.innerHTML=railHTML()+`
+    ${current.gorsel?`<div class="gorsel">${current.gorsel}</div>`:''}
+    <div class="feedback ok" style="font-size:22px">${current.ok}</div>
+    ${tb}
+    <button class="cta ${last?'sun ':''}big" onclick="${last?'showEnd()':'next()'}">${last?'Bitir 🏁':'Devam Et ➜'}</button>`;
+}
+function next(){ idx++; renderSoru(); }
+
+function showEnd(){ burstFx();
+  stage.innerHTML=`
+    <div class="heroes">${s_kure()}${s_kup()}</div>
+    <h1 class="start-title">Cisim Ustası Oldun!</h1>
+    <p class="start-sub">Cisimleri tanıdın, yüzlerini ve köşelerini keşfettin. Harika!</p>
+    <div class="soru" style="color:var(--sun)">⭐ ${score}/${TOTAL}</div>
+    <div class="think" style="justify-content:center">Çevrene bak: hangi eşya küpe, hangisi silindire, hangisi küreye benziyor?</div>
+    <button class="cta sun big" onclick="startGame()">Yeniden Oyna 🔁</button>`;
+}
+
+showStart();
+</script>
+</body>
+</html>
