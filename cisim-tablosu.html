@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cisim Tablosu — Yüz · Köşe · Ayrıt (3-4. Sınıf)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#4E8CFF; --green:#3FAE6B; --pink:#FF6B9D; --sun:#FFC531; --orange:#FF9F43;
+    --purple:#8B6BFF; --coral:#FF7A6B; --ink:#243a5e; --card:#ffffff; --soft:#EDF2FF;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    background:radial-gradient(1100px 720px at 25% -8%, #DCE8FF 0%, #C3D6FF 42%, #AFE6D2 100%);
+    color:var(--ink); min-height:100vh; overflow-x:hidden;
+    display:flex; align-items:center; justify-content:center; padding:16px;
+  }
+  h1,h2,h3{font-family:'Baloo 2',system-ui,sans-serif;}
+  .sky{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+  .sky i{position:absolute; font-size:22px; opacity:.15; animation:bob 4s ease-in-out infinite;}
+  @keyframes bob{50%{transform:translateY(-9px)}}
+
+  .stage{position:relative; z-index:2; width:100%; max-width:600px;
+    background:var(--card); border-radius:30px; padding:22px 18px 26px;
+    box-shadow:0 22px 54px rgba(30,50,110,.32), inset 0 0 0 4px #fff; animation:pop .4s cubic-bezier(.2,1.3,.4,1);}
+  @keyframes pop{from{transform:translateY(20px) scale(.95); opacity:0}to{transform:none; opacity:1}}
+
+  .heroes{display:flex; justify-content:center; gap:4px; margin:2px 0;}
+  .start-title{font-size:30px; text-align:center; color:var(--ink); line-height:1.1; margin:6px 0;}
+  .start-sub{text-align:center; font-weight:700; color:#3a5fb0; font-size:16px; margin-bottom:6px;}
+  .legend{background:var(--soft); border-radius:14px; padding:10px 14px; font-weight:700; color:#3a5fb0; font-size:14px; margin:8px 0; line-height:1.5;}
+
+  .prog{text-align:center; font-family:'Baloo 2'; font-weight:800; color:#5b7bc0; font-size:15px; margin-bottom:8px;}
+
+  table{width:100%; border-collapse:separate; border-spacing:4px; margin:2px 0 6px;}
+  th{font-family:'Baloo 2'; font-weight:800; font-size:14px; color:#fff; padding:6px 2px; border-radius:10px; text-align:center;}
+  th.c0{background:#8aa0c8;} th.y{background:var(--blue)} th.k{background:var(--green)} th.a{background:var(--orange)}
+  td{text-align:center; vertical-align:middle;}
+  td.cisim{background:var(--soft); border-radius:12px; padding:4px 2px;}
+  td.cisim .nm{font-family:'Baloo 2'; font-weight:800; font-size:12px; color:var(--ink); line-height:1.1;}
+  .hucre{font-family:'Baloo 2'; font-weight:800; font-size:22px; border-radius:12px; height:52px;
+    display:flex; align-items:center; justify-content:center; background:#f2f4fb; color:#c3c9dc;}
+  .hucre.dolu{background:#e2f7ea; color:var(--green);}
+  .hucre.aktif{background:#fff6d9; color:#b58a12; box-shadow:0 0 0 3px var(--sun) inset; animation:pulse 1.1s infinite;}
+  @keyframes pulse{50%{box-shadow:0 0 0 5px var(--sun) inset;}}
+
+  .soru{font-family:'Baloo 2'; font-weight:800; font-size:20px; color:var(--ink); text-align:center; margin:8px 0 10px;}
+  .soru b{color:var(--coral);}
+  .opts{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; max-width:360px; margin:0 auto;}
+  .opt{font-family:'Baloo 2'; font-weight:800; font-size:26px; color:#fff; border:none; cursor:pointer;
+    padding:14px 0; border-radius:16px; background:var(--blue); box-shadow:0 5px 0 #2f6fd6; transition:.12s;}
+  .opt:active{transform:translateY(3px);} .opt.wrong{opacity:.3;}
+
+  .feedback{margin-top:12px; text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:19px; min-height:22px;}
+  .feedback.ok{color:var(--green);} .feedback.no{color:var(--coral);}
+  .think{background:var(--soft); border-radius:14px; padding:10px 14px; margin:10px 0 4px; font-weight:700; color:#3a5fb0; font-size:15px;}
+
+  .cta{font-family:'Baloo 2'; font-weight:800; font-size:22px; color:#fff; border:none; cursor:pointer;
+    background:var(--green); padding:14px 30px; border-radius:20px; box-shadow:0 6px 0 #2c854e; margin-top:8px;}
+  .cta:active{transform:translateY(4px); box-shadow:0 2px 0 #2c854e;} .cta.big{display:block; margin:16px auto 0;}
+  .cta.sun{background:var(--sun);color:#5a4200;box-shadow:0 6px 0 #d9a520}
+
+  .burst{position:fixed; inset:0; pointer-events:none; z-index:9; overflow:hidden;}
+  .burst span{position:absolute; top:40%; font-size:26px; animation:fly 1s ease-out forwards;}
+  @keyframes fly{to{transform:translate(var(--tx),var(--ty)) rotate(var(--r)); opacity:0}}
+
+  @media (max-width:480px){ .start-title{font-size:24px} .opt{font-size:22px} .hucre{height:46px;font-size:20px} td.cisim .nm{font-size:11px} }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;}}
+</style>
+</head>
+<body>
+<div class="sky" id="sky"></div>
+<div class="burst" id="burst"></div>
+<div class="stage" id="stage"></div>
+
+<script>
+/* ---- cisim çizimleri ---- */
+function s_kup(c){c=c||'var(--blue)';const x=18,y=30,s=30,dx=14,dy=-11;
+ return `<svg viewBox="0 0 76 70" width="52">
+  <polygon points="${x},${y} ${x+dx},${y+dy} ${x+s+dx},${y+dy} ${x+s},${y}" fill="${c}" opacity=".6" stroke="#1f3a63" stroke-width="2"/>
+  <polygon points="${x+s},${y} ${x+s+dx},${y+dy} ${x+s+dx},${y+dy+s} ${x+s},${y+s}" fill="${c}" opacity=".42" stroke="#1f3a63" stroke-width="2"/>
+  <polygon points="${x},${y} ${x+s},${y} ${x+s},${y+s} ${x},${y+s}" fill="${c}" opacity=".92" stroke="#1f3a63" stroke-width="2"/></svg>`;}
+function s_prizma(c){c=c||'var(--orange)';const x=12,y=32,w=40,hh=24,dx=13,dy=-10;
+ return `<svg viewBox="0 0 78 70" width="56">
+  <polygon points="${x},${y} ${x+dx},${y+dy} ${x+w+dx},${y+dy} ${x+w},${y}" fill="${c}" opacity=".6" stroke="#7a4a12" stroke-width="2"/>
+  <polygon points="${x+w},${y} ${x+w+dx},${y+dy} ${x+w+dx},${y+dy+hh} ${x+w},${y+hh}" fill="${c}" opacity=".42" stroke="#7a4a12" stroke-width="2"/>
+  <polygon points="${x},${y} ${x+w},${y} ${x+w},${y+hh} ${x},${y+hh}" fill="${c}" opacity=".92" stroke="#7a4a12" stroke-width="2"/></svg>`;}
+function s_ucgenprizma(c){c=c||'var(--pink)';const dx=14,dy=-11;
+ const A=[16,58],B=[52,58],T=[34,26], A2=[A[0]+dx,A[1]+dy],B2=[B[0]+dx,B[1]+dy],T2=[T[0]+dx,T[1]+dy];
+ return `<svg viewBox="0 0 78 70" width="56">
+  <polygon points="${A2} ${B2} ${T2}" fill="${c}" opacity=".5" stroke="#a83a6a" stroke-width="2"/>
+  <polygon points="${B} ${B2} ${T2} ${T}" fill="${c}" opacity=".4" stroke="#a83a6a" stroke-width="2"/>
+  <polygon points="${A} ${A2} ${B2} ${B}" fill="${c}" opacity=".55" stroke="#a83a6a" stroke-width="2"/>
+  <polygon points="${A} ${B} ${T}" fill="${c}" opacity=".92" stroke="#a83a6a" stroke-width="2"/></svg>`;}
+function s_piramit(c){c=c||'var(--sun)';
+ const fL=[16,60],fR=[54,60],bL=[28,50],bR=[66,50],ap=[38,20];
+ return `<svg viewBox="0 0 82 70" width="56">
+  <polygon points="${fL} ${fR} ${bR} ${bL}" fill="${c}" opacity=".4" stroke="#b58a12" stroke-width="2"/>
+  <polygon points="${ap} ${bL} ${fL}" fill="${c}" opacity=".6" stroke="#b58a12" stroke-width="2"/>
+  <polygon points="${ap} ${fR} ${bR}" fill="${c}" opacity=".5" stroke="#b58a12" stroke-width="2"/>
+  <polygon points="${ap} ${fL} ${fR}" fill="${c}" opacity=".92" stroke="#b58a12" stroke-width="2"/></svg>`;}
+
+/* ---- tablo verisi (Euler: K − A + Y = 2) ---- */
+const ROWS = [
+  { ad:"Küp", svg:s_kup(), y:6, k:8, a:12 },
+  { ad:"Dikdörtgenler Prizması", svg:s_prizma(), y:6, k:8, a:12 },
+  { ad:"Üçgen Prizma", svg:s_ucgenprizma(), y:5, k:6, a:9 },
+  { ad:"Kare Piramit", svg:s_piramit(), y:5, k:5, a:8 }
+];
+const KOL=[{key:'y',ad:'Yüz'},{key:'k',ad:'Köşe'},{key:'a',ad:'Ayrıt'}];
+// hücre sırası: satır satır (yüz, köşe, ayrıt)
+const CELLS=[]; ROWS.forEach((r,ri)=>KOL.forEach((c,ci)=>CELLS.push({ri,ci,key:c.key,ad:c.ad,val:r[c.key],cisim:r.ad})));
+
+let idx=0, doldu=[];
+const stage=document.getElementById('stage'), burst=document.getElementById('burst');
+
+(function(){ const em=["🧊","📦","🔺","⭐","🔷","🎲"]; let s='';
+  for(let i=0;i<12;i++) s+=`<i style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*4}s">${em[i%em.length]}</i>`;
+  document.getElementById('sky').innerHTML=s; })();
+
+function rnd(a,b){return a+Math.floor(Math.random()*(b-a+1));}
+function secenekler(d){ const set=new Set([d]); [d-1,d+1,d-2,d+2,d+3].forEach(x=>{if(x>=3&&x<=13&&set.size<4)set.add(x);});
+  while(set.size<4) set.add(rnd(3,13)); return [...set].sort(()=>Math.random()-0.5); }
+function burstFx(set){ const emo=set||["⭐","📦","🎉","✨"]; let h='';
+  for(let i=0;i<16;i++){ const tx=(Math.random()*2-1)*55+'vw', ty=(Math.random()*-1-0.2)*55+'vh', r=(Math.random()*720-360)+'deg';
+    h+=`<span style="left:${40+Math.random()*20}%;--tx:${tx};--ty:${ty};--r:${r}">${emo[i%emo.length]}</span>`; }
+  burst.innerHTML=h; setTimeout(()=>burst.innerHTML='',1000); }
+
+function showStart(){
+  stage.innerHTML=`
+    <div class="heroes">${s_kup()}${s_prizma()}${s_ucgenprizma()}${s_piramit()}</div>
+    <h1 class="start-title">Cisim Tablosu</h1>
+    <p class="start-sub">Cisimlerin yüz, köşe ve ayrıt sayılarını bul, tabloyu doldur! 📊</p>
+    <div class="legend">📐 <b>Yüz</b> = düz yüzeyler · <b>Köşe</b> = sivri noktalar · <b>Ayrıt</b> = iki yüzün birleştiği kenar çizgisi</div>
+    <button class="cta sun big" onclick="startGame()">Tabloyu Doldur ▶</button>`;
+}
+function startGame(){ idx=0; doldu=[]; render(); }
+
+function tabloHTML(){
+  let head=`<tr><th class="c0">Cisim</th>${KOL.map(c=>`<th class="${c.key}">${c.ad}</th>`).join('')}</tr>`;
+  let rows=ROWS.map((r,ri)=>{
+    let cells=KOL.map((c,ci)=>{
+      const ck=CELLS.findIndex(x=>x.ri===ri&&x.ci===ci);
+      let cls='hucre', txt='';
+      if(doldu.includes(ck)){ cls+=' dolu'; txt=r[c.key]; }
+      else if(ck===idx){ cls+=' aktif'; txt='?'; }
+      return `<td><div class="${cls}">${txt}</div></td>`;
+    }).join('');
+    return `<tr><td class="cisim">${r.svg}<div class="nm">${r.ad}</div></td>${cells}</tr>`;
+  }).join('');
+  return `<table>${head}${rows}</table>`;
+}
+
+function render(){
+  const cur=CELLS[idx];
+  stage.innerHTML=`
+    <div class="prog">Tablo: ${idx}/${CELLS.length} hücre dolu</div>
+    ${tabloHTML()}
+    <div class="soru"><b>${cur.cisim}</b> cisminin kaç <b>${cur.ad.toUpperCase()}</b>'ü var?</div>
+    <div class="opts">${secenekler(cur.val).map(o=>`<button class="opt" onclick="cevap(${o},this)">${o}</button>`).join('')}</div>
+    <div class="feedback" id="fb"></div>`;
+}
+
+function cevap(v,btn){ const cur=CELLS[idx];
+  if(v===cur.val){ doldu.push(idx); burstFx(["⭐"]); idx++;
+    if(idx<CELLS.length) render(); else bitir();
+  } else { btn.classList.add('wrong'); btn.disabled=true;
+    const fb=document.getElementById('fb'); fb.className='feedback no'; fb.textContent="Cisme iyi bak, tekrar say 👀"; }
+}
+
+function bitir(){ burstFx(["🏆","📊","⭐","🎉"]);
+  stage.innerHTML=`
+    <div class="heroes">${s_kup()}${s_piramit()}</div>
+    <h1 class="start-title">Tablo Tamam! 🏆</h1>
+    <p class="start-sub">Tüm cisimlerin yüz, köşe ve ayrıt sayılarını buldun!</p>
+    ${tabloHTML()}
+    <div class="think">İpucu: Her cisimde <b>Köşe − Ayrıt + Yüz = 2</b> olur. Kontrol et bakalım — hep 2 çıkıyor mu?</div>
+    <button class="cta sun big" onclick="startGame()">Yeniden Oyna 🔁</button>`;
+}
+
+showStart();
+</script>
+</body>
+</html>
