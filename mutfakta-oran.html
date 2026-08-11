@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mutfakta Hesap — Tariflerle Ölçek (4. Sınıf)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --tomato:#FF6B4A; --tomato2:#E24B2B; --cream:#FFE9C7; --herb:#5FB85C; --sun:#FFC531;
+    --brown:#C98A3C; --coral:#FF7A6B; --green:#4FCB77; --ink:#4a2a18; --card:#ffffff; --soft:#FFF1DF;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    background:radial-gradient(1100px 720px at 25% -8%, #FFE7C9 0%, #FFD09E 42%, #F7B37E 100%);
+    color:var(--ink); min-height:100vh; overflow-x:hidden;
+    display:flex; align-items:center; justify-content:center; padding:16px;
+  }
+  h1,h2,h3{font-family:'Baloo 2',system-ui,sans-serif;}
+  .sky{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+  .sky i{position:absolute; font-size:22px; opacity:.16; animation:bob 4s ease-in-out infinite;}
+  @keyframes bob{50%{transform:translateY(-9px)}}
+
+  .stage{position:relative; z-index:2; width:100%; max-width:600px;
+    background:var(--card); border-radius:30px; padding:22px 20px 26px;
+    box-shadow:0 22px 54px rgba(120,60,20,.34), inset 0 0 0 4px #fff; animation:pop .4s cubic-bezier(.2,1.3,.4,1);}
+  @keyframes pop{from{transform:translateY(18px) scale(.96); opacity:0}to{transform:none; opacity:1}}
+
+  .rail{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
+  .track{flex:1; height:14px; border-radius:20px; background:var(--soft); position:relative; overflow:hidden;}
+  .fill{position:absolute; inset:0 auto 0 0; width:0%; border-radius:20px; background:linear-gradient(90deg,var(--tomato),var(--sun)); transition:width .4s;}
+  .scorebox{font-family:'Baloo 2'; font-weight:800; color:var(--tomato2); font-size:18px; white-space:nowrap;}
+
+  .tarif{background:var(--soft); border:3px solid var(--brown); border-radius:18px; padding:12px 14px; margin:8px 0 6px;}
+  .tarif-bas{font-family:'Baloo 2'; font-weight:800; font-size:20px; color:var(--ink); text-align:center; margin-bottom:8px;
+    display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap;}
+  .kisi{font-family:'Nunito'; font-weight:800; font-size:13px; color:#fff; background:var(--herb); padding:2px 10px; border-radius:999px;}
+  .malz{display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:16px; padding:5px 8px; border-radius:10px;}
+  .malz span:last-child{font-family:'Baloo 2'; font-weight:800; color:var(--tomato2);}
+  .malz.vurgu{background:#fff6d9; box-shadow:0 0 0 2px var(--sun) inset;}
+  .tarif.oran{font-family:'Baloo 2'; font-weight:800; font-size:20px; color:var(--ink); text-align:center; line-height:1.5;}
+  .tarif.oran b{color:var(--tomato2);}
+
+  .hedef{text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:17px; color:var(--herb); margin:6px 0;}
+  .hedef b{color:var(--tomato2);}
+  .question{font-family:'Baloo 2'; font-weight:700; font-size:22px; color:var(--ink); text-align:center; margin:8px 0 12px;}
+
+  .padwrap{display:flex; flex-direction:column; align-items:center; gap:12px;}
+  .display-num{font-family:'Baloo 2'; font-weight:800; font-size:38px; color:var(--ink); background:var(--soft);
+    min-width:150px; text-align:center; padding:8px 20px; border-radius:20px;}
+  .unit{font-size:20px; color:#a9814a;}
+  .pad{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; width:100%; max-width:300px;}
+  .key{font-family:'Baloo 2'; font-weight:700; font-size:26px; padding:14px 0; border:none; cursor:pointer;
+    border-radius:16px; background:#fff; color:var(--ink); box-shadow:0 4px 0 #ecd9b6, inset 0 0 0 2px var(--soft);}
+  .key:active{transform:translateY(3px);} .key.act{background:var(--tomato); color:#fff; box-shadow:0 4px 0 var(--tomato2);}
+  .key.go{background:var(--sun); color:#5a4200; box-shadow:0 4px 0 #d9a520;}
+
+  .cta{font-family:'Baloo 2'; font-weight:800; font-size:22px; color:#fff; border:none; cursor:pointer;
+    background:var(--tomato2); padding:14px 30px; border-radius:20px; box-shadow:0 6px 0 #b33a1f; margin-top:6px;}
+  .cta:active{transform:translateY(4px); box-shadow:0 2px 0 #b33a1f;} .cta.big{display:block; margin:16px auto 0;}
+  .cta.sun{background:var(--sun);color:#5a4200;box-shadow:0 6px 0 #d9a520}
+
+  .feedback{margin-top:12px; text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:20px; min-height:24px;}
+  .feedback.ok{color:var(--green);} .feedback.hint{color:var(--tomato2);}
+  .think{background:var(--soft); border-radius:16px; padding:12px 14px; margin:12px 0 4px; font-weight:700; color:#a8631e; font-size:16px; display:flex; gap:8px; align-items:flex-start;}
+  .think::before{content:"⚖️"; font-size:18px;}
+
+  .burst{position:fixed; inset:0; pointer-events:none; z-index:9; overflow:hidden;}
+  .burst span{position:absolute; top:40%; font-size:26px; animation:fly 1s ease-out forwards;}
+  @keyframes fly{to{transform:translate(var(--tx),var(--ty)) rotate(var(--r)); opacity:0}}
+
+  .start-title{font-size:32px; text-align:center; color:var(--ink); line-height:1.1; margin:6px 0;}
+  .start-sub{text-align:center; font-weight:700; color:#a8631e; font-size:16px; margin-bottom:6px;}
+  .heroes{font-size:54px; text-align:center; margin:4px 0;}
+  @media (max-width:480px){ .question{font-size:19px} .start-title{font-size:26px} .malz{font-size:15px} }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;}}
+</style>
+</head>
+<body>
+<div class="sky" id="sky"></div>
+<div class="burst" id="burst"></div>
+<div class="stage" id="stage"></div>
+
+<script>
+let sesAcik=true, audioCtx=null;
+function ac(){ if(!audioCtx){ try{ audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ audioCtx=null; } } return audioCtx; }
+function ton(freq,start,dur,tip){ const a=ac(); if(!a) return; const o=a.createOscillator(), g=a.createGain();
+  o.type=tip||'sine'; o.frequency.value=freq; o.connect(g); g.connect(a.destination);
+  const t=a.currentTime+start; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.25,t+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur); o.start(t); o.stop(t+dur+0.02); }
+function sesDogru(){ if(!sesAcik) return; [392,523,659,784,988,1319].forEach(function(f,i){ ton(f,i*0.05,0.12,'square',0.16); }); }
+function sesYanlis(){ if(!sesAcik) return; ton(300,0,0.16,'sawtooth'); ton(200,0.15,0.22,'sawtooth'); }
+function sesToggle(){ sesAcik=!sesAcik; const b=document.getElementById('sesBtn'); if(b) b.textContent=sesAcik?'🔊':'🔇'; }
+
+function recipeCard(emoji,baslik,kisi,malz,vurgu){
+  const rows=malz.map((m,i)=>`<div class="malz ${i===vurgu?'vurgu':''}"><span>${m.e} ${m.ad}</span><span>${m.mik}</span></div>`).join('');
+  return `<div class="tarif"><div class="tarif-bas">${emoji} ${baslik} <span class="kisi">${kisi} kişilik</span></div>${rows}</div>`;
+}
+function oranCard(html){ return `<div class="tarif oran">${html}</div>`; }
+
+const TURLAR = [
+  { visual:recipeCard("🍪","Kurabiye",4,[{e:"🌾",ad:"Un",mik:"200 g"},{e:"🧈",ad:"Tereyağı",mik:"100 g"},{e:"🍫",ad:"Çikolata",mik:"50 g"}],0),
+    hedef:"🎯 4 kişilik tarifi <b>8 kişilik</b> yapacaksın", soru:"8 kişi için kaç g UN gerekir?", birim:"g", cevap:400,
+    ok:"Doğru! 200 × 2 = 400 g un.", think:"8 kişi, 4 kişinin 2 katı. O yüzden UN da 2 katı olur. Bütün malzemeler aynı sayıyla (2 ile) çarpılır." },
+
+  { visual:recipeCard("🎂","Kek",2,[{e:"🥚",ad:"Yumurta",mik:"3 tane"},{e:"🥛",ad:"Süt",mik:"1 bardak"},{e:"🌾",ad:"Un",mik:"2 bardak"}],0),
+    hedef:"🎯 2 kişilik tarifi <b>6 kişilik</b> yapacaksın", soru:"6 kişi için kaç YUMURTA gerekir?", birim:"tane", cevap:9,
+    ok:"Süper! 3 × 3 = 9 yumurta.", think:"6 kişi, 2 kişinin 3 katı → yumurta da 3 katı: 3 × 3 = 9." },
+
+  { visual:recipeCard("🍲","Mercimek Çorbası",8,[{e:"💧",ad:"Su",mik:"4 bardak"},{e:"🥕",ad:"Havuç",mik:"2 tane"},{e:"🧅",ad:"Soğan",mik:"2 tane"}],0),
+    hedef:"🎯 8 kişilik tarifi <b>4 kişilik</b> yapacaksın (yarısı!)", soru:"4 kişi için kaç bardak SU gerekir?", birim:"bardak", cevap:2,
+    ok:"Harika! 4 ÷ 2 = 2 bardak su.", think:"4 kişi, 8 kişinin yarısı → su da yarısı: 4 ÷ 2 = 2. Küçültürken de her malzeme aynı sayıya bölünür." },
+
+  { visual:oranCard("Limonata 🍋<br>Her <b>3 bardak su</b> için <b>1 limon</b> gerekiyor."),
+    hedef:"🎯 Daha çok limonata yapıyorsun", soru:"9 bardak su için kaç LİMON gerekir?", birim:"limon", cevap:3,
+    ok:"Doğru! 9 bardak = 3 × 3 bardak → 3 limon.", think:"Su 3 katına çıktı (3→9), limon da 3 katına çıkar: 1 × 3 = 3." },
+
+  { visual:oranCard("Krep 🥞<br><b>2 yumurta</b> ile <b>6 krep</b> yapılıyor."),
+    hedef:"🎯 Daha çok krep yapacaksın", soru:"9 krep için kaç YUMURTA gerekir?", birim:"yumurta", cevap:3,
+    ok:"Müthiş! 6 krep 2 yumurta → 3 krep 1 yumurta. 9 krep → 3 yumurta.", think:"Önce 1 yumurtanın kaç krep yaptığını bul: 6 ÷ 2 = 3 krep. 9 ÷ 3 = 3 yumurta." },
+
+  { visual:recipeCard("🥐","Poğaça",4,[{e:"🥛",ad:"Süt",mik:"2 su bardağı"},{e:"🌾",ad:"Un",mik:"400 g"},{e:"🧂",ad:"Tuz",mik:"1 tatlı kaşığı"}],0),
+    hedef:"🎯 4 kişilik tarifi <b>12 kişilik</b> yapacaksın", soru:"12 kişi için kaç su bardağı SÜT gerekir?", birim:"bardak", cevap:6,
+    ok:"Doğru! 12, 4'ün 3 katı → 2 × 3 = 6 su bardağı.", think:"12 ÷ 4 = 3 kat. Süt de 3 katı: 2 × 3 = 6." },
+
+  { visual:oranCard("Pilav 🍚<br>Her <b>1 bardak pirinç</b> için <b>2 bardak su</b>."),
+    hedef:"🎯 Büyük tencere pilav", soru:"4 bardak pirinç için kaç bardak SU gerekir?", birim:"bardak", cevap:8,
+    ok:"Harika! Pirinç 4 kat → su 4 kat: 2 × 4 = 8 bardak.", think:"Her 1 bardak pirinç için hep 2 bardak su. Pirinç 4 kat olunca su da 4 kat: 2 × 4 = 8 bardak." }
+];
+
+let idx=0, score=0, typed='', current=null, busy=false;
+const stage=document.getElementById('stage'), burst=document.getElementById('burst');
+const TOTAL=TURLAR.length;
+
+(function(){ const em=["🍪","🥕","🥚","🍋","🥞","🍚","🧂","🌾"]; let s='';
+  for(let i=0;i<12;i++) s+=`<i style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*4}s">${em[i%em.length]}</i>`;
+  document.getElementById('sky').innerHTML=s; })();
+
+function burstFx(){ const emo=["⭐","🍪","🎉","✨"]; let h='';
+  for(let i=0;i<16;i++){ const tx=(Math.random()*2-1)*55+'vw', ty=(Math.random()*-1-0.2)*55+'vh', r=(Math.random()*720-360)+'deg';
+    h+=`<span style="left:${40+Math.random()*20}%;--tx:${tx};--ty:${ty};--r:${r}">${emo[i%emo.length]}</span>`; }
+  burst.innerHTML=h; setTimeout(()=>burst.innerHTML='',1000); }
+
+function showStart(){
+  stage.innerHTML=`
+    <div class="heroes">👩‍🍳🍳</div>
+    <h1 class="start-title">Mutfakta Hesap</h1>
+    <p class="start-sub">Tarifleri büyüt, küçült! Kişi sayısı kaç kat olursa, her malzeme de o kadar kat olur. Hepsini birlikte ayarla! ⚖️</p>
+    <div class="heroes" style="font-size:32px">🍪🎂🍲🍋🥞🍚</div>
+    <button class="cta sun big" onclick="startGame()">Mutfağa Gir ▶</button>`;
+}
+function startGame(){ idx=0; score=0; renderTur(); }
+
+function railHTML(){ const pct=Math.round((score/TOTAL)*100);
+  return `<div class="rail"><div class="track"><div class="fill" style="width:${pct}%"></div></div>
+    <span class="scorebox">🍽️ ${score}/${TOTAL}</span><button id="sesBtn" onclick="sesToggle()" title="Ses aç/kapa" style="border:none;background:var(--soft);cursor:pointer;font-size:18px;border-radius:999px;padding:4px 10px;margin-left:2px">🔊</button></div>`; }
+
+function renderTur(){ current=TURLAR[idx]; typed=''; busy=false;
+  stage.innerHTML=railHTML()+`
+    ${current.visual}
+    <div class="hedef">${current.hedef}</div>
+    <div class="question">${current.soru}</div>
+    <div class="padwrap"><div class="display-num"><span id="disp">0</span> <span class="unit">${current.birim}</span></div>
+      <div class="pad">${[1,2,3,4,5,6,7,8,9].map(k=>`<button class="key" onclick="press(${k})">${k}</button>`).join('')}
+      <button class="key act" onclick="press('del')">⌫</button>
+      <button class="key" onclick="press(0)">0</button>
+      <button class="key go" onclick="kontrol()">✓</button></div></div>
+    <div class="feedback" id="fb"></div>`;
+}
+function press(k){ if(busy) return; const d=document.getElementById('disp'); if(!d) return;
+  if(k==='del') typed=typed.slice(0,-1); else if(typed.length<4) typed+=k;
+  d.textContent=typed===''?'0':typed; }
+
+function kontrol(){ if(busy||typed==='') return; const v=parseInt(typed,10);
+  if(v===current.cevap){ busy=true; score++; burstFx(); sesDogru();
+    const tb=current.think?`<div class="think">${current.think}</div>`:'';
+    const last=idx===TOTAL-1;
+    stage.innerHTML=railHTML()+`
+      ${current.visual}
+      <div class="feedback ok" style="font-size:21px">${current.ok}</div>
+      ${tb}
+      <button class="cta ${last?'sun ':''}big" onclick="${last?'showEnd()':'next()'}">${last?'Bitir 🏁':'Sonraki Tarif ➜'}</button>`;
+  } else { sesYanlis(); const fb=document.getElementById('fb'); fb.className='feedback hint';
+    fb.textContent = v<current.cevap?"Az geldi — kaç kat büyüdü/küçüldü? ⬆":"Çok geldi ⬇";
+    typed=''; document.getElementById('disp').textContent='0'; }
+}
+function next(){ idx++; renderTur(); }
+
+function showEnd(){ burstFx();
+  stage.innerHTML=`
+    <div class="heroes">🏆👩‍🍳</div>
+    <h1 class="start-title">Şef Oldun!</h1>
+    <p class="start-sub">Tarifleri büyüttün, küçülttün; her malzemeyi birlikte ayarladın. Şef gibi hesap yaptın!</p>
+    <div class="feedback ok" style="font-size:24px">⭐ ${score}/${TOTAL}</div>
+    <div class="think" style="justify-content:center">Büyük fikir: Kişi sayısı kaç kat olursa, <b>her malzeme de o kadar kat</b> olur. Hepsi birlikte değişir.</div>
+    <button class="cta sun big" onclick="startGame()">Yeniden Oyna 🔁</button>`;
+}
+
+document.addEventListener('keydown',e=>{ if(!current||busy||!document.getElementById('disp')) return;
+  if(/[0-9]/.test(e.key)) press(parseInt(e.key,10)); else if(e.key==='Backspace') press('del'); else if(e.key==='Enter') kontrol(); });
+
+showStart();
+</script>
+</body>
+</html>

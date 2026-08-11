@@ -274,7 +274,7 @@ function checkNum(){ if(typedNum==='') return;
     typedNum=''; document.getElementById('disp').textContent='0'; } }
 
 function answerChoice(i,btn){ if(i===current.answer) win();
-  else{ btn.classList.add('shake'); setTimeout(()=>btn.classList.remove('shake'),400);
+  else{ sesYanlis();btn.classList.add('shake'); setTimeout(()=>btn.classList.remove('shake'),400);
     const fb=document.getElementById('fb'); fb.className='feedback no';
     fb.textContent="Olmadı — şekli tekrar incele 👀"; } }
 
@@ -305,6 +305,29 @@ document.addEventListener('keydown',e=>{ if(!current||current.type!=='input') re
   else if(e.key==='Backspace') press('del'); else if(e.key==='Enter') checkNum(); });
 
 showStart();
+
+/* === SES MOTORU (power-up doğru / buzzer yanlış) === */
+(function(){
+  var sesAcik=true, actx=null, sonSes=0;
+  function AC(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ actx=null; } } return actx; }
+  function ton(f,st,du,tp,vol){ var a=AC(); if(!a) return; var o=a.createOscillator(), g=a.createGain();
+    o.type=tp||'sine'; o.frequency.value=f; o.connect(g); g.connect(a.destination);
+    var t=a.currentTime+st; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.2,t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+du); o.start(t); o.stop(t+du+0.03); }
+  function gate(){ var n=Date.now(); if(n-sonSes<120) return false; sonSes=n; return true; }
+  window.sesDogru=function(){ if(!sesAcik||!gate()) return; [392,523,659,784,988,1319].forEach(function(f,i){ ton(f,i*0.05,0.12,'square',0.16); }); };
+  window.sesYanlis=function(){ if(!sesAcik||!gate()) return; ton(300,0,0.16,'sawtooth',0.2); ton(200,0.15,0.22,'sawtooth',0.2); };
+  window.sesToggle=function(){ sesAcik=!sesAcik; var b=document.getElementById('sesBtn'); if(b) b.textContent=sesAcik?'🔊':'🔇'; };
+  function ekleBtn(){ if(document.getElementById('sesBtn')) return; var b=document.createElement('button'); b.id='sesBtn';
+    b.textContent='🔊'; b.title='Ses aç/kapa'; b.setAttribute('onclick','sesToggle()');
+    b.style.cssText='position:fixed;top:10px;right:10px;z-index:9999;border:none;cursor:pointer;font-size:20px;background:rgba(255,255,255,.9);border-radius:999px;width:42px;height:42px;box-shadow:0 3px 8px rgba(0,0,0,.25)';
+    if(document.body) document.body.appendChild(b); }
+  if(document.readyState!=='loading') ekleBtn(); else document.addEventListener('DOMContentLoaded',ekleBtn);
+  function sar(name,ses){ if(typeof window[name]==='function'){ var o=window[name]; window[name]=function(){ ses(); return o.apply(this,arguments); }; return true; } return false; }
+  sar('burstFx',window.sesDogru) || sar('starBurst',window.sesDogru);
+  sar('wrong',window.sesYanlis); sar('yanlis',window.sesYanlis);
+})();
+
 </script>
 </body>
 </html>
