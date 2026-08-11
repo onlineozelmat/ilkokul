@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Süpermarket — Alışveriş & Para Üstü (3-4. Sınıf)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --market:#2FB6A8; --market2:#1E8478; --shelf:#D9A566; --sun:#FFC531; --coral:#FF7A6B;
+    --green:#4FCB77; --red:#FF6B6B; --purple:#8B6BFF; --ink:#243a3f; --card:#ffffff; --soft:#E9F7F4;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    background:radial-gradient(1100px 720px at 25% -8%, #CFF0EC 0%, #A6E2DA 42%, #7FD0C4 100%);
+    color:var(--ink); min-height:100vh; overflow-x:hidden;
+    display:flex; align-items:center; justify-content:center; padding:14px;
+  }
+  h1,h2,h3{font-family:'Baloo 2',system-ui,sans-serif;}
+  .stage{position:relative; z-index:2; width:100%; max-width:660px;
+    background:var(--card); border-radius:28px; padding:20px 18px 24px;
+    box-shadow:0 22px 54px rgba(20,80,72,.36), inset 0 0 0 4px #fff; animation:pop .4s cubic-bezier(.2,1.3,.4,1);}
+  @keyframes pop{from{transform:translateY(18px) scale(.96); opacity:0}to{transform:none; opacity:1}}
+
+  .rail{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
+  .track{flex:1; height:14px; border-radius:20px; background:var(--soft); position:relative; overflow:hidden;}
+  .fill{position:absolute; inset:0 auto 0 0; width:0%; border-radius:20px; background:linear-gradient(90deg,var(--market),var(--sun)); transition:width .4s;}
+  .scorebox{font-family:'Baloo 2'; font-weight:800; color:var(--market2); font-size:17px; white-space:nowrap;}
+
+  .banner{display:flex; align-items:center; justify-content:center; gap:8px; font-family:'Baloo 2'; font-weight:800;
+    font-size:20px; color:#fff; background:linear-gradient(90deg,var(--market),var(--market2)); border-radius:16px; padding:10px; margin-bottom:12px;}
+
+  .liste{background:#FFF7E6; border:3px dashed var(--sun); border-radius:16px; padding:10px 12px; margin-bottom:12px;}
+  .liste h3{font-size:16px; color:#a8720c; margin-bottom:6px;}
+  .liste .li{display:inline-flex; align-items:center; gap:4px; font-weight:800; font-size:15px; color:#7a5a12;
+    background:#fff; border-radius:999px; padding:3px 10px; margin:2px;}
+  .liste .li.ok{background:#e2f7ea; color:var(--green);}
+
+  .raf{background:linear-gradient(180deg,#f0dcbe,var(--shelf)); border-radius:16px; padding:12px 10px; margin-bottom:12px;
+    box-shadow:inset 0 -6px 0 #b9843f;}
+  .raf h3{font-size:14px; color:#6b4a1c; text-align:center; margin-bottom:8px;}
+  .urunler{display:grid; grid-template-columns:repeat(4,1fr); gap:8px;}
+  .urun{cursor:pointer; background:#fff; border:3px solid transparent; border-radius:14px; padding:8px 4px 6px; text-align:center; transition:.12s;}
+  .urun:active{transform:scale(.95);} .urun.sepette{border-color:var(--green); background:#eefbf2;}
+  .urun .ue{font-size:30px;} .urun .un{font-weight:800; font-size:11px; color:var(--ink); line-height:1;}
+  .urun .uf{font-family:'Baloo 2'; font-weight:800; font-size:13px; color:var(--market2);}
+  .urun .tik{font-size:12px; font-weight:800; color:var(--green); min-height:14px;}
+
+  .sepet{background:var(--soft); border-radius:16px; padding:10px 12px; margin-bottom:8px;}
+  .sepet h3{font-size:15px; color:var(--market2); margin-bottom:4px;}
+  .sepet .row{display:flex; justify-content:space-between; font-weight:700; font-size:15px; padding:2px 0;}
+  .sepet .toplam{border-top:2px solid #c9e7e1; margin-top:4px; padding-top:6px; font-family:'Baloo 2'; font-weight:800; font-size:19px; color:var(--ink);}
+  .bos{color:#8ab5ad; font-weight:700; font-size:14px; text-align:center; padding:6px;}
+
+  /* KASA / para */
+  .kasa-box{text-align:center; margin-bottom:10px;}
+  .odenecek{font-family:'Baloo 2'; font-weight:800; font-size:24px; color:var(--ink); background:var(--soft); border-radius:16px; padding:10px; display:inline-block;}
+  .paralar{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:12px 0;}
+  .para{cursor:pointer; font-family:'Baloo 2'; font-weight:800; font-size:18px; color:#fff; border:none;
+    border-radius:12px; padding:14px 14px; box-shadow:0 5px 0 rgba(0,0,0,.22); min-width:66px; transition:.1s;}
+  .para:active{transform:translateY(3px);}
+  .p5{background:#9C6B4A} .p10{background:#E24B4B} .p20{background:#3FAE6B} .p50{background:#FF9F43} .p100{background:#4E8CFF}
+  .verilen{font-family:'Baloo 2'; font-weight:800; font-size:20px; color:var(--market2); text-align:center; margin:6px 0;}
+  .verilen small{display:block; font-family:'Nunito'; font-weight:700; font-size:13px; color:#8ab5ad;}
+
+  .padwrap{display:flex; flex-direction:column; align-items:center; gap:10px; margin-top:6px;}
+  .display-num{font-family:'Baloo 2'; font-weight:800; font-size:34px; color:var(--ink); background:var(--soft);
+    min-width:130px; text-align:center; padding:6px 18px; border-radius:16px;}
+  .pad{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; width:100%; max-width:280px;}
+  .key{font-family:'Baloo 2'; font-weight:700; font-size:24px; padding:12px 0; border:none; cursor:pointer;
+    border-radius:14px; background:#fff; color:var(--ink); box-shadow:0 4px 0 #cbe7e2, inset 0 0 0 2px var(--soft);}
+  .key:active{transform:translateY(3px);} .key.act{background:var(--market); color:#fff; box-shadow:0 4px 0 var(--market2);}
+  .key.go{background:var(--sun); color:#5a4200; box-shadow:0 4px 0 #d9a520;}
+
+  .cta{font-family:'Baloo 2'; font-weight:800; font-size:20px; color:#fff; border:none; cursor:pointer;
+    background:var(--market2); padding:13px 26px; border-radius:18px; box-shadow:0 6px 0 #12655b; margin:6px 4px 0;}
+  .cta:active{transform:translateY(4px); box-shadow:0 2px 0 #12655b;} .cta.big{display:block; margin:12px auto 0;}
+  .cta.sun{background:var(--sun);color:#5a4200;box-shadow:0 6px 0 #d9a520}
+  .cta.gray{background:#b7c6c3;box-shadow:0 6px 0 #93a5a2;color:#38504c}
+  .cta:disabled{opacity:.4; cursor:not-allowed;}
+
+  .feedback{margin-top:10px; text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:19px; min-height:22px;}
+  .feedback.ok{color:var(--green);} .feedback.no{color:var(--coral);} .feedback.hint{color:var(--market2);}
+  .durum{font-family:'Baloo 2'; font-weight:800; font-size:22px; text-align:center; margin:8px 0;}
+  .durum.ust{color:var(--green);} .durum.eksik{color:var(--red);}
+
+  .burst{position:fixed; inset:0; pointer-events:none; z-index:9; overflow:hidden;}
+  .burst span{position:absolute; top:40%; font-size:26px; animation:fly 1s ease-out forwards;}
+  @keyframes fly{to{transform:translate(var(--tx),var(--ty)) rotate(var(--r)); opacity:0}}
+
+  .start-title{font-size:32px; text-align:center; color:var(--ink); line-height:1.1; margin:6px 0;}
+  .start-sub{text-align:center; font-weight:700; color:#3a8a7e; font-size:16px; margin-bottom:6px;}
+  .heroes{font-size:52px; text-align:center; margin:4px 0;}
+  @media (max-width:480px){ .urunler{grid-template-columns:repeat(3,1fr)} .start-title{font-size:26px} }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;}}
+</style>
+</head>
+<body>
+<div class="burst" id="burst"></div>
+<div class="stage" id="stage"></div>
+
+<script>
+const URUNLER = {
+  ekmek:{e:"🍞",ad:"Ekmek",f:8}, sut:{e:"🥛",ad:"Süt",f:20}, peynir:{e:"🧀",ad:"Peynir",f:45},
+  yumurta:{e:"🥚",ad:"Yumurta",f:30}, elma:{e:"🍎",ad:"Elma",f:15}, muz:{e:"🍌",ad:"Muz",f:18},
+  cikolata:{e:"🍫",ad:"Çikolata",f:12}, kola:{e:"🥤",ad:"Kola",f:9}, makarna:{e:"🍝",ad:"Makarna",f:16},
+  biskuvi:{e:"🍪",ad:"Bisküvi",f:11}, su:{e:"💧",ad:"Su",f:6}, cay:{e:"🍵",ad:"Çay",f:35},
+  recel:{e:"🍓",ad:"Reçel",f:22}, zeytin:{e:"🫒",ad:"Zeytin",f:28}
+};
+const RAF = ["ekmek","sut","peynir","yumurta","elma","muz","cikolata","kola","makarna","biskuvi","su","cay","recel","zeytin"];
+const PARALAR = [5,10,20,50,100];
+const TURLAR = [
+  { liste:["ekmek","sut","elma"] },                    // 43
+  { liste:["muz","cikolata","kola"] },                 // 39
+  { liste:["makarna","biskuvi","su","kola"] },         // 42
+  { liste:["peynir","yumurta"] },                      // 75
+  { liste:["cay","recel","ekmek"] },                   // 65
+  { liste:["peynir","zeytin","yumurta","sut"] }        // 123
+];
+
+let round=0, sepet=[], odeme=[], typed='', faz='liste', bekle=false;
+const stage=document.getElementById('stage'), burst=document.getElementById('burst');
+const TOTAL=TURLAR.length;
+
+function burstFx(set){ const emo=set||["🪙","⭐","🎉","🛒"]; let h='';
+  for(let i=0;i<16;i++){ const tx=(Math.random()*2-1)*55+'vw', ty=(Math.random()*-1-0.2)*55+'vh', r=(Math.random()*720-360)+'deg';
+    h+=`<span style="left:${40+Math.random()*20}%;--tx:${tx};--ty:${ty};--r:${r}">${emo[i%emo.length]}</span>`; }
+  burst.innerHTML=h; setTimeout(()=>burst.innerHTML='',1000); }
+
+const fiyat=id=>URUNLER[id].f;
+const sepetToplam=()=>sepet.reduce((a,id)=>a+fiyat(id),0);
+const odemeToplam=()=>odeme.reduce((a,v)=>a+v,0);
+const liste=()=>TURLAR[round].liste;
+const listeTamam=()=>{ const l=[...liste()].sort().join(), s=[...sepet].sort().join(); return l===s; };
+
+function railHTML(){ const pct=Math.round((round/TOTAL)*100);
+  return `<div class="rail"><div class="track"><div class="fill" style="width:${pct}%"></div></div>
+    <span class="scorebox">🛒 ${round+1}/${TOTAL}</span></div>`; }
+
+function showStart(){
+  stage.innerHTML=`
+    <div class="heroes">🛒🏪</div>
+    <h1 class="start-title">Süpermarket</h1>
+    <p class="start-sub">Listedeki ürünleri raftan seç, sepeti doldur, kasaya git ve öde! Para üstünü ya da eksiği sen hesapla. 🪙</p>
+    <div class="heroes" style="font-size:34px">🍞🥛🧀🥚🍎🍌🍫🥤</div>
+    <button class="cta sun big" onclick="startGame()">Alışverişe Başla ▶</button>`;
+}
+function startGame(){ round=0; beginRound(); }
+function beginRound(){ sepet=[]; odeme=[]; typed=''; faz='liste'; bekle=false; renderShop(); }
+
+/* ---------- 1) ALIŞVERİŞ ---------- */
+function renderShop(){
+  const listeHTML=liste().map(id=>`<span class="li ${sepet.includes(id)?'ok':''}">${URUNLER[id].e} ${URUNLER[id].ad}${sepet.includes(id)?' ✓':''}</span>`).join('');
+  const rafHTML=RAF.map(id=>`
+    <div class="urun ${sepet.includes(id)?'sepette':''}" onclick="toggle('${id}')">
+      <div class="ue">${URUNLER[id].e}</div><div class="un">${URUNLER[id].ad}</div>
+      <div class="uf">${URUNLER[id].f} ₺</div><div class="tik">${sepet.includes(id)?'✓ sepette':''}</div>
+    </div>`).join('');
+  const sepetRows = sepet.length? sepet.map(id=>`<div class="row"><span>${URUNLER[id].e} ${URUNLER[id].ad}</span><span>${URUNLER[id].f} ₺</span></div>`).join('')
+    : `<div class="bos">Sepet boş — raftan ürün seç 🛒</div>`;
+  const tam=listeTamam();
+  stage.innerHTML=railHTML()+`
+    <div class="banner">🏪 Süpermarket</div>
+    <div class="liste"><h3>📋 Alışveriş Listesi</h3>${listeHTML}</div>
+    <div class="raf"><h3>— RAF — (ürüne dokun, sepete ekle/çıkar)</h3><div class="urunler">${rafHTML}</div></div>
+    <div class="sepet"><h3>🛒 Sepetim</h3>${sepetRows}
+      <div class="row toplam"><span>Toplam</span><span>${sepetToplam()} ₺</span></div></div>
+    <button class="cta ${tam?'sun':'gray'} big" ${tam?'':'disabled'} onclick="gotoKasa()">Kasaya Git ▶</button>
+    <div class="feedback" id="fb">${tam?'Liste tamam! Kasaya gidebilirsin.':'Listedeki ürünleri sepete ekle.'}</div>`;
+}
+function toggle(id){ if(bekle) return; const i=sepet.indexOf(id);
+  if(i>=0) sepet.splice(i,1); else sepet.push(id); renderShop(); }
+
+/* ---------- 2) KASA / ÖDEME ---------- */
+function gotoKasa(){ if(!listeTamam()) return; faz='kasa'; odeme=[]; renderKasa(); }
+function renderKasa(){
+  const paraHTML=PARALAR.map(v=>`<button class="para p${v}" onclick="paraEkle(${v})">${v} ₺</button>`).join('');
+  stage.innerHTML=railHTML()+`
+    <div class="banner">💳 Kasa</div>
+    <div class="kasa-box"><div class="odenecek">Ödenecek: <b>${sepetToplam()} ₺</b></div></div>
+    <p style="text-align:center;font-weight:700;color:#3a8a7e;margin:6px 0">Kasaya vermek için paralara dokun:</p>
+    <div class="paralar">${paraHTML}</div>
+    <div class="verilen">Verdiğin: ${odemeToplam()} ₺ <small>${odeme.length?odeme.join(' + ')+' ₺':'henüz para vermedin'}</small></div>
+    <div style="text-align:center">
+      <button class="cta gray" onclick="paraSil()">↺ Temizle</button>
+      <button class="cta ${odeme.length?'sun':'gray'}" ${odeme.length?'':'disabled'} onclick="ode()">Öde 💰</button>
+    </div>
+    <div class="feedback hint">İstediğin kadar para verebilirsin — tam, fazla ya da eksik.</div>`;
+}
+function paraEkle(v){ if(bekle) return; odeme.push(v); renderKasa(); }
+function paraSil(){ if(bekle) return; odeme=[]; renderKasa(); }
+
+/* ---------- 3) PARA ÜSTÜ / EKSİK HESABI ---------- */
+function ode(){ if(!odeme.length) return;
+  const X=sepetToplam(), Y=odemeToplam();
+  if(X===Y){ // tam ödeme
+    bekle=true; burstFx(["🪙","⭐","🎉"]);
+    stage.innerHTML=railHTML()+`
+      <div class="banner">💳 Kasa</div>
+      <div class="durum ust">Tam ödedin! 🎉</div>
+      <p style="text-align:center;font-weight:700">Ödenecek ${X} ₺ · Verdiğin ${Y} ₺ — tam olarak denk!</p>
+      <button class="cta sun big" onclick="sonraki()">${round===TOTAL-1?'Alışverişi Bitir 🏁':'Sonraki Alışveriş ▶'}</button>`;
+    return;
+  }
+  faz='hesap'; typed=''; const ust = Y>X;
+  const fark = Math.abs(Y-X);
+  stage.innerHTML=railHTML()+`
+    <div class="banner">🧮 Hesap</div>
+    <div class="kasa-box">
+      <div class="odenecek" style="font-size:19px">Ödenecek: <b>${X} ₺</b> &nbsp; | &nbsp; Verdiğin: <b>${Y} ₺</b></div>
+    </div>
+    <div class="durum ${ust?'ust':'eksik'}">${ust?'Fazla para verdin! 💰':'Eksik para verdin! ⚠️'}</div>
+    <div class="question" style="font-family:'Baloo 2';font-weight:800;font-size:21px;text-align:center;margin:8px 0 10px">
+      ${ust?'Kasiyer sana kaç ₺ PARA ÜSTÜ vermeli?':'Kaç ₺ EKSİK kaldı?'}</div>
+    <div class="padwrap"><div class="display-num"><span id="disp">0</span> ₺</div>
+      <div class="pad">${[1,2,3,4,5,6,7,8,9].map(k=>`<button class="key" onclick="press(${k})">${k}</button>`).join('')}
+      <button class="key act" onclick="press('del')">⌫</button>
+      <button class="key" onclick="press(0)">0</button>
+      <button class="key go" onclick="kontrol(${fark},${ust})">✓</button></div></div>
+    <div class="feedback" id="fb"></div>`;
+}
+function press(k){ if(bekle) return; const d=document.getElementById('disp'); if(!d) return;
+  if(k==='del') typed=typed.slice(0,-1); else if(typed.length<4) typed+=k;
+  d.textContent=typed===''?'0':typed; }
+function kontrol(fark,ust){ if(bekle||typed==='') return; const v=parseInt(typed,10);
+  const fb=document.getElementById('fb');
+  if(v===fark){ bekle=true; burstFx(["🪙","⭐","🎉"]);
+    const X=sepetToplam(),Y=odemeToplam();
+    const acikla = ust ? `${Y} − ${X} = ${fark} ₺ para üstü.` : `${X} − ${Y} = ${fark} ₺ eksik.`;
+    stage.innerHTML=railHTML()+`
+      <div class="banner">${ust?'💰 Para Üstü':'⚠️ Eksik'}</div>
+      <div class="durum ${ust?'ust':'eksik'}">Doğru! ${fark} ₺</div>
+      <p style="text-align:center;font-weight:700;color:#3a8a7e">${acikla}</p>
+      <button class="cta sun big" onclick="sonraki()">${round===TOTAL-1?'Alışverişi Bitir 🏁':'Sonraki Alışveriş ▶'}</button>`;
+  } else { fb.className='feedback hint'; fb.textContent = v<fark?"Az geldi ⬆":"Çok geldi ⬇"; typed=''; document.getElementById('disp').textContent='0'; }
+}
+
+function sonraki(){ if(round===TOTAL-1) finale(); else { round++; beginRound(); } }
+function finale(){ burstFx(["🏆","🛒","🪙","🎉"]);
+  stage.innerHTML=`
+    <div class="heroes">🏆🛒🪙</div>
+    <h1 class="start-title">Alışveriş Tamam!</h1>
+    <p class="start-sub">Ürünleri seçtin, sepeti doldurdun, ödedin ve para üstü/eksik hesabını yaptın. Usta bir alışverişçisin!</p>
+    <div class="think" style="background:var(--soft);border-radius:16px;padding:14px;font-weight:700;color:var(--market2);text-align:center;margin:10px 0">
+      Unutma: Para üstü = <b>verdiğin − ödediğin</b>. Eksik = <b>ödenecek − verdiğin</b>.</div>
+    <button class="cta sun big" onclick="startGame()">Yeniden Alışveriş 🔁</button>`;
+}
+
+document.addEventListener('keydown',e=>{ if(faz!=='hesap'||bekle||!document.getElementById('disp')) return;
+  if(/[0-9]/.test(e.key)) press(parseInt(e.key,10)); else if(e.key==='Backspace') press('del'); });
+
+showStart();
+</script>
+</body>
+</html>
