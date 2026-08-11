@@ -104,16 +104,32 @@ function s_piramit(c){c=c||'var(--sun)';
   <polygon points="${ap} ${fR} ${bR}" fill="${c}" opacity=".5" stroke="#b58a12" stroke-width="2"/>
   <polygon points="${ap} ${fL} ${fR}" fill="${c}" opacity=".92" stroke="#b58a12" stroke-width="2"/></svg>`;}
 
-/* ---- tablo verisi (Euler: K − A + Y = 2) ---- */
+function s_silindir(c){c=c||'var(--green)';const cx=38,topY=16,botY=60,rx=18,ry=6;
+ return `<svg viewBox="0 0 78 70" width="52">
+  <path d="M${cx-rx},${topY} L${cx-rx},${botY} A${rx},${ry} 0 0 0 ${cx+rx},${botY} L${cx+rx},${topY} Z" fill="${c}" opacity=".82" stroke="#1c5a3a" stroke-width="2"/>
+  <ellipse cx="${cx}" cy="${topY}" rx="${rx}" ry="${ry}" fill="#bfe6cf" stroke="#1c5a3a" stroke-width="2"/></svg>`;}
+function s_koni(c){c=c||'var(--pink)';const cx=38,apexY=14,baseY=60,rx=18,ry=6;
+ return `<svg viewBox="0 0 78 70" width="52">
+  <path d="M${cx},${apexY} L${cx-rx},${baseY} A${rx},${ry} 0 0 0 ${cx+rx},${baseY} Z" fill="${c}" opacity=".85" stroke="#a83a6a" stroke-width="2"/>
+  <path d="M${cx-rx},${baseY} A${rx},${ry} 0 0 1 ${cx+rx},${baseY}" fill="#ffd0e4" stroke="#a83a6a" stroke-width="2"/></svg>`;}
+function s_kure(c){c=c||'var(--purple)';const cx=38,cy=36,r=22;
+ return `<svg viewBox="0 0 78 70" width="52">
+  <circle cx="${cx}" cy="${cy}" r="${r}" fill="${c}" opacity=".85" stroke="#5a3fb0" stroke-width="2"/>
+  <ellipse cx="${cx}" cy="${cy}" rx="${r}" ry="7" fill="none" stroke="#5a3fb0" stroke-width="1.5" opacity=".5" stroke-dasharray="3 3"/>
+  <ellipse cx="${cx-7}" cy="${cy-8}" rx="6" ry="3.5" fill="#fff" opacity=".45"/></svg>`;}
+
+/* ---- tablo verisi ---- */
 const ROWS = [
   { ad:"Küp", svg:s_kup(), y:6, k:8, a:12 },
   { ad:"Dikdörtgenler Prizması", svg:s_prizma(), y:6, k:8, a:12 },
   { ad:"Üçgen Prizma", svg:s_ucgenprizma(), y:5, k:6, a:9 },
-  { ad:"Kare Piramit", svg:s_piramit(), y:5, k:5, a:8 }
+  { ad:"Küre", svg:s_kure(), y:1, k:0, a:0 },
+  { ad:"Silindir", svg:s_silindir(), y:3, k:0, a:2 },
+  { ad:"Koni", svg:s_koni(), y:2, k:1, a:1 }
 ];
-const KOL=[{key:'y',ad:'Yüz'},{key:'k',ad:'Köşe'},{key:'a',ad:'Ayrıt'}];
+const KOL=[{key:'y',ad:'Yüz',sor:'yüzü'},{key:'k',ad:'Köşe',sor:'köşesi'},{key:'a',ad:'Ayrıt',sor:'ayrıtı'}];
 // hücre sırası: satır satır (yüz, köşe, ayrıt)
-const CELLS=[]; ROWS.forEach((r,ri)=>KOL.forEach((c,ci)=>CELLS.push({ri,ci,key:c.key,ad:c.ad,val:r[c.key],cisim:r.ad})));
+const CELLS=[]; ROWS.forEach((r,ri)=>KOL.forEach((c,ci)=>CELLS.push({ri,ci,key:c.key,ad:c.ad,sor:c.sor,val:r[c.key],cisim:r.ad})));
 
 let idx=0, doldu=[];
 const stage=document.getElementById('stage'), burst=document.getElementById('burst');
@@ -123,8 +139,8 @@ const stage=document.getElementById('stage'), burst=document.getElementById('bur
   document.getElementById('sky').innerHTML=s; })();
 
 function rnd(a,b){return a+Math.floor(Math.random()*(b-a+1));}
-function secenekler(d){ const set=new Set([d]); [d-1,d+1,d-2,d+2,d+3].forEach(x=>{if(x>=3&&x<=13&&set.size<4)set.add(x);});
-  while(set.size<4) set.add(rnd(3,13)); return [...set].sort(()=>Math.random()-0.5); }
+function secenekler(d){ const set=new Set([d]); [d-2,d-1,d+1,d+2,d+3].forEach(x=>{if(x>=0&&x<=13&&set.size<4)set.add(x);});
+  while(set.size<4) set.add(rnd(0,13)); return [...set].sort(()=>Math.random()-0.5); }
 function burstFx(set){ const emo=set||["⭐","📦","🎉","✨"]; let h='';
   for(let i=0;i<16;i++){ const tx=(Math.random()*2-1)*55+'vw', ty=(Math.random()*-1-0.2)*55+'vh', r=(Math.random()*720-360)+'deg';
     h+=`<span style="left:${40+Math.random()*20}%;--tx:${tx};--ty:${ty};--r:${r}">${emo[i%emo.length]}</span>`; }
@@ -132,7 +148,7 @@ function burstFx(set){ const emo=set||["⭐","📦","🎉","✨"]; let h='';
 
 function showStart(){
   stage.innerHTML=`
-    <div class="heroes">${s_kup()}${s_prizma()}${s_ucgenprizma()}${s_piramit()}</div>
+    <div class="heroes">${s_kup()}${s_silindir()}${s_koni()}${s_kure()}</div>
     <h1 class="start-title">Cisim Tablosu</h1>
     <p class="start-sub">Cisimlerin yüz, köşe ve ayrıt sayılarını bul, tabloyu doldur! 📊</p>
     <div class="legend">📐 <b>Yüz</b> = düz yüzeyler · <b>Köşe</b> = sivri noktalar · <b>Ayrıt</b> = iki yüzün birleştiği kenar çizgisi</div>
@@ -160,7 +176,7 @@ function render(){
   stage.innerHTML=`
     <div class="prog">Tablo: ${idx}/${CELLS.length} hücre dolu</div>
     ${tabloHTML()}
-    <div class="soru"><b>${cur.cisim}</b> cisminin kaç <b>${cur.ad.toUpperCase()}</b>'ü var?</div>
+    <div class="soru"><b>${cur.cisim}</b> cisminin kaç <b>${cur.sor}</b> var?</div>
     <div class="opts">${secenekler(cur.val).map(o=>`<button class="opt" onclick="cevap(${o},this)">${o}</button>`).join('')}</div>
     <div class="feedback" id="fb"></div>`;
 }
@@ -174,11 +190,11 @@ function cevap(v,btn){ const cur=CELLS[idx];
 
 function bitir(){ burstFx(["🏆","📊","⭐","🎉"]);
   stage.innerHTML=`
-    <div class="heroes">${s_kup()}${s_piramit()}</div>
+    <div class="heroes">${s_silindir()}${s_kure()}</div>
     <h1 class="start-title">Tablo Tamam! 🏆</h1>
     <p class="start-sub">Tüm cisimlerin yüz, köşe ve ayrıt sayılarını buldun!</p>
     ${tabloHTML()}
-    <div class="think">İpucu: Her cisimde <b>Köşe − Ayrıt + Yüz = 2</b> olur. Kontrol et bakalım — hep 2 çıkıyor mu?</div>
+    <div class="think">Fark ettin mi? Küre, silindir ve koni <b>yuvarlak yüzeyli</b>dir; köşeleri ve ayrıtları çok az ya da hiç yoktur. Küp ve prizmaların ise çok köşesi ve ayrıtı vardır.</div>
     <button class="cta sun big" onclick="startGame()">Yeniden Oyna 🔁</button>`;
 }
 
