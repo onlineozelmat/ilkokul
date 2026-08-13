@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bir Günüm — Saatler & Süre (3. Sınıf)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --morning:#FFB74D; --noon:#4EC5FF; --eve:#9B6BFF; --night:#3B4C8C; --sun:#FFC531;
+    --coral:#FF7A6B; --green:#4FCB77; --ink:#2a3550; --card:#ffffff; --soft:#EEF3FB;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    background:radial-gradient(1100px 720px at 25% -8%, #FFE6C4 0%, #CFE6FF 45%, #C7D4FF 100%);
+    color:var(--ink); min-height:100vh; overflow-x:hidden;
+    display:flex; align-items:center; justify-content:center; padding:16px;
+  }
+  h1,h2,h3{font-family:'Baloo 2',system-ui,sans-serif;}
+  .stage{position:relative; z-index:2; width:100%; max-width:560px;
+    background:var(--card); border-radius:30px; padding:22px 20px 26px;
+    box-shadow:0 22px 54px rgba(40,50,90,.28), inset 0 0 0 4px #fff; animation:pop .4s cubic-bezier(.2,1.3,.4,1);}
+  @keyframes pop{from{transform:translateY(18px) scale(.96); opacity:0}to{transform:none; opacity:1}}
+
+  .rail{display:flex; align-items:center; gap:10px; margin-bottom:6px;}
+  .track{flex:1; height:14px; border-radius:20px; background:var(--soft); position:relative; overflow:hidden;}
+  .fill{position:absolute; inset:0 auto 0 0; width:0%; border-radius:20px; background:linear-gradient(90deg,var(--morning),var(--eve)); transition:width .4s;}
+  .scorebox{font-family:'Baloo 2'; font-weight:800; color:var(--eve); font-size:16px; white-space:nowrap;}
+  .kesim{text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:16px; color:#6a7aa8; margin:2px 0 4px;}
+
+  .clock{width:180px; height:180px; display:block; margin:6px auto 4px;}
+  .fixcard{width:190px; margin:10px auto 4px; background:#fff0f0; border:4px solid var(--coral); border-radius:20px;
+    padding:18px 10px; text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:46px; color:var(--coral); letter-spacing:2px;}
+  .fixcard small{display:block; font-family:'Nunito'; font-weight:800; font-size:12px; color:#b06a6a; letter-spacing:0; margin-top:4px;}
+  .story{background:var(--soft); border-radius:16px; padding:12px 14px; font-weight:700; font-size:16px; color:#3a4568; text-align:center; margin:6px 0;}
+  .soru{font-family:'Baloo 2'; font-weight:800; font-size:22px; color:var(--ink); text-align:center; margin:8px 0 12px;}
+
+  .opts{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; max-width:420px; margin:0 auto;}
+  .opt{font-family:'Baloo 2'; font-weight:800; font-size:24px; color:#fff; border:none; cursor:pointer;
+    padding:18px 4px; border-radius:18px; background:var(--noon); box-shadow:0 6px 0 #2f9fd0; transition:.12s;}
+  .opt:active{transform:translateY(4px);} .opt.wrong{opacity:.35;} .opt.shake{animation:shk .4s;}
+  @keyframes shk{10%,90%{transform:translateX(-2px)}30%,70%{transform:translateX(5px)}50%{transform:translateX(-7px)}}
+
+  .msg{margin-top:14px; text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:20px; min-height:24px;}
+  .msg.ok{color:var(--green);} .msg.no{color:var(--coral);}
+  .think{background:#fff6e0; border-radius:16px; padding:12px 14px; margin:12px 0 4px; font-weight:700; color:#a8631e; font-size:16px; text-align:center;}
+
+  .cta{font-family:'Baloo 2'; font-weight:800; font-size:22px; color:#fff; border:none; cursor:pointer;
+    background:var(--eve); padding:14px 30px; border-radius:20px; box-shadow:0 6px 0 #7a4fd0; margin-top:6px;}
+  .cta:active{transform:translateY(4px); box-shadow:0 2px 0 #7a4fd0;} .cta.big{display:block; margin:16px auto 0;}
+  .cta.sun{background:var(--sun);color:#5a4200;box-shadow:0 6px 0 #d9a520}
+
+  .burst{position:fixed; inset:0; pointer-events:none; z-index:9; overflow:hidden;}
+  .burst span{position:absolute; top:40%; font-size:26px; animation:fly 1s ease-out forwards;}
+  @keyframes fly{to{transform:translate(var(--tx),var(--ty)) rotate(var(--r)); opacity:0}}
+
+  .start-title{font-size:30px; text-align:center; color:var(--ink); line-height:1.1; margin:6px 0;}
+  .start-sub{text-align:center; font-weight:700; color:#6a7aa8; font-size:16px; margin-bottom:6px;}
+  .heroes{font-size:52px; text-align:center; margin:4px 0;}
+  @media (max-width:480px){ .soru{font-size:19px} .opt{font-size:21px} .clock{width:150px;height:150px} .start-title{font-size:25px} }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;}}
+</style>
+</head>
+<body>
+<div class="burst" id="burst"></div>
+<div class="stage" id="stage"></div>
+
+<script>
+function drawClock(h,m){
+  const cx=100,cy=100;
+  const hourAng=((h%12)+m/60)*30, minAng=m*6;
+  const hx=cx+44*Math.sin(hourAng*Math.PI/180), hy=cy-44*Math.cos(hourAng*Math.PI/180);
+  const mx=cx+66*Math.sin(minAng*Math.PI/180), my=cy-66*Math.cos(minAng*Math.PI/180);
+  let nums='';
+  for(let i=1;i<=12;i++){ const a=i*30*Math.PI/180; const nx=cx+74*Math.sin(a), ny=cy-74*Math.cos(a);
+    nums+=`<text x="${nx.toFixed(1)}" y="${(ny+6).toFixed(1)}" text-anchor="middle" font-size="17" font-weight="800" fill="#3a4a6a" font-family="Baloo 2, sans-serif">${i}</text>`; }
+  let ticks='';
+  for(let i=0;i<60;i++){ const a=i*6*Math.PI/180; const r1=i%5===0?82:86, r2=90;
+    ticks+=`<line x1="${(cx+r1*Math.sin(a)).toFixed(1)}" y1="${(cy-r1*Math.cos(a)).toFixed(1)}" x2="${(cx+r2*Math.sin(a)).toFixed(1)}" y2="${(cy-r2*Math.cos(a)).toFixed(1)}" stroke="#d7deec" stroke-width="${i%5===0?2.5:1}"/>`; }
+  return `<svg viewBox="0 0 200 200" class="clock" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="94" fill="#fff" stroke="var(--sun)" stroke-width="6"/>
+    ${ticks}${nums}
+    <line x1="100" y1="100" x2="${hx.toFixed(1)}" y2="${hy.toFixed(1)}" stroke="#2a3550" stroke-width="7" stroke-linecap="round"/>
+    <line x1="100" y1="100" x2="${mx.toFixed(1)}" y2="${my.toFixed(1)}" stroke="var(--coral)" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="100" cy="100" r="6" fill="#2a3550"/></svg>`;
+}
+
+function gorselFor(c){
+  return c.tip==='duzelt'
+    ? `<div class="fixcard">${c.yanlis}<small>✖ 60'tan büyük dakika — yanlış yazılmış</small></div>`
+    : drawClock(c.h,c.m);
+}
+
+const GUN = [
+  { tip:'oku', h:6,m:50, kesim:"🌅 Sabah", story:"Güne başlıyorsun! Çalar saat çaldı.", soru:"Saat kaçı gösteriyor?",
+    opts:["6:50","6:10","7:50"], cevap:"6:50", think:"Akrep 7'ye yakın ama tam varmadı, yelkovan 10 rakamında (50 dakika) → 6:50." },
+
+  { tip:'topla', h:6,m:50, kesim:"🌅 Sabah", story:"Kahvaltıya 6:50'de başladın, 25 dakika sürdü.", soru:"Kaçta bitirdin?",
+    opts:["7:15","6:15","6:75"], cevap:"7:15", think:"50 + 25 = 75 dakika. 60 dakika = 1 saat; artan 15 → 6:50 + 25 = 7:15. (7:75 diye bir saat yoktur!)" },
+
+  { tip:'geri', h:8,m:10, kesim:"🌅 Sabah", story:"Okula 8:10'da vardın. Yürüyüş 25 dakika sürdü.", soru:"Evden saat kaçta çıktın?",
+    opts:["7:45","7:35","8:35"], cevap:"7:45", think:"Geri gitmek için 1 saati 60 dakika yap: 8:10 = 7 saat 70 dakika. 70 − 25 = 45 → 7:45." },
+
+  { tip:'duzelt', yanlis:"8:75", kesim:"☀️ Okulda", story:"Bir arkadaşın ders bitişini hesaplarken 8:75 yazdı.", soru:"Doğru yazılışı hangisi?",
+    opts:["9:15","8:15","9:75"], cevap:"9:15", think:"Bir saatte 60 dakika var; 75 dakika = 1 saat 15 dakika. Yani 8:75 = 9:15." },
+
+  { tip:'topla', h:9,m:20, kesim:"☀️ Okulda", story:"İkinci ders 9:20'de başladı, 50 dakika sürdü.", soru:"Ders kaçta biter?",
+    opts:["10:10","9:10","9:70"], cevap:"10:10", think:"20 + 50 = 70 dakika = 1 saat 10 dakika → 9:20 + 50 = 10:10." },
+
+  { tip:'gecen', h:12,m:0, kesim:"☀️ Öğle", story:"Öğle yemeği 12:00. Okula 8:10'da gelmiştin.", soru:"Okula geleli ne kadar oldu?",
+    opts:["3 saat 50 dakika","4 saat","3 saat 40 dakika"], cevap:"3 saat 50 dakika", think:"8:10'dan 12:10 olsaydı tam 4 saat; ama 12:00, yani 10 dakika eksik → 3 saat 50 dakika." },
+
+  { tip:'geri', h:5,m:10, kesim:"🌤️ Öğleden sonra", story:"Ödevini öğleden sonra 5:10'da bitirdin. Ödev 40 dakika sürdü.", soru:"Ödeve kaçta başladın?",
+    opts:["4:30","4:40","5:50"], cevap:"4:30", think:"5:10 = 4 saat 70 dakika. 70 − 40 = 30 → 4:30." },
+
+  { tip:'duzelt', yanlis:"6:80", kesim:"🌆 Akşam", story:"Akşam etkinliklerinin süresini toplarken 6:80 çıktı.", soru:"Doğrusu hangisi?",
+    opts:["7:20","6:20","7:00"], cevap:"7:20", think:"80 dakika = 1 saat 20 dakika. Yani 6:80 = 7:20." },
+
+  { tip:'topla', h:8,m:35, kesim:"🌙 Gece", story:"Gece kitabına 8:35'te başladın, 40 dakika okudun.", soru:"Kaçta uyudun?",
+    opts:["9:15","8:15","9:75"], cevap:"9:15", think:"35 + 40 = 75 dakika = 1 saat 15 dakika → 8:35 + 40 = 9:15." }
+];
+
+let idx=0, score=0, busy=false;
+const stage=document.getElementById('stage'), burst=document.getElementById('burst');
+const TOTAL=GUN.length;
+
+function burstFx(){ const emo=["⭐","🕐","🎉","✨","☀️"]; let h='';
+  for(let i=0;i<16;i++){ const tx=(Math.random()*2-1)*55+'vw', ty=(Math.random()*-1-0.2)*55+'vh', r=(Math.random()*720-360)+'deg';
+    h+=`<span style="left:${40+Math.random()*20}%;--tx:${tx};--ty:${ty};--r:${r}">${emo[i%emo.length]}</span>`; }
+  burst.innerHTML=h; setTimeout(()=>burst.innerHTML='',1000); }
+
+function showStart(){
+  stage.innerHTML=`
+    <div class="heroes">🌅🕐🌙</div>
+    <h1 class="start-title">Bir Günüm</h1>
+    <p class="start-sub">Sabahtan geceye bir günü birlikte yaşayalım! Saatleri oku, süreleri hesapla. Her görev bir öncekinden devam eder. 🕐</p>
+    <div class="think">1 saat = 60 dakika, unutma! Saat gösteriminde dakika kısmına 60'tan büyük sayı yazılamaz.</div>
+    <button class="cta sun big" onclick="startGame()">Güne Başla ▶</button>`;
+}
+function startGame(){ idx=0; score=0; render(); }
+
+function render(){ busy=false; const c=GUN[idx]; const pct=Math.round((idx/TOTAL)*100);
+  stage.innerHTML=`
+    <div class="rail"><div class="track"><div class="fill" style="width:${pct}%"></div></div>
+      <span class="scorebox">⭐ ${score}/${TOTAL}</span></div>
+    <div class="kesim">${c.kesim}</div>
+    ${gorselFor(c)}
+    <div class="story">${c.story}</div>
+    <div class="soru">${c.soru}</div>
+    <div class="opts">${c.opts.slice().sort(function(){return Math.random()-0.5;}).map(o=>`<button class="opt" onclick="cevap('${o}',this)">${o}</button>`).join('')}</div>
+    <div class="msg" id="msg"></div>`;
+}
+
+function cevap(v,btn){ if(busy) return; const c=GUN[idx];
+  if(v===c.cevap){ busy=true; score++; burstFx();
+    const last=idx===TOTAL-1;
+    const m=document.getElementById('msg'); m.className='msg ok'; m.textContent="Doğru! ✓";
+    setTimeout(()=>{ stage.innerHTML=`
+      <div class="kesim">${c.kesim}</div>
+      ${gorselFor(c)}
+      <div class="msg ok" style="font-size:21px">Doğru! ✓</div>
+      <div class="think">${c.think}</div>
+      <button class="cta ${last?'sun ':''}big" onclick="${last?'bitir()':'ilerle()'}">${last?'Günü Bitir 🏁':'Güne Devam ➜'}</button>`; }, 650);
+  } else { sesYanlis && sesYanlis(); btn.classList.add('wrong'); btn.classList.add('shake'); btn.disabled=true;
+    const m=document.getElementById('msg'); m.className='msg no'; m.textContent="Saati ve süreyi tekrar düşün 🕐"; }
+}
+function ilerle(){ idx++; render(); }
+function bitir(){ burstFx();
+  stage.innerHTML=`
+    <div class="heroes">🏆🌙</div>
+    <h1 class="start-title">Günün Tamam!</h1>
+    <p class="start-sub">Sabahtan geceye bütün saatleri okudun ve süreleri doğru hesapladın!</p>
+    <div class="think">Büyük fikir: Bir saat = 60 dakika. Bir işin bitişini bulmak için başlangıç saatine süreyi eklersin.</div>
+    <button class="cta sun big" onclick="startGame()">Yeniden Oyna 🔁</button>`;
+}
+
+showStart();
+
+/* === SES MOTORU === */
+(function(){
+  var sesAcik=true, actx=null, sonSes=0;
+  function AC(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ actx=null; } } return actx; }
+  function ton(f,st,du,tp,vol){ var a=AC(); if(!a) return; var o=a.createOscillator(), g=a.createGain();
+    o.type=tp||'sine'; o.frequency.value=f; o.connect(g); g.connect(a.destination);
+    var t=a.currentTime+st; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.2,t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+du); o.start(t); o.stop(t+du+0.03); }
+  function gate(){ var n=Date.now(); if(n-sonSes<120) return false; sonSes=n; return true; }
+  window.sesDogru=function(){ if(!sesAcik||!gate()) return; [392,523,659,784,988,1319].forEach(function(f,i){ ton(f,i*0.05,0.12,'square',0.16); }); };
+  window.sesYanlis=function(){ if(!sesAcik||!gate()) return; ton(300,0,0.16,'sawtooth',0.2); ton(200,0.15,0.22,'sawtooth',0.2); };
+  window.sesToggle=function(){ sesAcik=!sesAcik; var b=document.getElementById('sesBtn'); if(b) b.textContent=sesAcik?'🔊':'🔇'; };
+  function ekleBtn(){ if(document.getElementById('sesBtn')) return; var b=document.createElement('button'); b.id='sesBtn';
+    b.textContent='🔊'; b.title='Ses aç/kapa'; b.setAttribute('onclick','sesToggle()');
+    b.style.cssText='position:fixed;top:10px;right:10px;z-index:9999;border:none;cursor:pointer;font-size:20px;background:rgba(255,255,255,.9);border-radius:999px;width:42px;height:42px;box-shadow:0 3px 8px rgba(0,0,0,.25)';
+    if(document.body) document.body.appendChild(b); }
+  if(document.readyState!=='loading') ekleBtn(); else document.addEventListener('DOMContentLoaded',ekleBtn);
+  function sar(name,ses){ if(typeof window[name]==='function'){ var o=window[name]; window[name]=function(){ ses(); return o.apply(this,arguments); }; return true; } return false; }
+  sar('burstFx',window.sesDogru) || sar('starBurst',window.sesDogru);
+})();
+
+</script>
+</body>
+</html>
