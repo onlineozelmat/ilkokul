@@ -99,48 +99,54 @@
 const TURLAR = [
   { tip:'ihtiyac', e:"🍞", ad:"Ekmek", dogru:0,
     ok:"Doğru! Ekmek yaşamak için gerekli → İHTİYAÇ.", think:"İhtiyaç: olmazsa olmaz şeyler (yemek, su, giysi)." },
+  { tip:'say', paralar:[5,2,1], cevap:8,
+    ok:"Doğru! 5 + 2 + 1 = 8 TL.", think:"Paraları büyükten küçüğe say: 5… 7… 8." },
   { tip:'ihtiyac', e:"🧸", ad:"Oyuncak Ayı", dogru:1,
     ok:"Doğru! Oyuncak eğlence için → İSTEK.", think:"İstek: hoşumuza giden ama şart olmayan şeyler." },
-  { tip:'ihtiyac', e:"💧", ad:"Su", dogru:0,
-    ok:"Doğru! Su içmek zorundayız → İHTİYAÇ.", think:"Susuz yaşayamayız; su bir ihtiyaçtır." },
   { tip:'yeter', e:"🍎", ad:"Elma", cuzdan:10, fiyat:6, dogru:0,
     ok:"Doğru! 10 TL'n var, elma 6 TL. Paran YETER. ✓", think:"Paran eşya kadar ya da daha çoksa alabilirsin." },
-  { tip:'ihtiyac', e:"🍭", ad:"Şeker", dogru:1,
-    ok:"Doğru! Şeker keyif için → İSTEK.", think:"Şeker olmadan da yaşarız; bu bir istektir." },
+  { tip:'kumbara', hedef:8, basla:0,
+    ok:"Kumbaran doldu! 💰 8 TL biriktirdin.", think:"Sıfırdan başlayıp para atarak 8 TL'ye ulaştın." },
+  { tip:'ihtiyac', e:"💧", ad:"Su", dogru:0,
+    ok:"Doğru! Su içmek zorundayız → İHTİYAÇ.", think:"Susuz yaşayamayız; su bir ihtiyaçtır." },
+  { tip:'say', paralar:[2,2,2], cevap:6,
+    ok:"Doğru! 2 + 2 + 2 = 6 TL.", think:"2'şer say: 2, 4, 6." },
   { tip:'yeter', e:"🚲", ad:"Bisiklet", cuzdan:5, fiyat:20, dogru:1,
     ok:"Doğru! 5 TL'n var ama bisiklet 20 TL. Paran YETMEZ. ✗", think:"Paran eşyadan azsa alamazsın — biriktirmen gerekir." },
-  { tip:'kumbara', hedef:10, coin:2,
-    ok:"Kumbaran doldu! 🐷 Biriktirerek hedefe ulaştın.", think:"Her gün biraz biriktirince para büyür ve istediğini alabilirsin." },
+  { tip:'kumbara', hedef:10, basla:4,
+    ok:"Kumbaran doldu! 💰 10 TL'ye ulaştın.", think:"Kumbarada 4 TL vardı; 6 TL daha atınca 10 oldu." },
   { tip:'secim', e1:"🍞", n1:"Ekmek", f1:8, e2:"🎈", n2:"Balon", f2:8, dogru:0,
     ok:"Doğru! Önce İHTİYACINI (ekmek) alırsın.", think:"Akıllı seçim: önce ihtiyaç, para kalırsa istek." },
-  { tip:'ihtiyac', e:"👟", ad:"Ayakkabı", dogru:0,
-    ok:"Doğru! Ayakkabı giymek gerekir → İHTİYAÇ.", think:"Giysi ve ayakkabı temel ihtiyaçlardır." }
+  { tip:'kumbara', hedef:15, basla:5,
+    ok:"Kumbaran doldu! 💰 15 TL biriktirdin.", think:"5 TL'n vardı; 10 TL daha atınca 15 oldu." },
+  { tip:'say', paralar:[5,5], cevap:10,
+    ok:"Doğru! 5 + 5 = 10 TL.", think:"5'er say: 5, 10." }
 ];
 
 let idx=0, score=0, kmb=0, busy=false;
 const stage=document.getElementById('stage'), burst=document.getElementById('burst');
 const TOTAL=TURLAR.length;
 
-(function(){ const em=["🪙","🐷","💰","💵","⭐","🛒"]; let s='';
+(function(){ const em=["🪙","💰","💰","💵","⭐","🛒"]; let s='';
   for(let i=0;i<14;i++) s+=`<i style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*4}s">${em[i%em.length]}</i>`;
   document.getElementById('sky').innerHTML=s; })();
 
-function burstFx(){ const emo=["🪙","⭐","🎉","🐷","💰"]; let h='';
+function burstFx(){ const emo=["🪙","⭐","🎉","💰","💰"]; let h='';
   for(let i=0;i<16;i++){ const tx=(Math.random()*2-1)*55+'vw', ty=(Math.random()*-1-0.2)*55+'vh', r=(Math.random()*720-360)+'deg';
     h+=`<span style="left:${40+Math.random()*20}%;--tx:${tx};--ty:${ty};--r:${r}">${emo[i%emo.length]}</span>`; }
   burst.innerHTML=h; setTimeout(()=>burst.innerHTML='',1000); }
 
 function showStart(){
   stage.innerHTML=`
-    <div class="heroes">🐷🪙</div>
+    <div class="heroes">💰🪙</div>
     <h1 class="start-title">Akıllı Kumbara</h1>
-    <p class="start-sub">İhtiyaç mı istek mi? Paran yeter mi? Biriktir ve akıllı seç! Parayı tanımayı öğren. 🐷</p>
+    <p class="start-sub">İhtiyaç mı istek mi? Paran yeter mi? Biriktir ve akıllı seç! Parayı tanımayı öğren. 💰</p>
     <div class="heroes" style="font-size:34px">🍞 🧸 💧 🍭 👟</div>
     <button class="cta gold big" onclick="startGame()">Başla ▶</button>
     <p class="adult">👩‍🏫 Yetişkin için: her soruyu birlikte konuşun — "bu neden ihtiyaç/istek?" diye sorun.</p>`;
 }
 function startGame(){ idx=0; score=0; nextTur(); }
-function nextTur(){ busy=false; kmb=0; render(); }
+function nextTur(){ busy=false; const c=TURLAR[idx]; kmb=(c&&c.tip==='kumbara')?(c.basla||0):0; render(); }
 
 function render(){
   const c=TURLAR[idx];
@@ -163,9 +169,16 @@ function render(){
       <div class="secim">
         <div class="kart" onclick="sec(0)"><div class="e">${c.e1}</div><div class="n">${c.n1}</div><div class="f">${c.f1} TL</div></div>
         <div class="kart" onclick="sec(1)"><div class="e">${c.e2}</div><div class="n">${c.n2}</div><div class="f">${c.f2} TL</div></div></div>`;
+  } else if(c.tip==='say'){
+    const coinsHtml=c.paralar.map(v=>`<div class="coin" style="cursor:default">${v} TL</div>`).join('');
+    const secs=secenekMoney(c.cevap);
+    body=`<div class="soru" style="font-size:21px">💰 Kumbarada kaç TL var?<small>Paraları say</small></div>
+      <div class="coins" style="margin-bottom:16px">${coinsHtml}</div>
+      <div class="ikili" style="grid-template-columns:repeat(4,1fr); max-width:380px">
+        ${secs.map(o=>`<button class="big-btn" style="background:var(--gold);color:#5a4200;box-shadow:0 6px 0 var(--gold2);font-size:24px;padding:18px 4px" onclick="secSay(${o})">${o}</button>`).join('')}</div>`;
   } else if(c.tip==='kumbara'){
     const pct=Math.min(100,Math.round(kmb/c.hedef*100));
-    body=`<div class="pig">🐷</div>
+    body=`<div class="pig">💰</div>
       <div class="kmb-say">Kumbara: ${kmb} / ${c.hedef} TL</div>
       <div class="meter"><div class="in" style="width:${pct}%"></div></div>
       <div class="soru" style="font-size:18px"><small>Hedefe ulaşmak için para at 🪙</small></div>
@@ -184,7 +197,7 @@ function render(){
 function dogruTur(){ if(busy) return; busy=true; score++; burstFx();
   const c=TURLAR[idx]; const last=idx===TOTAL-1;
   setTimeout(()=>{ stage.innerHTML=`
-    <div class="esya">${c.e||c.e1||'🐷'}</div>
+    <div class="esya">${c.e||c.e1||'💰'}</div>
     <div class="msg ok" style="font-size:22px">${c.ok}</div>
     <div class="think">${c.think}</div>
     <button class="cta ${last?'gold ':''}big" onclick="${last?'bitir()':'ilerle()'}">${last?'Bitir 🏁':'Sonraki ➜'}</button>`; }, 650);
@@ -195,16 +208,22 @@ function sec(k){ if(busy) return; if(k===TURLAR[idx].dogru) dogruTur();
   else{ const c=TURLAR[idx];
     yanlisTur(c.tip==='yeter' ? "Paranı ve fiyatı karşılaştır 👀" : (c.tip==='secim'?"Önce ihtiyaç olanı seç 🤔":"Bir daha düşün 🙂")); } }
 
+function secSay(v){ if(busy) return; if(v===TURLAR[idx].cevap) dogruTur(); else yanlisTur("Paraları tek tek say 🪙"); }
+function secenekMoney(c){ const set=new Set([c]);
+  [c+1,c-1,c+2,c-2,c+5].forEach(x=>{ if(x>0&&set.size<4) set.add(x); });
+  while(set.size<4){ const x=c+Math.floor(Math.random()*7)-3; if(x>0) set.add(x); }
+  return [...set].sort(()=>Math.random()-0.5); }
+
 function paraAt(v){ if(busy) return; kmb+=v; if(window.sesDogru && kmb<TURLAR[idx].hedef) {} render();
   if(kmb>=TURLAR[idx].hedef){ dogruTur(); } }
 
 function ilerle(){ idx++; nextTur(); }
 function bitir(){ burstFx();
   stage.innerHTML=`
-    <div class="heroes">🏆🐷🪙</div>
+    <div class="heroes">🏆💰🪙</div>
     <h1 class="start-title">Para Ustası!</h1>
     <p class="start-sub">İhtiyaç ve isteği ayırdın, paranın yetip yetmediğini anladın ve biriktirmeyi öğrendin!</p>
-    <div class="think">Büyük fikir: Önce <b>ihtiyaçlar</b>, sonra <b>istekler</b>. Biriktirince istediğini alabilirsin. 🐷</div>
+    <div class="think">Büyük fikir: Önce <b>ihtiyaçlar</b>, sonra <b>istekler</b>. Biriktirince istediğini alabilirsin. 💰</div>
     <button class="cta gold big" onclick="startGame()">Yeniden Oyna 🔁</button>`;
 }
 
