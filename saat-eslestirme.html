@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saat Eşleştirme — Öğleden Önce/Sonra & 24 Saat (3-4. Sınıf)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --dawn:#FF9F43; --dusk:#8B6BFF; --sky:#4EC5FF; --sun:#FFC531; --coral:#FF7A6B;
+    --green:#4FCB77; --ink:#2a2f5a; --card:#ffffff; --soft:#EFEDFF;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    background:radial-gradient(1100px 720px at 25% -8%, #FFE7C9 0%, #D9CFFF 45%, #BFE3FF 100%);
+    color:var(--ink); min-height:100vh; overflow-x:hidden;
+    display:flex; align-items:center; justify-content:center; padding:16px;
+  }
+  h1,h2,h3{font-family:'Baloo 2',system-ui,sans-serif;}
+  .stage{position:relative; z-index:2; width:100%; max-width:600px;
+    background:var(--card); border-radius:30px; padding:22px 20px 26px;
+    box-shadow:0 22px 54px rgba(50,40,110,.3), inset 0 0 0 4px #fff; animation:pop .4s cubic-bezier(.2,1.3,.4,1);}
+  @keyframes pop{from{transform:translateY(18px) scale(.96); opacity:0}to{transform:none; opacity:1}}
+
+  .rail{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+  .track{flex:1; height:14px; border-radius:20px; background:var(--soft); position:relative; overflow:hidden;}
+  .fill{position:absolute; inset:0 auto 0 0; width:0%; border-radius:20px; background:linear-gradient(90deg,var(--dawn),var(--dusk)); transition:width .4s;}
+  .scorebox{font-family:'Baloo 2'; font-weight:800; color:var(--dusk); font-size:17px; white-space:nowrap;}
+
+  .soru{font-family:'Baloo 2'; font-weight:800; font-size:20px; color:var(--ink); text-align:center; margin:6px 0 12px;}
+  .hint{text-align:center; font-weight:700; color:#7a6fae; font-size:14px; margin-bottom:10px;}
+
+  .board{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .col{display:flex; flex-direction:column; gap:10px;}
+  .colhead{font-family:'Baloo 2'; font-weight:800; font-size:13px; text-align:center; color:#7a6fae; margin-bottom:2px;}
+  .kart{cursor:pointer; border:none; border-radius:16px; padding:12px 8px; text-align:center; transition:.12s;
+    box-shadow:0 5px 0 rgba(0,0,0,.14); font-family:'Baloo 2'; font-weight:800;}
+  .kart:active{transform:translateY(3px);}
+  .kart.sol{background:var(--soft); color:var(--ink);}
+  .kart.sol .ust{font-family:'Nunito'; font-weight:800; font-size:12px; display:block; margin-bottom:2px;}
+  .kart.sol .oo{color:var(--dawn);} .kart.sol .os{color:var(--dusk);}
+  .kart.sol .buyuk{font-size:22px;}
+  .kart.sag{background:#eaf6ff; color:#0a5a7a; font-size:24px; letter-spacing:1px;}
+  .kart.sec{box-shadow:0 0 0 4px var(--sun) inset, 0 5px 0 rgba(0,0,0,.14);}
+  .kart.match{background:#e2f7ea !important; color:var(--green) !important; box-shadow:0 5px 0 #b6e6c8; cursor:default;}
+  .kart.match::after{content:' ✓';}
+  .kart.shake{animation:shk .4s;} @keyframes shk{10%,90%{transform:translateX(-2px)}30%,70%{transform:translateX(5px)}50%{transform:translateX(-7px)}}
+
+  .feedback{margin-top:12px; text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:19px; min-height:22px;}
+  .feedback.ok{color:var(--green);} .feedback.no{color:var(--coral);}
+  .think{background:var(--soft); border-radius:16px; padding:12px 14px; margin:12px 0 4px; font-weight:700; color:#5a4fa0; font-size:15px; text-align:center;}
+
+  .cta{font-family:'Baloo 2'; font-weight:800; font-size:22px; color:#fff; border:none; cursor:pointer;
+    background:var(--dusk); padding:14px 30px; border-radius:20px; box-shadow:0 6px 0 #6a4fd0; margin-top:6px;}
+  .cta:active{transform:translateY(4px); box-shadow:0 2px 0 #6a4fd0;} .cta.big{display:block; margin:16px auto 0;}
+  .cta.sun{background:var(--sun);color:#5a4200;box-shadow:0 6px 0 #d9a520}
+
+  .burst{position:fixed; inset:0; pointer-events:none; z-index:9; overflow:hidden;}
+  .burst span{position:absolute; top:40%; font-size:26px; animation:fly 1s ease-out forwards;}
+  @keyframes fly{to{transform:translate(var(--tx),var(--ty)) rotate(var(--r)); opacity:0}}
+
+  .start-title{font-size:30px; text-align:center; color:var(--ink); line-height:1.1; margin:6px 0;}
+  .start-sub{text-align:center; font-weight:700; color:#6a5fa8; font-size:16px; margin-bottom:6px;}
+  .heroes{font-size:52px; text-align:center; margin:4px 0;}
+  @media (max-width:480px){ .kart.sag{font-size:20px} .kart.sol .buyuk{font-size:19px} .start-title{font-size:25px} }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;}}
+</style>
+</head>
+<body>
+<div class="burst" id="burst"></div>
+<div class="stage" id="stage"></div>
+
+<script>
+/* Her tur 4 eşleşme. sol: {oo:true/false, saat:"9:00"} sag: "09:00" (24 saat) */
+const TURLAR = [
+  [ {oo:true,  s12:"9:00",  s24:"09:00"},
+    {oo:false, s12:"3:00",  s24:"15:00"},
+    {oo:true,  s12:"7:00",  s24:"07:00"},
+    {oo:false, s12:"6:00",  s24:"18:00"} ],
+
+  [ {oo:true,  s12:"11:00", s24:"11:00"},
+    {oo:false, s12:"1:00",  s24:"13:00"},
+    {oo:false, s12:"9:00",  s24:"21:00"},
+    {oo:true,  s12:"5:00",  s24:"05:00"} ],
+
+  [ {oo:false, s12:"2:30",  s24:"14:30"},
+    {oo:true,  s12:"8:15",  s24:"08:15"},
+    {oo:false, s12:"5:45",  s24:"17:45"},
+    {oo:true,  s12:"10:20", s24:"10:20"} ],
+
+  [ {oo:true,  s12:"6:00",  s24:"06:00"},
+    {oo:false, s12:"8:00",  s24:"20:00"},
+    {oo:false, s12:"4:00",  s24:"16:00"},
+    {oo:false, s12:"10:00", s24:"22:00"} ]
+];
+
+let idx=0, matched=new Set(), sel=null, sagSira=[];
+const stage=document.getElementById('stage'), burst=document.getElementById('burst');
+const TOTAL=TURLAR.length;
+
+function karistir(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function burstFx(){ const emo=["⭐","🕐","🎉","✨"]; let h='';
+  for(let i=0;i<16;i++){ const tx=(Math.random()*2-1)*55+'vw', ty=(Math.random()*-1-0.2)*55+'vh', r=(Math.random()*720-360)+'deg';
+    h+=`<span style="left:${40+Math.random()*20}%;--tx:${tx};--ty:${ty};--r:${r}">${emo[i%emo.length]}</span>`; }
+  burst.innerHTML=h; setTimeout(()=>burst.innerHTML='',1000); }
+
+function showStart(){
+  stage.innerHTML=`
+    <div class="heroes">🌅🕐🌇</div>
+    <h1 class="start-title">Saat Eşleştirme</h1>
+    <p class="start-sub">Öğleden önce / öğleden sonra saatleri, 24 saatlik dijital saatle eşleştir! 🕐</p>
+    <div class="think">🌅 Öğleden önce → saat aynı kalır (9 → 09:00)<br>🌇 Öğleden sonra → saate 12 eklenir (3 → 15:00)</div>
+    <button class="cta sun big" onclick="startGame()">Eşleştirmeye Başla ▶</button>`;
+}
+function startGame(){ idx=0; beginRound(); }
+function beginRound(){ matched=new Set(); sel=null; sagSira=karistir(TURLAR[idx].map((_,i)=>i)); render(); }
+
+function render(msg){
+  const t=TURLAR[idx];
+  const pct=Math.round((idx/TOTAL)*100);
+  const solCards=t.map((p,i)=>`
+    <button class="kart sol ${matched.has(i)?'match':''} ${sel&&sel.side==='L'&&sel.i===i?'sec':''}"
+      onclick="tik('L',${i},this)">
+      <span class="ust ${p.oo?'oo':'os'}">${p.oo?'🌅 Öğleden önce':'🌇 Öğleden sonra'}</span>
+      <span class="buyuk">${p.s12}</span></button>`).join('');
+  const sagCards=sagSira.map(i=>`
+    <button class="kart sag ${matched.has(i)?'match':''} ${sel&&sel.side==='R'&&sel.i===i?'sec':''}"
+      onclick="tik('R',${i},this)">${t[i].s24}</button>`).join('');
+  stage.innerHTML=`
+    <div class="rail"><div class="track"><div class="fill" style="width:${pct}%"></div></div>
+      <span class="scorebox">🕐 Tur ${idx+1}/${TOTAL}</span></div>
+    <div class="soru">Aynı saatleri eşleştir</div>
+    <div class="hint">Bir kart seç, sonra eşini seç. (${matched.size}/${t.length} eşleşti)</div>
+    <div class="board">
+      <div class="col"><div class="colhead">SÖZEL SAAT</div>${solCards}</div>
+      <div class="col"><div class="colhead">DİJİTAL (24 SAAT)</div>${sagCards}</div>
+    </div>
+    <div class="feedback" id="fb">${msg||''}</div>`;
+}
+
+function tik(side,i,el){
+  if(el.classList.contains('match')) return;
+  if(!sel){ sel={side,i}; render(); return; }
+  if(sel.side===side){ sel = (sel.i===i)?null:{side,i}; render(); return; }
+  // karşı sütun -> aynı pairId (i) ise eşleşme
+  if(sel.i===i){ matched.add(i); sel=null;
+    if(window.sesDogru) sesDogru();
+    if(matched.size===TURLAR[idx].length){ setTimeout(turBitti,400); } else render("Doğru eşleşme! ✓");
+  } else {
+    if(window.sesYanlis) sesYanlis(); sel=null; render("Olmadı, tekrar dene 🕐");
+  }
+}
+
+function turBitti(){ burstFx();
+  const last=idx===TOTAL-1;
+  stage.innerHTML=`
+    <div class="heroes">✅🕐</div>
+    <h1 class="start-title">Tur Tamam!</h1>
+    <p class="start-sub">Bütün saatleri doğru eşleştirdin!</p>
+    <div class="think">🌇 Öğleden sonra saatlerinde 24 saatlik gösterimde saate <b>12 eklenir</b>: öğleden sonra 3 → 15:00.</div>
+    <button class="cta ${last?'sun ':''}big" onclick="${last?'bitir()':'sonraki()'}">${last?'Bitir 🏁':'Sonraki Tur ➜'}</button>`;
+}
+function sonraki(){ idx++; beginRound(); }
+function bitir(){ burstFx();
+  stage.innerHTML=`
+    <div class="heroes">🏆🕐🌅🌇</div>
+    <h1 class="start-title">Saat Ustası!</h1>
+    <p class="start-sub">Öğleden önce ve öğleden sonra saatleri 24 saatlik gösterime çevirmeyi başardın!</p>
+    <div class="think">Unutma: Gece yarısı = 00:00, öğle = 12:00. Öğleden sonra 1'den itibaren 13:00, 14:00, 15:00… diye devam eder.</div>
+    <button class="cta sun big" onclick="startGame()">Yeniden Oyna 🔁</button>`;
+}
+
+showStart();
+
+/* === SES MOTORU === */
+(function(){
+  var sesAcik=true, actx=null, sonSes=0;
+  function AC(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ actx=null; } } return actx; }
+  function ton(f,st,du,tp,vol){ var a=AC(); if(!a) return; var o=a.createOscillator(), g=a.createGain();
+    o.type=tp||'sine'; o.frequency.value=f; o.connect(g); g.connect(a.destination);
+    var t=a.currentTime+st; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.2,t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+du); o.start(t); o.stop(t+du+0.03); }
+  function gate(){ var n=Date.now(); if(n-sonSes<120) return false; sonSes=n; return true; }
+  window.sesDogru=function(){ if(!sesAcik||!gate()) return; [392,523,659,784,988,1319].forEach(function(f,i){ ton(f,i*0.05,0.12,'square',0.16); }); };
+  window.sesYanlis=function(){ if(!sesAcik||!gate()) return; ton(300,0,0.16,'sawtooth',0.2); ton(200,0.15,0.22,'sawtooth',0.2); };
+  window.sesToggle=function(){ sesAcik=!sesAcik; var b=document.getElementById('sesBtn'); if(b) b.textContent=sesAcik?'🔊':'🔇'; };
+  function ekleBtn(){ if(document.getElementById('sesBtn')) return; var b=document.createElement('button'); b.id='sesBtn';
+    b.textContent='🔊'; b.title='Ses aç/kapa'; b.setAttribute('onclick','sesToggle()');
+    b.style.cssText='position:fixed;top:10px;right:10px;z-index:9999;border:none;cursor:pointer;font-size:20px;background:rgba(255,255,255,.9);border-radius:999px;width:42px;height:42px;box-shadow:0 3px 8px rgba(0,0,0,.25)';
+    if(document.body) document.body.appendChild(b); }
+  if(document.readyState!=='loading') ekleBtn(); else document.addEventListener('DOMContentLoaded',ekleBtn);
+  function sar(name,ses){ if(typeof window[name]==='function'){ var o=window[name]; window[name]=function(){ ses(); return o.apply(this,arguments); }; return true; } return false; }
+  sar('burstFx',window.sesDogru) || sar('starBurst',window.sesDogru);
+})();
+
+</script>
+</body>
+</html>

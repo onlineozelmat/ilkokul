@@ -137,6 +137,29 @@ const SIHIRLER = [
       { label:"İlk tuttuğun sayıyı çıkar", f:(c,n)=>c-n }
     ],
     neden:"2 ile çarpıp sonra 2'ye bölünce sayı geri geldi; 10'un yarısı 5 oldu; tuttuğun sayıyı çıkarınca o yok oldu. Sonuç hep 5!" },
+
+  { id:4, ad:"4. Sihir", ic:"🌟", altbilgi:"8 adım · en karmaşığı", sonuc:9,
+    adimlar:[
+      { label:"Tuttuğun sayıyı 3 ile çarp", f:c=>c*3 },
+      { label:"18 ekle", f:c=>c+18 },
+      { label:"Sonucu 3'e böl", f:c=>c/3 },
+      { label:"5 ekle", f:c=>c+5 },
+      { label:"2 ile çarp", f:c=>c*2 },
+      { label:"4 çıkar", f:c=>c-4 },
+      { label:"2'ye böl", f:c=>c/2 },
+      { label:"İlk tuttuğun sayıyı çıkar", f:(c,n)=>c-n }
+    ],
+    neden:"Çarpma ve bölme adımları tuttuğun sayıyı tur attırıp aynen geri getirdi. Eklediğin ve çıkardığın sabit sayılar sonunda 9'a denk geldi. En sonda tuttuğun sayıyı çıkarınca o yok oldu — sonuç hep 9!" },
+
+  { id:5, ad:"5. Sihir", ic:"🎲", altbilgi:"5 adım · dört işlem birden", sonuc:3,
+    adimlar:[
+      { label:"Tuttuğun sayıya 5 ekle", f:c=>c+5 },
+      { label:"Sonucu 2 ile çarp", f:c=>c*2 },
+      { label:"4 çıkar", f:c=>c-4 },
+      { label:"2'ye böl", f:c=>c/2 },
+      { label:"İlk tuttuğun sayıyı çıkar", f:(c,n)=>c-n }
+    ],
+    neden:"5 ekleyip 2 ile çarptın, sonra 4 çıkarıp 2'ye böldün; sayı kendine döndü. Geriye hep 3 kaldı!" },
 ];
 
 let view='menu', trick=null, n=0, cur=0, step=0, typedNum='', enteringStart=false;
