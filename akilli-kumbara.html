@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akıllı Kumbara — Para Okuryazarlığı (1. Sınıf)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pig:#FF8FB4; --pig2:#E86A96; --gold:#FFC531; --gold2:#E0A81E; --sky:#4EC5FF;
+    --green:#4FCB77; --red:#FF6B6B; --purple:#9B6BFF; --ink:#5a2a40; --card:#ffffff; --soft:#FFF0F5;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    background:radial-gradient(1100px 720px at 25% -8%, #FFE3EF 0%, #FFD1E4 42%, #FFC7DC 100%);
+    color:var(--ink); min-height:100vh; overflow-x:hidden;
+    display:flex; align-items:center; justify-content:center; padding:16px;
+  }
+  h1,h2,h3{font-family:'Baloo 2',system-ui,sans-serif;}
+  .sky{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+  .sky i{position:absolute; font-size:24px; opacity:.2; animation:bob 4s ease-in-out infinite;}
+  @keyframes bob{50%{transform:translateY(-9px)}}
+
+  .stage{position:relative; z-index:2; width:100%; max-width:580px;
+    background:var(--card); border-radius:34px; padding:24px 22px 28px;
+    box-shadow:0 22px 54px rgba(120,40,80,.3), inset 0 0 0 5px #fff; animation:pop .4s cubic-bezier(.2,1.3,.4,1);}
+  @keyframes pop{from{transform:translateY(20px) scale(.95); opacity:0}to{transform:none; opacity:1}}
+
+  .top{display:flex; align-items:center; gap:10px; margin-bottom:8px;}
+  .stars{margin-left:auto; font-size:20px; font-weight:800; color:var(--gold); font-family:'Baloo 2';}
+  .prog{text-align:center; font-family:'Baloo 2'; font-weight:800; color:#b06a88; font-size:15px; margin-bottom:6px;}
+
+  .esya{font-size:80px; text-align:center; line-height:1; margin:8px 0; animation:bob 2.6s ease-in-out infinite;}
+  .soru{font-family:'Baloo 2'; font-weight:800; font-size:25px; color:var(--ink); text-align:center; margin:6px 0 14px;}
+  .soru small{display:block; font-family:'Nunito'; font-weight:800; font-size:15px; color:#b06a88; margin-top:4px;}
+
+  .ikili{display:grid; grid-template-columns:1fr 1fr; gap:14px; max-width:400px; margin:0 auto;}
+  .big-btn{font-family:'Baloo 2'; font-weight:800; font-size:22px; color:#fff; border:none; cursor:pointer;
+    padding:22px 10px; border-radius:22px; box-shadow:0 6px 0 rgba(0,0,0,.18); transition:.12s;}
+  .big-btn:active{transform:translateY(4px);} .big-btn small{display:block; font-size:28px; margin-bottom:2px;}
+  .b-need{background:var(--green); box-shadow:0 6px 0 #3aa55e;}
+  .b-want{background:var(--purple); box-shadow:0 6px 0 #7a4fd0;}
+  .b-yes{background:var(--green); box-shadow:0 6px 0 #3aa55e;}
+  .b-no{background:var(--red); box-shadow:0 6px 0 #d64a4a;}
+
+  .cuzdan{background:var(--soft); border-radius:18px; padding:12px; text-align:center; margin:6px auto 10px; max-width:360px;}
+  .cuzdan .lbl{font-weight:800; font-size:15px; color:#b06a88;}
+  .cuzdan .para{font-family:'Baloo 2'; font-weight:800; font-size:30px; color:var(--green);}
+  .fiyat{display:inline-block; background:var(--gold); color:#5a4200; font-family:'Baloo 2'; font-weight:800; font-size:20px; padding:4px 16px; border-radius:999px; margin-top:4px;}
+
+  /* seçim (iki eşya) */
+  .secim{display:grid; grid-template-columns:1fr 1fr; gap:14px; max-width:420px; margin:0 auto;}
+  .secim .kart{cursor:pointer; background:var(--soft); border:4px solid transparent; border-radius:20px; padding:14px 8px; text-align:center; transition:.12s;}
+  .secim .kart:active{transform:scale(.96);} .secim .kart .e{font-size:52px;} .secim .kart .n{font-family:'Baloo 2'; font-weight:800; font-size:17px; margin-top:4px;}
+  .secim .kart .f{display:inline-block; background:var(--gold); color:#5a4200; font-weight:800; font-size:14px; padding:1px 10px; border-radius:999px; margin-top:4px;}
+
+  /* kumbara */
+  .pig{font-size:72px; text-align:center; margin:4px 0; animation:bob 2.4s ease-in-out infinite;}
+  .meter{background:var(--soft); border-radius:999px; height:28px; max-width:360px; margin:8px auto; overflow:hidden; box-shadow:inset 0 0 0 3px #ffd6e6;}
+  .meter .in{height:100%; width:0%; border-radius:999px; background:linear-gradient(90deg,var(--gold),var(--pig)); transition:width .35s;}
+  .kmb-say{text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:22px; color:var(--ink); margin-bottom:6px;}
+  .coins{display:flex; gap:12px; justify-content:center; flex-wrap:wrap;}
+  .coin{font-family:'Baloo 2'; font-weight:800; font-size:20px; color:#5a4200; border:none; cursor:pointer;
+    background:radial-gradient(circle at 40% 35%, #ffe07a, var(--gold)); box-shadow:0 5px 0 var(--gold2);
+    width:70px; height:70px; border-radius:50%;}
+  .coin:active{transform:translateY(3px);}
+
+  .msg{margin-top:14px; text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:21px; min-height:24px;}
+  .msg.ok{color:var(--green);} .msg.no{color:var(--red);}
+  .think{background:var(--soft); border-radius:16px; padding:12px 14px; margin:12px 0 4px; font-weight:700; color:#a8536f; font-size:16px; text-align:center;}
+
+  .cta{font-family:'Baloo 2'; font-weight:800; font-size:22px; color:#fff; border:none; cursor:pointer;
+    background:var(--pig2); padding:14px 30px; border-radius:22px; box-shadow:0 6px 0 #c24e78; margin-top:8px;}
+  .cta:active{transform:translateY(4px); box-shadow:0 2px 0 #c24e78;} .cta.big{display:block; margin:16px auto 0;}
+  .cta.gold{background:var(--gold);color:#5a4200;box-shadow:0 6px 0 var(--gold2)}
+
+  .burst{position:fixed; inset:0; pointer-events:none; z-index:9; overflow:hidden;}
+  .burst span{position:absolute; top:40%; font-size:28px; animation:fly 1s ease-out forwards;}
+  @keyframes fly{to{transform:translate(var(--tx),var(--ty)) rotate(var(--r)); opacity:0}}
+
+  .start-title{font-size:30px; text-align:center; color:var(--ink); line-height:1.1; margin:6px 0;}
+  .start-sub{text-align:center; font-weight:700; color:#a8536f; font-size:16px; margin-bottom:6px;}
+  .heroes{font-size:56px; text-align:center; margin:4px 0;}
+  .adult{text-align:center; color:#c98aa6; font-weight:700; font-size:13px; margin-top:12px;}
+  @media (max-width:480px){ .esya{font-size:64px} .soru{font-size:21px} .big-btn{font-size:19px} .start-title{font-size:25px} }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;}}
+</style>
+</head>
+<body>
+<div class="sky" id="sky"></div>
+<div class="burst" id="burst"></div>
+<div class="stage" id="stage"></div>
+
+<script>
+/* tipler: 'ihtiyac' (ihtiyaç/istek), 'yeter' (paran yeter mi), 'kumbara' (biriktir), 'secim' (önce hangisi) */
+const TURLAR = [
+  { tip:'ihtiyac', e:"🍞", ad:"Ekmek", dogru:0,
+    ok:"Doğru! Ekmek yaşamak için gerekli → İHTİYAÇ.", think:"İhtiyaç: olmazsa olmaz şeyler (yemek, su, giysi)." },
+  { tip:'ihtiyac', e:"🧸", ad:"Oyuncak Ayı", dogru:1,
+    ok:"Doğru! Oyuncak eğlence için → İSTEK.", think:"İstek: hoşumuza giden ama şart olmayan şeyler." },
+  { tip:'ihtiyac', e:"💧", ad:"Su", dogru:0,
+    ok:"Doğru! Su içmek zorundayız → İHTİYAÇ.", think:"Susuz yaşayamayız; su bir ihtiyaçtır." },
+  { tip:'yeter', e:"🍎", ad:"Elma", cuzdan:10, fiyat:6, dogru:0,
+    ok:"Doğru! 10 TL'n var, elma 6 TL. Paran YETER. ✓", think:"Paran eşya kadar ya da daha çoksa alabilirsin." },
+  { tip:'ihtiyac', e:"🍭", ad:"Şeker", dogru:1,
+    ok:"Doğru! Şeker keyif için → İSTEK.", think:"Şeker olmadan da yaşarız; bu bir istektir." },
+  { tip:'yeter', e:"🚲", ad:"Bisiklet", cuzdan:5, fiyat:20, dogru:1,
+    ok:"Doğru! 5 TL'n var ama bisiklet 20 TL. Paran YETMEZ. ✗", think:"Paran eşyadan azsa alamazsın — biriktirmen gerekir." },
+  { tip:'kumbara', hedef:10, coin:2,
+    ok:"Kumbaran doldu! 🐷 Biriktirerek hedefe ulaştın.", think:"Her gün biraz biriktirince para büyür ve istediğini alabilirsin." },
+  { tip:'secim', e1:"🍞", n1:"Ekmek", f1:8, e2:"🎈", n2:"Balon", f2:8, dogru:0,
+    ok:"Doğru! Önce İHTİYACINI (ekmek) alırsın.", think:"Akıllı seçim: önce ihtiyaç, para kalırsa istek." },
+  { tip:'ihtiyac', e:"👟", ad:"Ayakkabı", dogru:0,
+    ok:"Doğru! Ayakkabı giymek gerekir → İHTİYAÇ.", think:"Giysi ve ayakkabı temel ihtiyaçlardır." }
+];
+
+let idx=0, score=0, kmb=0, busy=false;
+const stage=document.getElementById('stage'), burst=document.getElementById('burst');
+const TOTAL=TURLAR.length;
+
+(function(){ const em=["🪙","🐷","💰","💵","⭐","🛒"]; let s='';
+  for(let i=0;i<14;i++) s+=`<i style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*4}s">${em[i%em.length]}</i>`;
+  document.getElementById('sky').innerHTML=s; })();
+
+function burstFx(){ const emo=["🪙","⭐","🎉","🐷","💰"]; let h='';
+  for(let i=0;i<16;i++){ const tx=(Math.random()*2-1)*55+'vw', ty=(Math.random()*-1-0.2)*55+'vh', r=(Math.random()*720-360)+'deg';
+    h+=`<span style="left:${40+Math.random()*20}%;--tx:${tx};--ty:${ty};--r:${r}">${emo[i%emo.length]}</span>`; }
+  burst.innerHTML=h; setTimeout(()=>burst.innerHTML='',1000); }
+
+function showStart(){
+  stage.innerHTML=`
+    <div class="heroes">🐷🪙</div>
+    <h1 class="start-title">Akıllı Kumbara</h1>
+    <p class="start-sub">İhtiyaç mı istek mi? Paran yeter mi? Biriktir ve akıllı seç! Parayı tanımayı öğren. 🐷</p>
+    <div class="heroes" style="font-size:34px">🍞 🧸 💧 🍭 👟</div>
+    <button class="cta gold big" onclick="startGame()">Başla ▶</button>
+    <p class="adult">👩‍🏫 Yetişkin için: her soruyu birlikte konuşun — "bu neden ihtiyaç/istek?" diye sorun.</p>`;
+}
+function startGame(){ idx=0; score=0; nextTur(); }
+function nextTur(){ busy=false; kmb=0; render(); }
+
+function render(){
+  const c=TURLAR[idx];
+  let body='';
+  if(c.tip==='ihtiyac'){
+    body=`<div class="esya">${c.e}</div>
+      <div class="soru">${c.ad}<small>İhtiyaç mı, İstek mi?</small></div>
+      <div class="ikili">
+        <button class="big-btn b-need" onclick="sec(0)"><small>✅</small>İhtiyaç</button>
+        <button class="big-btn b-want" onclick="sec(1)"><small>💜</small>İstek</button></div>`;
+  } else if(c.tip==='yeter'){
+    body=`<div class="cuzdan"><div class="lbl">👛 Cüzdanında</div><div class="para">${c.cuzdan} TL</div></div>
+      <div class="esya">${c.e}</div>
+      <div class="soru">${c.ad} <span class="fiyat">${c.fiyat} TL</span><small>Paran yeter mi?</small></div>
+      <div class="ikili">
+        <button class="big-btn b-yes" onclick="sec(0)"><small>✓</small>Alırım</button>
+        <button class="big-btn b-no" onclick="sec(1)"><small>✗</small>Alamam</button></div>`;
+  } else if(c.tip==='secim'){
+    body=`<div class="soru">Elinde 10 TL var.<small>Önce hangisini almalısın?</small></div>
+      <div class="secim">
+        <div class="kart" onclick="sec(0)"><div class="e">${c.e1}</div><div class="n">${c.n1}</div><div class="f">${c.f1} TL</div></div>
+        <div class="kart" onclick="sec(1)"><div class="e">${c.e2}</div><div class="n">${c.n2}</div><div class="f">${c.f2} TL</div></div></div>`;
+  } else if(c.tip==='kumbara'){
+    const pct=Math.min(100,Math.round(kmb/c.hedef*100));
+    body=`<div class="pig">🐷</div>
+      <div class="kmb-say">Kumbara: ${kmb} / ${c.hedef} TL</div>
+      <div class="meter"><div class="in" style="width:${pct}%"></div></div>
+      <div class="soru" style="font-size:18px"><small>Hedefe ulaşmak için para at 🪙</small></div>
+      <div class="coins">
+        <button class="coin" onclick="paraAt(1)">1 TL</button>
+        <button class="coin" onclick="paraAt(2)">2 TL</button>
+        <button class="coin" onclick="paraAt(5)">5 TL</button></div>`;
+  }
+  stage.innerHTML=`
+    <div class="top"><span class="stars">⭐ ${score}</span></div>
+    <div class="prog">Görev ${idx+1}/${TOTAL}</div>
+    ${body}
+    <div class="msg" id="msg"></div>`;
+}
+
+function dogruTur(){ if(busy) return; busy=true; score++; burstFx();
+  const c=TURLAR[idx]; const last=idx===TOTAL-1;
+  setTimeout(()=>{ stage.innerHTML=`
+    <div class="esya">${c.e||c.e1||'🐷'}</div>
+    <div class="msg ok" style="font-size:22px">${c.ok}</div>
+    <div class="think">${c.think}</div>
+    <button class="cta ${last?'gold ':''}big" onclick="${last?'bitir()':'ilerle()'}">${last?'Bitir 🏁':'Sonraki ➜'}</button>`; }, 650);
+}
+function yanlisTur(msg){ if(window.sesYanlis) sesYanlis(); const m=document.getElementById('msg'); m.className='msg no'; m.textContent=msg||"Bir daha düşün 🙂"; }
+
+function sec(k){ if(busy) return; if(k===TURLAR[idx].dogru) dogruTur();
+  else{ const c=TURLAR[idx];
+    yanlisTur(c.tip==='yeter' ? "Paranı ve fiyatı karşılaştır 👀" : (c.tip==='secim'?"Önce ihtiyaç olanı seç 🤔":"Bir daha düşün 🙂")); } }
+
+function paraAt(v){ if(busy) return; kmb+=v; if(window.sesDogru && kmb<TURLAR[idx].hedef) {} render();
+  if(kmb>=TURLAR[idx].hedef){ dogruTur(); } }
+
+function ilerle(){ idx++; nextTur(); }
+function bitir(){ burstFx();
+  stage.innerHTML=`
+    <div class="heroes">🏆🐷🪙</div>
+    <h1 class="start-title">Para Ustası!</h1>
+    <p class="start-sub">İhtiyaç ve isteği ayırdın, paranın yetip yetmediğini anladın ve biriktirmeyi öğrendin!</p>
+    <div class="think">Büyük fikir: Önce <b>ihtiyaçlar</b>, sonra <b>istekler</b>. Biriktirince istediğini alabilirsin. 🐷</div>
+    <button class="cta gold big" onclick="startGame()">Yeniden Oyna 🔁</button>`;
+}
+
+showStart();
+
+/* === SES MOTORU === */
+(function(){
+  var sesAcik=true, actx=null, sonSes=0;
+  function AC(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ actx=null; } } return actx; }
+  function ton(f,st,du,tp,vol){ var a=AC(); if(!a) return; var o=a.createOscillator(), g=a.createGain();
+    o.type=tp||'sine'; o.frequency.value=f; o.connect(g); g.connect(a.destination);
+    var t=a.currentTime+st; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.2,t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+du); o.start(t); o.stop(t+du+0.03); }
+  function gate(){ var n=Date.now(); if(n-sonSes<120) return false; sonSes=n; return true; }
+  window.sesDogru=function(){ if(!sesAcik||!gate()) return; [392,523,659,784,988,1319].forEach(function(f,i){ ton(f,i*0.05,0.12,'square',0.16); }); };
+  window.sesYanlis=function(){ if(!sesAcik||!gate()) return; ton(300,0,0.16,'sawtooth',0.2); ton(200,0.15,0.22,'sawtooth',0.2); };
+  window.sesToggle=function(){ sesAcik=!sesAcik; var b=document.getElementById('sesBtn'); if(b) b.textContent=sesAcik?'🔊':'🔇'; };
+  function ekleBtn(){ if(document.getElementById('sesBtn')) return; var b=document.createElement('button'); b.id='sesBtn';
+    b.textContent='🔊'; b.title='Ses aç/kapa'; b.setAttribute('onclick','sesToggle()');
+    b.style.cssText='position:fixed;top:10px;right:10px;z-index:9999;border:none;cursor:pointer;font-size:20px;background:rgba(255,255,255,.9);border-radius:999px;width:42px;height:42px;box-shadow:0 3px 8px rgba(0,0,0,.25)';
+    if(document.body) document.body.appendChild(b); }
+  if(document.readyState!=='loading') ekleBtn(); else document.addEventListener('DOMContentLoaded',ekleBtn);
+  function sar(name,ses){ if(typeof window[name]==='function'){ var o=window[name]; window[name]=function(){ ses(); return o.apply(this,arguments); }; return true; } return false; }
+  sar('burstFx',window.sesDogru) || sar('starBurst',window.sesDogru);
+})();
+
+</script>
+</body>
+</html>
