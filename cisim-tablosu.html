@@ -124,8 +124,8 @@ const ROWS = [
   { ad:"Dikdörtgenler Prizması", svg:s_prizma(), y:6, k:8, a:12 },
   { ad:"Üçgen Prizma", svg:s_ucgenprizma(), y:5, k:6, a:9 },
   { ad:"Küre", svg:s_kure(), y:1, k:0, a:0 },
-  { ad:"Silindir", svg:s_silindir(), y:3, k:0, a:2 },
-  { ad:"Koni", svg:s_koni(), y:2, k:1, a:1 }
+  { ad:"Silindir", svg:s_silindir(), y:3, k:0, a:0 },
+  { ad:"Koni", svg:s_koni(), y:2, k:0, a:0 }
 ];
 const KOL=[{key:'y',ad:'Yüz',sor:'yüzü'},{key:'k',ad:'Köşe',sor:'köşesi'},{key:'a',ad:'Ayrıt',sor:'ayrıtı'}];
 // hücre sırası: satır satır (yüz, köşe, ayrıt)
@@ -151,7 +151,7 @@ function showStart(){
     <div class="heroes">${s_kup()}${s_silindir()}${s_koni()}${s_kure()}</div>
     <h1 class="start-title">Cisim Tablosu</h1>
     <p class="start-sub">Cisimlerin yüz, köşe ve ayrıt sayılarını bul, tabloyu doldur! 📊</p>
-    <div class="legend">📐 <b>Yüz</b> = düz yüzeyler · <b>Köşe</b> = sivri noktalar · <b>Ayrıt</b> = iki yüzün birleştiği kenar çizgisi</div>
+    <div class="legend">📐 <b>Yüz</b> = cismi saran yüzeyler (düz ya da yuvarlak) · <b>Köşe</b> = sivri noktalar · <b>Ayrıt</b> = iki yüzün birleştiği kenar çizgisi</div>
     <button class="cta sun big" onclick="startGame()">Tabloyu Doldur ▶</button>`;
 }
 function startGame(){ idx=0; doldu=[]; render(); }
@@ -194,7 +194,7 @@ function bitir(){ burstFx(["🏆","📊","⭐","🎉"]);
     <h1 class="start-title">Tablo Tamam! 🏆</h1>
     <p class="start-sub">Tüm cisimlerin yüz, köşe ve ayrıt sayılarını buldun!</p>
     ${tabloHTML()}
-    <div class="think">Fark ettin mi? Küre, silindir ve koni <b>yuvarlak yüzeyli</b>dir; köşeleri ve ayrıtları çok az ya da hiç yoktur. Küp ve prizmaların ise çok köşesi ve ayrıtı vardır.</div>
+    <div class="think">Fark ettin mi? Küre, silindir ve koni <b>yuvarlak yüzeyli</b>dir; <b>köşeleri ve ayrıtları yoktur (0)</b>. Küre 1, koni 2, silindir 3 yüzeye sahiptir. Küp ve prizmaların ise çok köşesi ve ayrıtı vardır.</div>
     <button class="cta sun big" onclick="startGame()">Yeniden Oyna 🔁</button>`;
 }
 
