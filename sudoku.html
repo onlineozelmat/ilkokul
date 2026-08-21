@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sudoku — Boyut Seç ve Oyna (3-4. Sınıf)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#26324f; --grid:#2c3a5e; --sun:#FFC531; --sky:#4EA1FF; --sky2:#2f7fd6;
+    --green:#4FCB77; --coral:#FF6B6B; --card:#ffffff; --soft:#EAF1FB; --given:#3a4a72;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    background:radial-gradient(1100px 720px at 25% -8%, #DCEBFF 0%, #BBD6FF 45%, #9EC2FF 100%);
+    color:var(--ink); min-height:100vh; overflow-x:hidden;
+    display:flex; align-items:center; justify-content:center; padding:14px;
+  }
+  h1,h2,h3{font-family:'Baloo 2',system-ui,sans-serif;}
+  .stage{position:relative; z-index:2; width:100%; max-width:520px;
+    background:var(--card); border-radius:28px; padding:18px 18px 22px;
+    box-shadow:0 22px 54px rgba(40,60,110,.3), inset 0 0 0 4px #fff; animation:pop .4s cubic-bezier(.2,1.3,.4,1);}
+  @keyframes pop{from{transform:translateY(18px) scale(.96); opacity:0}to{transform:none; opacity:1}}
+
+  .baslik{text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:24px; color:var(--ink); margin:2px 0 8px;}
+  .baslik small{display:block; font-family:'Nunito'; font-weight:700; font-size:13px; color:#6a7aa0; margin-top:2px;}
+
+  .secici{display:flex; gap:7px; justify-content:center; flex-wrap:wrap; margin-bottom:12px;}
+  .chip{font-family:'Baloo 2'; font-weight:800; font-size:15px; border:none; cursor:pointer; color:var(--sky2);
+    background:var(--soft); padding:8px 12px; border-radius:12px; box-shadow:0 3px 0 #cdddf3; transition:.1s;}
+  .chip:active{transform:translateY(2px);} .chip.sec{background:var(--sky); color:#fff; box-shadow:0 3px 0 var(--sky2);}
+
+  .board-wrap{display:flex; justify-content:center; margin:6px 0 12px;}
+  .board{display:grid; gap:0; background:var(--grid); padding:3px; border-radius:12px; border:3px solid var(--grid);}
+  .cell{background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer;
+    font-family:'Baloo 2'; font-weight:800; color:var(--sky2); border:1px solid #d5deee; user-select:none;}
+  .cell.given{color:var(--given); background:#eef2f9; cursor:default;}
+  .cell.sel{background:#fff3cf; box-shadow:0 0 0 2px var(--sun) inset;}
+  .cell.peer{background:#f3f7fd;}
+  .cell.same{background:#d7ecff;}
+  .cell.bad{color:#fff; background:var(--coral) !important;}
+  .cell.br{border-right:3px solid var(--grid);}
+  .cell.bb{border-bottom:3px solid var(--grid);}
+
+  .pad{display:flex; gap:7px; justify-content:center; flex-wrap:wrap; margin-top:4px;}
+  .key{font-family:'Baloo 2'; font-weight:800; font-size:20px; border:none; cursor:pointer; color:#fff;
+    background:var(--sky); box-shadow:0 4px 0 var(--sky2); width:44px; height:48px; border-radius:12px; transition:.1s;}
+  .key:active{transform:translateY(3px);} .key.sil{background:#9aa7c4; box-shadow:0 4px 0 #7d8aa8; font-size:16px;}
+
+  .altbar{display:flex; gap:8px; justify-content:center; margin-top:14px;}
+  .cta{font-family:'Baloo 2'; font-weight:800; font-size:17px; color:#fff; border:none; cursor:pointer;
+    background:var(--sky2); padding:11px 20px; border-radius:16px; box-shadow:0 5px 0 #235f9e;}
+  .cta:active{transform:translateY(3px); box-shadow:0 2px 0 #235f9e;}
+  .cta.sun{background:var(--sun); color:#5a4200; box-shadow:0 5px 0 #d9a520;}
+
+  .msg{text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:16px; min-height:20px; margin-top:10px; color:#6a7aa0;}
+  .yukleniyor{text-align:center; padding:40px 0; font-family:'Baloo 2'; font-weight:800; color:var(--sky2); font-size:18px;}
+
+  .burst{position:fixed; inset:0; pointer-events:none; z-index:9; overflow:hidden;}
+  .burst span{position:absolute; top:40%; font-size:26px; animation:fly 1s ease-out forwards;}
+  @keyframes fly{to{transform:translate(var(--tx),var(--ty)) rotate(var(--r)); opacity:0}}
+
+  .win{text-align:center; padding:10px 0;}
+  .win .heroes{font-size:52px;} .win h2{font-size:26px; color:var(--ink); margin:4px 0;}
+  .win p{font-weight:700; color:#6a7aa0; margin-bottom:8px;}
+  @media (max-width:480px){ .baslik{font-size:20px} }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;}}
+</style>
+</head>
+<body>
+<div class="burst" id="burst"></div>
+<div class="stage" id="stage"></div>
+
+<script>
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function boxDims(N){ if(N===4)return[2,2]; if(N===6)return[2,3]; if(N===9)return[3,3]; return[0,0]; }
+function ok(g,N,br,bc,r,c,v){ for(let i=0;i<N;i++){ if(g[r][i]===v)return false; if(g[i][c]===v)return false; }
+  if(br>0){ const r0=Math.floor(r/br)*br,c0=Math.floor(c/bc)*bc; for(let i=0;i<br;i++)for(let j=0;j<bc;j++) if(g[r0+i][c0+j]===v)return false; } return true; }
+function fillGrid(g,N,br,bc){ for(let r=0;r<N;r++)for(let c=0;c<N;c++) if(g[r][c]===0){ const nums=shuffle([...Array(N)].map((_,i)=>i+1));
+  for(const v of nums){ if(ok(g,N,br,bc,r,c,v)){ g[r][c]=v; if(fillGrid(g,N,br,bc))return true; g[r][c]=0; } } return false; } return true; }
+function countSol(g,N,br,bc,limit){ let r=-1,c=-1; outer:for(let i=0;i<N;i++)for(let j=0;j<N;j++) if(g[i][j]===0){r=i;c=j;break outer;}
+  if(r===-1)return 1; let cnt=0; for(let v=1;v<=N;v++){ if(ok(g,N,br,bc,r,c,v)){ g[r][c]=v; cnt+=countSol(g,N,br,bc,limit-cnt); g[r][c]=0; if(cnt>=limit)break; } } return cnt; }
+function makePuzzle(N,target){ const [br,bc]=boxDims(N); let full=Array.from({length:N},()=>Array(N).fill(0)); fillGrid(full,N,br,bc);
+  const p=full.map(r=>r.slice()); const cells=shuffle([...Array(N*N)].map((_,i)=>i)); let givens=N*N;
+  for(const idx of cells){ if(givens<=target)break; const r=Math.floor(idx/N),c=idx%N; const s=p[r][c]; p[r][c]=0;
+    const copy=p.map(row=>row.slice()); if(countSol(copy,N,br,bc,2)!==1){ p[r][c]=s; } else givens--; }
+  return {p,full,br,bc}; }
+
+const TARGET={3:4,4:8,5:13,6:18,9:40};
+let N=4, boxR=2, boxC=2, puzzle=[], solution=[], cur=[], given=[], selR=-1, selC=-1, busy=false;
+const stage=document.getElementById('stage'), burst=document.getElementById('burst');
+
+function burstFx(){ const emo=["⭐","🔢","🎉","✨","🧩"]; let h='';
+  for(let i=0;i<18;i++){ const tx=(Math.random()*2-1)*55+'vw', ty=(Math.random()*-1-0.2)*55+'vh', r=(Math.random()*720-360)+'deg';
+    h+=`<span style="left:${40+Math.random()*20}%;--tx:${tx};--ty:${ty};--r:${r}">${emo[i%emo.length]}</span>`; }
+  burst.innerHTML=h; setTimeout(()=>burst.innerHTML='',1000); }
+
+function conflicts(){
+  const bad=new Set();
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){ const v=cur[r][c]; if(!v) continue;
+    for(let i=0;i<N;i++){ if(i!==c && cur[r][i]===v) bad.add(r+','+c); if(i!==r && cur[i][c]===v) bad.add(r+','+c); }
+    if(boxR>0){ const r0=Math.floor(r/boxR)*boxR,c0=Math.floor(c/boxC)*boxC;
+      for(let i=0;i<boxR;i++)for(let j=0;j<boxC;j++){ const rr=r0+i,cc=c0+j; if((rr!==r||cc!==c)&&cur[rr][cc]===v) bad.add(r+','+c); } }
+  }
+  return bad;
+}
+function tamMi(){ for(let r=0;r<N;r++)for(let c=0;c<N;c++) if(!cur[r][c]) return false; return true; }
+
+function secici(){ return `<div class="secici">${[3,4,5,6,9].map(n=>`<button class="chip ${n===N?'sec':''}" onclick="yeniOyun(${n})">${n}×${n}</button>`).join('')}</div>`; }
+function kutuNot(){ return boxR>0 ? "Her satır, sütun ve kutuda 1–"+N+" birer kez" : "Her satır ve sütunda 1–"+N+" birer kez (kutu yok)"; }
+
+function yeniOyun(n){ N=n; [boxR,boxC]=boxDims(N); selR=-1; selC=-1; busy=false;
+  stage.innerHTML=`<div class="baslik">${N}×${N} Sudoku<small>Bulmaca hazırlanıyor…</small></div>${secici()}<div class="yukleniyor">🧩 Hazırlanıyor…</div>`;
+  setTimeout(()=>{ const P=makePuzzle(N,TARGET[N]); puzzle=P.p; solution=P.full;
+    cur=puzzle.map(r=>r.slice()); given=puzzle.map(r=>r.map(v=>v!==0)); render(); }, 30);
+}
+
+function render(msg){
+  const bad=conflicts();
+  const boyut=Math.min(46, Math.floor(360/N));
+  let cells='';
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+    const v=cur[r][c];
+    let cls='cell';
+    if(given[r][c]) cls+=' given';
+    if(r===selR&&c===selC) cls+=' sel';
+    else if(selR>=0){ const sameBox = boxR>0 && Math.floor(r/boxR)===Math.floor(selR/boxR) && Math.floor(c/boxC)===Math.floor(selC/boxC);
+      if(r===selR||c===selC||sameBox) cls+=' peer';
+      if(v && v===cur[selR][selC]) cls+=' same'; }
+    if(bad.has(r+','+c)) cls+=' bad';
+    if(boxC>0 && (c+1)%boxC===0 && c<N-1) cls+=' br';
+    if(boxR>0 && (r+1)%boxR===0 && r<N-1) cls+=' bb';
+    cells+=`<div class="${cls}" style="width:${boyut}px;height:${boyut}px;font-size:${Math.round(boyut*0.5)}px" onclick="secHucre(${r},${c})">${v||''}</div>`;
+  }
+  const keys=[...Array(N)].map((_,i)=>`<button class="key" onclick="koy(${i+1})">${i+1}</button>`).join('')
+    +`<button class="key sil" onclick="koy(0)">Sil</button>`;
+  stage.innerHTML=`
+    <div class="baslik">${N}×${N} Sudoku<small>${kutuNot()}</small></div>
+    ${secici()}
+    <div class="board-wrap"><div class="board" style="grid-template-columns:repeat(${N},${boyut}px)">${cells}</div></div>
+    <div class="pad">${keys}</div>
+    <div class="msg" id="msg">${msg||'Bir kareye dokun, sonra sayı seç.'}</div>
+    <div class="altbar"><button class="cta" onclick="ipucu()">💡 İpucu</button><button class="cta sun" onclick="yeniOyun(${N})">🔁 Yeni Bulmaca</button></div>`;
+}
+
+function secHucre(r,c){ if(busy) return; if(given[r][c]){ selR=-1;selC=-1; render(); return; } selR=r; selC=c; render(); }
+function koy(v){ if(busy||selR<0||given[selR][selC]) return;
+  cur[selR][selC]=v;
+  const bad=conflicts();
+  if(v!==0 && bad.has(selR+','+selC)){ if(window.sesYanlis) sesYanlis(); render("Bu sayı satır/sütun/kutuda tekrar ediyor 🔴"); return; }
+  if(tamMi() && bad.size===0){ kazandi(); return; }
+  render();
+}
+function ipucu(){ if(busy||selR<0||given[selR][selC]){ render("Önce boş bir kareye dokun 👆"); return; }
+  cur[selR][selC]=solution[selR][selC]; if(window.sesDogru) sesDogru();
+  if(tamMi() && conflicts().size===0){ kazandi(); return; }
+  render("İpucu verildi ✓"); }
+
+function kazandi(){ busy=true; burstFx();
+  stage.innerHTML=`
+    ${secici()}
+    <div class="win">
+      <div class="heroes">🏆🧩</div>
+      <h2>Çözdün!</h2>
+      <p>${N}×${N} Sudoku'yu tamamladın. Her satır, sütun${boxR>0?' ve kutu':''} tam!</p>
+    </div>
+    <div class="altbar"><button class="cta sun" onclick="yeniOyun(${N})">🔁 Yeni ${N}×${N}</button></div>`;
+}
+
+// başlangıç
+yeniOyun(4);
+
+/* === SES MOTORU === */
+(function(){
+  var sesAcik=true, actx=null, sonSes=0;
+  function AC(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ actx=null; } } return actx; }
+  function ton(f,st,du,tp,vol){ var a=AC(); if(!a) return; var o=a.createOscillator(), g=a.createGain();
+    o.type=tp||'sine'; o.frequency.value=f; o.connect(g); g.connect(a.destination);
+    var t=a.currentTime+st; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.2,t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+du); o.start(t); o.stop(t+du+0.03); }
+  function gate(){ var n=Date.now(); if(n-sonSes<120) return false; sonSes=n; return true; }
+  window.sesDogru=function(){ if(!sesAcik||!gate()) return; [392,523,659,784,988,1319].forEach(function(f,i){ ton(f,i*0.05,0.12,'square',0.16); }); };
+  window.sesYanlis=function(){ if(!sesAcik||!gate()) return; ton(300,0,0.16,'sawtooth',0.2); ton(200,0.15,0.22,'sawtooth',0.2); };
+  window.sesToggle=function(){ sesAcik=!sesAcik; var b=document.getElementById('sesBtn'); if(b) b.textContent=sesAcik?'🔊':'🔇'; };
+  function ekleBtn(){ if(document.getElementById('sesBtn')) return; var b=document.createElement('button'); b.id='sesBtn';
+    b.textContent='🔊'; b.title='Ses aç/kapa'; b.setAttribute('onclick','sesToggle()');
+    b.style.cssText='position:fixed;top:10px;right:10px;z-index:9999;border:none;cursor:pointer;font-size:20px;background:rgba(255,255,255,.9);border-radius:999px;width:42px;height:42px;box-shadow:0 3px 8px rgba(0,0,0,.25)';
+    if(document.body) document.body.appendChild(b); }
+  if(document.readyState!=='loading') ekleBtn(); else document.addEventListener('DOMContentLoaded',ekleBtn);
+  function sar(name,ses){ if(typeof window[name]==='function'){ var o=window[name]; window[name]=function(){ ses(); return o.apply(this,arguments); }; return true; } return false; }
+  sar('burstFx',window.sesDogru) || sar('starBurst',window.sesDogru);
+})();
+
+</script>
+</body>
+</html>
