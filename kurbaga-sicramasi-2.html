@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kurbağa Sıçraması — Ritmik Sayma (2. Sınıf)</title>
+<title>Kurbağa Sıçraması 2 — Ritmik Sayma (3. Sınıf)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
@@ -86,12 +86,12 @@ function seri(say,n,geri){ let a=[]; for(let i=1;i<=n;i++) a.push(say*i); if(ger
 
 /* Her tur: çok boşluklu bir dizi. bos = boşluk indeksleri. */
 const TURLAR = [
-  { say:2,  geri:false, tam:seri(2,10,false),  bos:[1,4,6,9], et:"+2",  baslik:"2'şer say, 20'ye kadar" },
-  { say:3,  geri:false, tam:seri(3,10,false),  bos:[2,3,6,8], et:"+3",  baslik:"3'er say, 30'a kadar" },
-  { say:4,  geri:false, tam:seri(4,10,false),  bos:[1,5,7,8], et:"+4",  baslik:"4'er say, 40'a kadar" },
-  { say:5,  geri:false, tam:seri(5,10,false),  bos:[2,4,5,9], et:"+5",  baslik:"5'er say, 50'ye kadar" },
-  { say:10, geri:false, tam:seri(10,10,false), bos:[1,3,7,8], et:"+10", baslik:"10'ar say, 100'e kadar" },
-  { say:2,  geri:true,  tam:seri(2,10,true),   bos:[2,5,6,8], et:"−2",  baslik:"2'şer GERİ say" }
+  { say:6, geri:false, tam:seri(6,10,false), bos:[1,2,4,6,7,9], et:"+6", baslik:"6'şar say, 60'a kadar" },
+  { say:7, geri:false, tam:seri(7,10,false), bos:[1,3,4,6,8,9], et:"+7", baslik:"7'şer say, 70'e kadar" },
+  { say:8, geri:false, tam:seri(8,10,false), bos:[2,3,5,6,8,9], et:"+8", baslik:"8'er say, 80'e kadar" },
+  { say:9, geri:false, tam:seri(9,10,false), bos:[1,2,4,5,7,8], et:"+9", baslik:"9'ar say, 90'a kadar" },
+  { say:6, geri:true,  tam:seri(6,10,true),  bos:[1,3,5,6,8,9], et:"−6", baslik:"6'şar GERİ say" },
+  { say:9, geri:true,  tam:seri(9,10,true),  bos:[2,3,5,7,8,9], et:"−9", baslik:"9'ar GERİ say" }
 ];
 
 let idx=0, score=0, current=null, filled=null, aktif=-1, busy=false;
@@ -115,9 +115,9 @@ function burstFx(){ const emo=["⭐","🐸","🎉","💚"]; let h='';
 function showStart(){
   stage.innerHTML=`
     <div class="heroes">🐸🪷</div>
-    <h1 class="start-title">Kurbağa Sıçraması</h1>
-    <p class="start-sub">Kurbağa yapraktan yaprağa zıplıyor! Boşluktaki sayıları ritmik sayarak bul: 2'şer, 3'er, 4'er, 5'er, 10'ar. 🐸</p>
-    <div class="heroes" style="font-size:30px">2️⃣ 3️⃣ 4️⃣ 5️⃣ 🔟</div>
+    <h1 class="start-title">Kurbağa Sıçraması 2</h1>
+    <p class="start-sub">Daha büyük sıçramalar! Boşluktaki sayıları ritmik sayarak bul: 6'şar, 7'şer, 8'er, 9'ar. 🐸</p>
+    <div class="heroes" style="font-size:30px">6️⃣ 7️⃣ 8️⃣ 9️⃣</div>
     <button class="cta sun big" onclick="startGame()">Sıçramaya Başla ▶</button>
     <p class="adult">👩‍🏫 Yetişkin için: çocukla sesli sayın — "iki, dört, altı…" ritmi öğrenmeyi kolaylaştırır.</p>`;
 }
@@ -170,7 +170,7 @@ function bitir(){ burstFx();
   stage.innerHTML=`
     <div class="heroes">🏆🐸🪷</div>
     <h1 class="start-title">Sıçrama Ustası!</h1>
-    <p class="start-sub">2'şer, 3'er, 4'er, 5'er ve 10'ar saymayı, üstelik çok boşluklu dizilerde başardın!</p>
+    <p class="start-sub">6'şar, 7'şer, 8'er ve 9'ar saymayı, üstelik bol boşluklu dizilerde başardın!</p>
     <div class="think">İpucu: Ritmik sayma saatte, parada ve büyük sayıları sayarken hep işine yarar!</div>
     <button class="cta sun big" onclick="startGame()">Yeniden Oyna 🔁</button>`;
 }

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Takvim Dedektifleri — Gün, Hafta, Ay (3-4. Sınıf)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#3d2c1a; --paper:#FFF7E8; --amber:#E8A33D; --amber2:#C9812A; --teal:#2FA8A0;
+    --rose:#E8637A; --green:#4FCB77; --coral:#FF7A6B; --sun:#FFC531; --card:#ffffff; --soft:#FBEFD8;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    background:radial-gradient(1100px 720px at 25% -8%, #FFEFCB 0%, #F6D9A0 45%, #E9C07E 100%);
+    color:var(--ink); min-height:100vh; overflow-x:hidden;
+    display:flex; align-items:center; justify-content:center; padding:14px;
+  }
+  h1,h2,h3{font-family:'Baloo 2',system-ui,sans-serif;}
+  .stage{position:relative; z-index:2; width:100%; max-width:560px;
+    background:var(--card); border-radius:28px; padding:20px 18px 24px;
+    box-shadow:0 22px 54px rgba(90,60,20,.3), inset 0 0 0 4px #fff; animation:pop .4s cubic-bezier(.2,1.3,.4,1);}
+  @keyframes pop{from{transform:translateY(18px) scale(.96); opacity:0}to{transform:none; opacity:1}}
+
+  .rail{display:flex; align-items:center; gap:10px; margin-bottom:8px;}
+  .track{flex:1; height:14px; border-radius:20px; background:var(--soft); position:relative; overflow:hidden;}
+  .fill{position:absolute; inset:0 auto 0 0; width:0%; border-radius:20px; background:linear-gradient(90deg,var(--amber),var(--teal)); transition:width .4s;}
+  .scorebox{font-family:'Baloo 2'; font-weight:800; color:var(--amber2); font-size:16px; white-space:nowrap;}
+
+  .aybas{text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:22px; color:var(--ink); margin:4px 0 6px;}
+  .takvim{display:grid; grid-template-columns:repeat(7,1fr); gap:4px; background:var(--soft); padding:8px; border-radius:16px; border:3px solid var(--amber);}
+  .cell{aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; font-family:'Baloo 2'; font-weight:800; font-size:16px; border-radius:9px;}
+  .cell.hdr{background:transparent; color:var(--amber2); font-size:12px; aspect-ratio:auto; padding:2px 0;}
+  .cell.bos{background:transparent;}
+  .cell.gun{background:#fff; color:var(--ink); box-shadow:0 2px 0 #e7d6b3;}
+  .cell.tik{cursor:pointer; border:none; transition:.1s;}
+  .cell.tik:hover{background:#fff3d6;} .cell.tik:active{transform:translateY(2px);}
+  .cell.vur{background:var(--green); color:#fff; box-shadow:0 2px 0 #3aa55e;}
+  .cell.shake{animation:shk .4s;} @keyframes shk{10%,90%{transform:translateX(-2px)}30%,70%{transform:translateX(3px)}50%{transform:translateX(-5px)}}
+
+  .kartbar{display:flex; align-items:center; gap:8px; margin:12px 0 4px; background:var(--soft); border-radius:14px; padding:8px 12px;}
+  .kartbar .no{font-family:'Baloo 2'; font-weight:800; background:var(--rose); color:#fff; border-radius:10px; padding:2px 10px; font-size:14px; white-space:nowrap;}
+  .soru{font-family:'Baloo 2'; font-weight:800; font-size:19px; color:var(--ink); line-height:1.3;}
+  .ipucu{background:#eafaf7; border-left:4px solid var(--teal); border-radius:8px; padding:8px 12px; font-weight:700; color:#1c6b66; font-size:16px; margin:10px 0; white-space:pre-line;}
+  .komut{text-align:center; font-weight:800; color:var(--amber2); font-size:14px; margin:8px 0 2px;}
+
+  .opts{display:grid; grid-template-columns:repeat(2,1fr); gap:10px; max-width:400px; margin:8px auto 0;}
+  .opts.dort{grid-template-columns:repeat(4,1fr);}
+  .opt{font-family:'Baloo 2'; font-weight:800; font-size:18px; color:#fff; border:none; cursor:pointer;
+    padding:14px 6px; border-radius:14px; background:var(--teal); box-shadow:0 5px 0 #22857e; transition:.1s;}
+  .opt:active{transform:translateY(3px);} .opt.wrong{opacity:.35;} .opt.shake{animation:shk .4s;}
+
+  .msg{margin-top:12px; text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:19px; min-height:22px;}
+  .msg.ok{color:var(--green);} .msg.no{color:var(--coral);}
+  .think{background:var(--soft); border-radius:16px; padding:12px 14px; margin:12px 0 4px; font-weight:700; color:#9a6a1e; font-size:16px; text-align:center;}
+
+  .cta{font-family:'Baloo 2'; font-weight:800; font-size:22px; color:#fff; border:none; cursor:pointer;
+    background:var(--amber2); padding:14px 30px; border-radius:20px; box-shadow:0 6px 0 #a06818; margin-top:6px;}
+  .cta:active{transform:translateY(4px); box-shadow:0 2px 0 #a06818;} .cta.big{display:block; margin:16px auto 0;}
+  .cta.sun{background:var(--sun);color:#5a4200;box-shadow:0 6px 0 #d9a520}
+
+  .burst{position:fixed; inset:0; pointer-events:none; z-index:9; overflow:hidden;}
+  .burst span{position:absolute; top:40%; font-size:26px; animation:fly 1s ease-out forwards;}
+  @keyframes fly{to{transform:translate(var(--tx),var(--ty)) rotate(var(--r)); opacity:0}}
+
+  .start-title{font-size:30px; text-align:center; color:var(--ink); line-height:1.1; margin:6px 0;}
+  .start-sub{text-align:center; font-weight:700; color:#9a6a3a; font-size:16px; margin-bottom:6px;}
+  .heroes{font-size:52px; text-align:center; margin:4px 0;}
+  @media (max-width:480px){ .soru{font-size:17px} .cell{font-size:14px} .start-title{font-size:25px} }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;}}
+</style>
+</head>
+<body>
+<div class="burst" id="burst"></div>
+<div class="stage" id="stage"></div>
+
+<script>
+const GUNLER=["Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi","Pazar"];
+const KISA=["Pzt","Sal","Çar","Per","Cum","Cmt","Paz"];
+const AY="Mayıs", GUN_SAYISI=31, ILK_COL=2;              // 1 Mayıs = Çarşamba
+const gunAdi=d=>GUNLER[(ILK_COL+(d-1))%7];
+
+/* tip: 'secenek' (gün/sayı seç) | 'tarih' (takvimden tarihe dokun) */
+const GOREVLER = [
+  { tip:'secenek', no:"Görev 1", soru:"15 Mayıs hangi gündür?", opts:["Salı","Çarşamba","Perşembe","Cuma"], cevap:"Çarşamba", vurgu:[15],
+    think:"15'i takvimde bul, sütun başlığına bak: Çarşamba." },
+  { tip:'tarih', no:"Görev 2", soru:"Bu ayın ilk Pazar günü hangi tarihtir?", cevap:5, vurgu:[5],
+    think:"Pazar sütununa bak; ilk Pazar 5 Mayıs." },
+  { tip:'tarih', no:"Görev 3", soru:"18 Mayıs'tan 10 gün önce hangi tarihtir?", cevap:8, vurgu:[8,18],
+    think:"18 − 10 = 8 Mayıs." },
+  { tip:'secenek', no:"Görev 4", soru:"8 Mayıs ile 29 Mayıs arasında kaç hafta vardır?", opts:["2","3","4","7"], cevap:"3", vurgu:[8,29],
+    think:"29 − 8 = 21 gün. 21 ÷ 7 = 3 hafta." },
+  { tip:'tarih', no:"İpucu 1", ipucu:"🔎 Ben bir tarihim.\nMayıs'tayım ve bir Cumartesiyim.\n15'ten büyük, 25'ten küçüğüm.\nHangi tarihim?", cevap:18, vurgu:[18],
+    think:"Cumartesiler: 4, 11, 18, 25. 15 ile 25 arasında olan: 18." },
+  { tip:'tarih', no:"İpucu 2", ipucu:"🔎 Ben, ayın üçüncü Pazartesisinden 2 gün sonrayım.\nHangi tarihim?", cevap:22, vurgu:[20,22],
+    think:"Pazartesiler: 6, 13, 20, 27. Üçüncüsü 20. 20 + 2 = 22." },
+  { tip:'tarih', no:"Görev 5", soru:"Bu ayın son Pazar günü hangi tarihtir?", cevap:26, vurgu:[26],
+    think:"Pazarlar: 5, 12, 19, 26. Sonuncusu 26." },
+  { tip:'tarih', no:"İpucu 3", ipucu:"🔎 Bir Perşembeyim.\n10'dan büyüğüm.\nRakamlarımın toplamı 5.\nHangi tarihim?", cevap:23, vurgu:[23],
+    think:"Perşembeler (10'dan büyük): 16, 23, 30. Rakam toplamı 5 olan: 23 (2+3=5)." },
+  { tip:'secenek', no:"Gün 1", soru:"12 Mayıs'tan 10 gün sonra hangi gündür?", opts:["Salı","Çarşamba","Perşembe","Pazar"], cevap:"Çarşamba", vurgu:[12,22],
+    think:"12 + 10 = 22 Mayıs. 22 Mayıs Çarşamba. (7 gün sonra hep aynı gün gelir.)" },
+  { tip:'secenek', no:"Gün 2", soru:"20 Mayıs'tan 10 gün önce hangi gündür?", opts:["Cuma","Cumartesi","Perşembe","Pazartesi"], cevap:"Cuma", vurgu:[10,20],
+    think:"20 − 10 = 10 Mayıs. 10 Mayıs Cuma." },
+  { tip:'secenek', no:"Gün 3", soru:"3 Mayıs'tan 15 gün sonra hangi gündür?", opts:["Cuma","Cumartesi","Pazar","Salı"], cevap:"Cumartesi", vurgu:[3,18],
+    think:"3 + 15 = 18 Mayıs. 18 Mayıs Cumartesi." },
+  { tip:'tarih', no:"Tarih 1", soru:"8 Mayıs'tan 10 gün sonra ayın kaçı olur? (Takvimden dokun)", cevap:18, vurgu:[8,18],
+    think:"8 + 10 = 18 Mayıs." },
+  { tip:'tarih', no:"Tarih 2", soru:"25 Mayıs'tan 12 gün önce ayın kaçı olur?", cevap:13, vurgu:[13,25],
+    think:"25 − 12 = 13 Mayıs." },
+  { tip:'tarih', no:"Tarih 3", soru:"6 Mayıs'tan 15 gün sonra ayın kaçı olur?", cevap:21, vurgu:[6,21],
+    think:"6 + 15 = 21 Mayıs." },
+  { tip:'tarih', no:"Hafta 1", soru:"Ayın ilk Perşembesinden 2 hafta sonra ayın kaçı olur? (Takvimden dokun)", cevap:16, vurgu:[2,16],
+    think:"İlk Perşembe 2 Mayıs. 2 hafta = 14 gün. 2 + 14 = 16." },
+  { tip:'tarih', no:"Hafta 2", soru:"Ayın ikinci Cuma gününden 1 hafta sonra ayın kaçı olur?", cevap:17, vurgu:[10,17],
+    think:"Cumalar: 3, 10, 17, 24, 31. İkincisi 10. 10 + 7 = 17." },
+  { tip:'tarih', no:"Hafta 3", soru:"Ayın son Salı gününden 2 hafta önce ayın kaçı olur?", cevap:14, vurgu:[28,14],
+    think:"Salılar: 7, 14, 21, 28. Sonuncusu 28. 2 hafta = 14 gün. 28 − 14 = 14." },
+  { tip:'tarih', no:"Hafta 4", soru:"Ayın ilk Pazartesisinden 3 hafta sonra ayın kaçı olur?", cevap:27, vurgu:[6,27],
+    think:"İlk Pazartesi 6 Mayıs. 3 hafta = 21 gün. 6 + 21 = 27." },
+  { tip:'tarih', no:"Etkinlik", soru:"🎲 Akıl Oyunları etkinliğini ayın ilk Cumartesisine koyacaksın. Hangi tarihe dokunursun?", cevap:4, vurgu:[4],
+    think:"Cumartesiler: 4, 11, 18, 25. İlki 4 Mayıs." }
+];
+
+let idx=0, score=0, busy=false;
+const stage=document.getElementById('stage'), burst=document.getElementById('burst');
+const TOTAL=GOREVLER.length;
+
+function burstFx(){ const emo=["⭐","🗓️","🎉","🔍","✨"]; let h='';
+  for(let i=0;i<16;i++){ const tx=(Math.random()*2-1)*55+'vw', ty=(Math.random()*-1-0.2)*55+'vh', r=(Math.random()*720-360)+'deg';
+    h+=`<span style="left:${40+Math.random()*20}%;--tx:${tx};--ty:${ty};--r:${r}">${emo[i%emo.length]}</span>`; }
+  burst.innerHTML=h; setTimeout(()=>burst.innerHTML='',1000); }
+
+function takvimHTML(tappable, vurgu){
+  let c='';
+  KISA.forEach(k=>c+=`<div class="cell hdr">${k}</div>`);
+  for(let i=0;i<ILK_COL;i++) c+=`<div class="cell bos"></div>`;
+  for(let d=1;d<=GUN_SAYISI;d++){
+    const v=(vurgu&&vurgu.includes(d))?' vur':'';
+    if(tappable) c+=`<button class="cell gun tik${v}" id="g${d}" onclick="tapDate(${d})">${d}</button>`;
+    else c+=`<div class="cell gun${v}" id="g${d}">${d}</div>`;
+  }
+  return `<div class="aybas">🗓️ ${AY}</div><div class="takvim">${c}</div>`;
+}
+
+function showStart(){
+  stage.innerHTML=`
+    <div class="heroes">🕵️🗓️</div>
+    <h1 class="start-title">Takvim Dedektifleri</h1>
+    <p class="start-sub">Etkinlik merkezinin takvimi karıştı! Sen bir dedektifsin. İpuçlarını kullanarak günleri, haftaları ve tarihleri çöz. 🔍</p>
+    ${takvimHTML(false,null)}
+    <p class="start-sub" style="margin-top:10px">Yukarıdaki Mayıs takvimini iyi incele — tüm görevlerde bunu kullanacaksın.</p>
+    <button class="cta sun big" onclick="startGame()">Görevlere Başla ▶</button>`;
+}
+function startGame(){ idx=0; score=0; render(); }
+
+function render(){ busy=false; const g=GOREVLER[idx]; const pct=Math.round((idx/TOTAL)*100);
+  const tappable = g.tip==='tarih';
+  let alt='';
+  if(g.tip==='secenek'){
+    const dort = g.opts.length===4 && g.opts.every(o=>o.length<=2);
+    alt=`<div class="opts ${dort?'dort':''}">${g.opts.map(o=>`<button class="opt" onclick="secen('${o}',this)">${o}</button>`).join('')}</div>`;
+  } else {
+    alt=`<div class="komut">👆 Cevabı takvimden bul ve dokun</div>`;
+  }
+  const govde = g.ipucu ? `<div class="ipucu">${g.ipucu}</div>` : `<div class="soru">${g.soru}</div>`;
+  stage.innerHTML=`
+    <div class="rail"><div class="track"><div class="fill" style="width:${pct}%"></div></div>
+      <span class="scorebox">🔍 ${score}/${TOTAL}</span></div>
+    ${takvimHTML(tappable,null)}
+    <div class="kartbar"><span class="no">${g.no}</span>${govde}</div>
+    ${alt}
+    <div class="msg" id="msg"></div>`;
+}
+
+function dogru(){ if(busy) return; busy=true; score++; burstFx(); const g=GOREVLER[idx]; const last=idx===TOTAL-1;
+  setTimeout(()=>{ stage.innerHTML=`
+    ${takvimHTML(false,g.vurgu)}
+    <div class="msg ok" style="font-size:20px">Doğru, dedektif! ✓</div>
+    <div class="think">${g.think}</div>
+    <button class="cta ${last?'sun ':''}big" onclick="${last?'bitir()':'ilerle()'}">${last?'Dosyayı Kapat 🏁':'Sonraki Görev ➜'}</button>`; }, 650);
+}
+function yanlisMsg(t){ if(window.sesYanlis) sesYanlis(); const m=document.getElementById('msg'); if(m){ m.className='msg no'; m.textContent=t||"Takvime tekrar bak 🔍"; } }
+
+function secen(o,btn){ if(busy) return; if(o===GOREVLER[idx].cevap) dogru();
+  else { btn.classList.add('wrong'); btn.classList.add('shake'); btn.disabled=true; yanlisMsg("Bu değil — takvimi tekrar incele 🔍"); } }
+function tapDate(d){ if(busy) return; if(d===GOREVLER[idx].cevap) dogru();
+  else { const el=document.getElementById('g'+d); if(el){ el.classList.add('shake'); } yanlisMsg("O tarih değil — ipucunu tekrar oku 🔍"); } }
+
+function ilerle(){ idx++; render(); }
+function bitir(){ burstFx();
+  stage.innerHTML=`
+    <div class="heroes">🏆🕵️</div>
+    <h1 class="start-title">Dosya Çözüldü!</h1>
+    <p class="start-sub">Günleri, haftaları ve tarihleri çözdün. Gerçek bir Takvim Dedektifi oldun!</p>
+    <div class="think">Takvim ipuçları: Aynı gün her hafta 7 gün sonra gelir. Bir hafta = 7 gün. "Ayın ilk/son ..." derken o günün sütununa bakılır.</div>
+    <button class="cta sun big" onclick="startGame()">Yeni Dosya 🔁</button>`;
+}
+
+showStart();
+
+/* === SES MOTORU === */
+(function(){
+  var sesAcik=true, actx=null, sonSes=0;
+  function AC(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ actx=null; } } return actx; }
+  function ton(f,st,du,tp,vol){ var a=AC(); if(!a) return; var o=a.createOscillator(), g=a.createGain();
+    o.type=tp||'sine'; o.frequency.value=f; o.connect(g); g.connect(a.destination);
+    var t=a.currentTime+st; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.2,t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+du); o.start(t); o.stop(t+du+0.03); }
+  function gate(){ var n=Date.now(); if(n-sonSes<120) return false; sonSes=n; return true; }
+  window.sesDogru=function(){ if(!sesAcik||!gate()) return; [392,523,659,784,988,1319].forEach(function(f,i){ ton(f,i*0.05,0.12,'square',0.16); }); };
+  window.sesYanlis=function(){ if(!sesAcik||!gate()) return; ton(300,0,0.16,'sawtooth',0.2); ton(200,0.15,0.22,'sawtooth',0.2); };
+  window.sesToggle=function(){ sesAcik=!sesAcik; var b=document.getElementById('sesBtn'); if(b) b.textContent=sesAcik?'🔊':'🔇'; };
+  function ekleBtn(){ if(document.getElementById('sesBtn')) return; var b=document.createElement('button'); b.id='sesBtn';
+    b.textContent='🔊'; b.title='Ses aç/kapa'; b.setAttribute('onclick','sesToggle()');
+    b.style.cssText='position:fixed;top:10px;right:10px;z-index:9999;border:none;cursor:pointer;font-size:20px;background:rgba(255,255,255,.9);border-radius:999px;width:42px;height:42px;box-shadow:0 3px 8px rgba(0,0,0,.25)';
+    if(document.body) document.body.appendChild(b); }
+  if(document.readyState!=='loading') ekleBtn(); else document.addEventListener('DOMContentLoaded',ekleBtn);
+  function sar(name,ses){ if(typeof window[name]==='function'){ var o=window[name]; window[name]=function(){ ses(); return o.apply(this,arguments); }; return true; } return false; }
+  sar('burstFx',window.sesDogru) || sar('starBurst',window.sesDogru);
+})();
+
+</script>
+</body>
+</html>
