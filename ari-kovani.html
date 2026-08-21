@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arı Kovanı — Bal Petekleri (1. Sınıf)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --honey:#FFC531; --honey2:#E8A31E; --amber:#FF9F1C; --brown:#8a5a2b; --ink:#5a3d18;
+    --green:#4FCB77; --coral:#FF7A6B; --card:#ffffff; --soft:#FFF3D6;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;
+    background:radial-gradient(1100px 720px at 25% -8%, #FFF3C9 0%, #FFE29B 45%, #FFD36E 100%);
+    color:var(--ink); min-height:100vh; overflow-x:hidden;
+    display:flex; align-items:center; justify-content:center; padding:16px;
+  }
+  h1,h2,h3{font-family:'Baloo 2',system-ui,sans-serif;}
+  .sky{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+  .sky i{position:absolute; font-size:24px; opacity:.18; animation:bob 4s ease-in-out infinite;}
+  @keyframes bob{50%{transform:translateY(-9px)}}
+
+  .stage{position:relative; z-index:2; width:100%; max-width:600px;
+    background:var(--card); border-radius:32px; padding:20px 20px 26px;
+    box-shadow:0 22px 54px rgba(120,80,20,.3), inset 0 0 0 4px #fff; animation:pop .4s cubic-bezier(.2,1.3,.4,1);}
+  @keyframes pop{from{transform:translateY(18px) scale(.96); opacity:0}to{transform:none; opacity:1}}
+
+  .top{display:flex; align-items:center; gap:10px; margin-bottom:6px;}
+  .bolum{font-family:'Baloo 2'; font-weight:800; font-size:15px; color:var(--honey2);}
+  .kovan{margin-left:auto; font-family:'Baloo 2'; font-weight:800; font-size:20px; color:var(--brown); background:var(--soft); padding:4px 14px; border-radius:999px;}
+
+  .soru{font-family:'Baloo 2'; font-weight:800; font-size:24px; color:var(--ink); text-align:center; margin:10px 0 6px;}
+  .soru b{color:var(--amber);}
+  .altmetin{text-align:center; font-weight:700; color:#a07d3a; font-size:15px; margin-bottom:10px;}
+
+  .petekler{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin:10px 0;}
+  .petek{width:62px; height:68px; display:flex; align-items:center; justify-content:center;
+    font-family:'Baloo 2'; font-weight:800; font-size:26px; color:#5a3d18;
+    background:linear-gradient(160deg,#FFDD7A,var(--honey)); clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);}
+  .petek.tik{cursor:pointer; transition:.1s;} .petek.tik:active{transform:scale(.94);}
+  .petek.dolu{background:linear-gradient(160deg,#a9ecc0,var(--green)); color:#fff;}
+  .petek.bos{background:#fff4d9; color:var(--honey2); box-shadow:0 0 0 3px var(--honey) inset;}
+  .petek.hedef{animation:pulse 1s infinite;} @keyframes pulse{50%{filter:brightness(1.12)}}
+  .petek.shake{animation:shk .4s;} @keyframes shk{10%,90%{transform:translateX(-2px)}30%,70%{transform:translateX(4px)}50%{transform:translateX(-6px)}}
+
+  .baldrops{text-align:center; font-size:34px; line-height:1.3; margin:6px 0;}
+  .baldrops .arti{font-family:'Baloo 2'; font-weight:800; color:var(--amber); margin:0 6px;}
+
+  .parkur{display:flex; align-items:center; justify-content:center; gap:4px; flex-wrap:wrap; margin:12px 0; background:var(--soft); border-radius:16px; padding:12px 8px;}
+  .adim{width:44px; height:48px; display:flex; align-items:center; justify-content:center; font-size:22px;
+    background:linear-gradient(160deg,#FFDD7A,var(--honey)); clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); position:relative;}
+  .adim.gecti{background:linear-gradient(160deg,#a9ecc0,var(--green));}
+  .adim .ari{position:absolute; top:-20px; font-size:24px; animation:bob 1.2s ease-in-out infinite;}
+  .ok-adim{color:var(--honey2); font-weight:800;}
+
+  .opts{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; max-width:360px; margin:10px auto 0;}
+  .opt{font-family:'Baloo 2'; font-weight:800; font-size:30px; color:#fff; border:none; cursor:pointer;
+    padding:18px 0; border-radius:18px; background:var(--amber); box-shadow:0 6px 0 #d97e12; transition:.12s;}
+  .opt:active{transform:translateY(4px);} .opt.wrong{opacity:.35;} .opt.shake{animation:shk .4s;}
+
+  .msg{margin-top:14px; text-align:center; font-family:'Baloo 2'; font-weight:800; font-size:20px; min-height:24px;}
+  .msg.ok{color:var(--green);} .msg.no{color:var(--coral);}
+
+  .cta{font-family:'Baloo 2'; font-weight:800; font-size:22px; color:#fff; border:none; cursor:pointer;
+    background:var(--honey2); padding:14px 30px; border-radius:20px; box-shadow:0 6px 0 #b7810f; margin-top:6px;}
+  .cta:active{transform:translateY(4px); box-shadow:0 2px 0 #b7810f;} .cta.big{display:block; margin:16px auto 0;}
+
+  .burst{position:fixed; inset:0; pointer-events:none; z-index:9; overflow:hidden;}
+  .burst span{position:absolute; top:40%; font-size:26px; animation:fly 1s ease-out forwards;}
+  @keyframes fly{to{transform:translate(var(--tx),var(--ty)) rotate(var(--r)); opacity:0}}
+
+  .start-title{font-size:32px; text-align:center; color:var(--ink); line-height:1.1; margin:6px 0;}
+  .start-sub{text-align:center; font-weight:700; color:#a07d3a; font-size:16px; margin-bottom:6px;}
+  .heroes{font-size:54px; text-align:center; margin:4px 0;}
+  .adult{text-align:center; color:#c9a659; font-weight:700; font-size:13px; margin-top:12px;}
+  @media (max-width:480px){ .soru{font-size:20px} .opt{font-size:26px} .petek{width:52px;height:58px;font-size:22px} .start-title{font-size:26px} }
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;}}
+</style>
+</head>
+<body>
+<div class="sky" id="sky"></div>
+<div class="burst" id="burst"></div>
+<div class="stage" id="stage"></div>
+
+<script>
+const BOLUM_AD = {1:"🍯 Bölüm 1 · Petekleri Sırala", 2:"🔍 Bölüm 2 · Kayıp Petek", 3:"➕ Bölüm 3 · Arıya Bal Topla", 4:"🐝 Bölüm 4 · Arıyı Kovaya Ulaştır"};
+
+const GOREVLER = [
+  { bolum:1, tip:'sirala', dizi:[3,1,5,2,4] },
+  { bolum:1, tip:'komsu', yon:'sonra', sayi:5, cevap:6, opts:[4,6,7] },
+  { bolum:1, tip:'sirala', dizi:[9,7,10,6,8] },
+
+  { bolum:2, tip:'kayip', dizi:[1,2,null,4,5], cevap:3, opts:[3,2,6] },
+  { bolum:2, tip:'kayip', dizi:[7,null,9], cevap:8, opts:[6,8,10] },
+  { bolum:2, tip:'kayip', dizi:[null,15,16], cevap:14, opts:[13,14,17] },
+
+  { bolum:3, tip:'topla', a:3, b:2, cevap:5, opts:[4,5,6] },
+  { bolum:3, tip:'topla', a:4, b:2, cevap:6, opts:[5,6,7] },
+  { bolum:3, tip:'topla', a:5, b:3, cevap:8, opts:[7,8,9] },
+
+  { bolum:4, tip:'parkur', soru:"6'dan önce hangi sayı gelir?", cevap:5, opts:[4,5,7] },
+  { bolum:4, tip:'parkur', soru:"8'e 1 eklersen kaç olur?", cevap:9, opts:[7,9,10] },
+  { bolum:4, tip:'parkur', soru:"10'dan 1 çıkarırsan kaç olur?", cevap:9, opts:[8,9,11] }
+];
+
+let idx=0, bal=0, busy=false, siraDolu=null, parkurAdim=0;
+const stage=document.getElementById('stage'), burst=document.getElementById('burst');
+const PARKUR_TOP = GOREVLER.filter(g=>g.tip==='parkur').length;
+
+(function(){ const em=["🐝","🍯","🌸","🐝","🍯"]; let s='';
+  for(let i=0;i<14;i++) s+=`<i style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*4}s">${em[i%em.length]}</i>`;
+  document.getElementById('sky').innerHTML=s; })();
+
+function karistir(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function burstFx(){ const emo=["🍯","⭐","🐝","🎉","✨"]; let h='';
+  for(let i=0;i<16;i++){ const tx=(Math.random()*2-1)*55+'vw', ty=(Math.random()*-1-0.2)*55+'vh', r=(Math.random()*720-360)+'deg';
+    h+=`<span style="left:${40+Math.random()*20}%;--tx:${tx};--ty:${ty};--r:${r}">${emo[i%emo.length]}</span>`; }
+  burst.innerHTML=h; setTimeout(()=>burst.innerHTML='',1000); }
+
+function showStart(){
+  stage.innerHTML=`
+    <div class="heroes">🐝🍯</div>
+    <h1 class="start-title">Arı Kovanı</h1>
+    <p class="start-sub">Arıların bal petekleri karışmış! Sırala, kayıp sayıyı bul, bal topla ve arıyı kovaya ulaştır. Her doğru cevap = 1 bal! 🍯</p>
+    <div class="heroes" style="font-size:32px">1️⃣ 2️⃣ 3️⃣ ... 🍯</div>
+    <button class="cta big" onclick="startGame()">Bala Başla ▶</button>
+    <p class="adult">👩‍🏫 Yetişkin için: çocukla birlikte sesli sayın ve "kaç bal oldu?" diye sorun.</p>`;
+}
+function startGame(){ idx=0; bal=0; parkurAdim=0; startTask(); }
+function startTask(){ busy=false; const g=GOREVLER[idx]; if(g.tip==='sirala') siraDolu=new Set(); render(); }
+
+function header(){ const g=GOREVLER[idx];
+  return `<div class="top"><span class="bolum">${BOLUM_AD[g.bolum]}</span><span class="kovan">🍯 ${bal} bal</span></div>`; }
+
+function render(msg){
+  const g=GOREVLER[idx]; let body='';
+  if(g.tip==='sirala'){
+    const cells=g.dizi.map(v=>{
+      const dolu=siraDolu.has(v);
+      return `<div class="petek tik ${dolu?'dolu':''}" onclick="siralaTik(${v})">${v}</div>`;
+    }).join('');
+    body=`<div class="soru">Petekleri <b>küçükten büyüğe</b> sırala</div>
+      <div class="altmetin">Sıradaki en küçük sayıya dokun 🐝</div>
+      <div class="petekler">${cells}</div>`;
+  } else if(g.tip==='komsu'){
+    body=`<div class="petekler"><div class="petek">${g.sayi}</div></div>
+      <div class="soru"><b>${g.sayi}</b>'${g.yon==='sonra'?'ten sonra':'dan önce'} hangi sayı gelir?</div>
+      ${optsHTML(g.opts)}`;
+  } else if(g.tip==='kayip'){
+    const cells=g.dizi.map(v=>`<div class="petek ${v===null?'bos hedef':''}">${v===null?'?':v}</div>`).join('');
+    body=`<div class="soru">Kayıp peteği bul!</div>
+      <div class="petekler">${cells}</div>
+      ${optsHTML(g.opts)}`;
+  } else if(g.tip==='topla'){
+    body=`<div class="soru">Arının balları</div>
+      <div class="baldrops">${'🍯'.repeat(g.a)} <span class="arti">+</span> ${'🍯'.repeat(g.b)}</div>
+      <div class="soru"><b>${g.a} + ${g.b}</b> = ?</div>
+      ${optsHTML(g.opts)}`;
+  } else if(g.tip==='parkur'){
+    let yol='<div class="parkur"><div class="ok-adim">🏁</div>';
+    for(let i=0;i<PARKUR_TOP;i++){ const gecti=i<parkurAdim; const ari=i===parkurAdim?'<div class="ari">🐝</div>':'';
+      yol+=`<div class="adim ${gecti?'gecti':''}">${ari}${gecti?'✓':''}</div>`; }
+    yol+='<div class="ok-adim" style="font-size:26px">🍯</div></div>';
+    body=`<div class="soru">Arıyı kovaya götür!</div>${yol}
+      <div class="soru" style="font-size:21px">${g.soru}</div>
+      ${optsHTML(g.opts)}`;
+  }
+  stage.innerHTML=header()+body+`<div class="msg" id="msg">${msg||''}</div>`;
+}
+function optsHTML(opts){ return `<div class="opts">${karistir(opts).map(o=>`<button class="opt" onclick="sec(${o},this)">${o}</button>`).join('')}</div>`; }
+
+function siralaTik(v){ if(busy) return; const g=GOREVLER[idx];
+  const sirali=g.dizi.slice().sort((a,b)=>a-b); const next=sirali[siraDolu.size];
+  if(v===next){ siraDolu.add(v); bal++;
+    if(siraDolu.size===g.dizi.length){ tamamla(); } else render("Aferin! +1 bal 🍯"); }
+  else { if(window.sesYanlis) sesYanlis(); const m=document.getElementById('msg'); m.className='msg no'; m.textContent="En küçük sayıdan başla 🐝"; }
+}
+
+function sec(v,btn){ if(busy) return; const g=GOREVLER[idx];
+  if(v===g.cevap){ bal++; if(g.tip==='parkur') parkurAdim++; tamamla(); }
+  else { if(window.sesYanlis) sesYanlis(); btn.classList.add('wrong'); btn.classList.add('shake'); btn.disabled=true;
+    const m=document.getElementById('msg'); m.className='msg no'; m.textContent="Tekrar say 🐝"; }
+}
+
+function tamamla(){ busy=true; burstFx();
+  const last=idx===GOREVLER.length-1;
+  render("🍯 +1 bal! Aferin 🎉");
+  setTimeout(()=>{ if(last) bitir(); else { idx++; startTask(); } }, 850);
+}
+
+function bitir(){ burstFx();
+  stage.innerHTML=`
+    <div class="heroes">🏆🐝🍯</div>
+    <h1 class="start-title">Kovan Doldu!</h1>
+    <p class="start-sub">Arımız bugün <b style="color:var(--amber);font-size:26px">${bal} bal</b> topladı! Saydın, kayıp sayıları buldun, topladın ve arıyı kovaya ulaştırdın. 🎉</p>
+    <div class="baldrops">${'🍯'.repeat(Math.min(bal,12))}</div>
+    <button class="cta big" onclick="startGame()">Yeniden Oyna 🔁</button>`;
+}
+
+showStart();
+
+/* === SES MOTORU === */
+(function(){
+  var sesAcik=true, actx=null, sonSes=0;
+  function AC(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ actx=null; } } return actx; }
+  function ton(f,st,du,tp,vol){ var a=AC(); if(!a) return; var o=a.createOscillator(), g=a.createGain();
+    o.type=tp||'sine'; o.frequency.value=f; o.connect(g); g.connect(a.destination);
+    var t=a.currentTime+st; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol||0.2,t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+du); o.start(t); o.stop(t+du+0.03); }
+  function gate(){ var n=Date.now(); if(n-sonSes<120) return false; sonSes=n; return true; }
+  window.sesDogru=function(){ if(!sesAcik||!gate()) return; [392,523,659,784,988,1319].forEach(function(f,i){ ton(f,i*0.05,0.12,'square',0.16); }); };
+  window.sesYanlis=function(){ if(!sesAcik||!gate()) return; ton(300,0,0.16,'sawtooth',0.2); ton(200,0.15,0.22,'sawtooth',0.2); };
+  window.sesToggle=function(){ sesAcik=!sesAcik; var b=document.getElementById('sesBtn'); if(b) b.textContent=sesAcik?'🔊':'🔇'; };
+  function ekleBtn(){ if(document.getElementById('sesBtn')) return; var b=document.createElement('button'); b.id='sesBtn';
+    b.textContent='🔊'; b.title='Ses aç/kapa'; b.setAttribute('onclick','sesToggle()');
+    b.style.cssText='position:fixed;top:10px;right:10px;z-index:9999;border:none;cursor:pointer;font-size:20px;background:rgba(255,255,255,.9);border-radius:999px;width:42px;height:42px;box-shadow:0 3px 8px rgba(0,0,0,.25)';
+    if(document.body) document.body.appendChild(b); }
+  if(document.readyState!=='loading') ekleBtn(); else document.addEventListener('DOMContentLoaded',ekleBtn);
+  function sar(name,ses){ if(typeof window[name]==='function'){ var o=window[name]; window[name]=function(){ ses(); return o.apply(this,arguments); }; return true; } return false; }
+  sar('burstFx',window.sesDogru) || sar('starBurst',window.sesDogru);
+})();
+
+</script>
+</body>
+</html>
