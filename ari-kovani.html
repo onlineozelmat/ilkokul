@@ -89,27 +89,40 @@
 <script>
 const BOLUM_AD = {1:"🍯 Bölüm 1 · Petekleri Sırala", 2:"🔍 Bölüm 2 · Kayıp Petek", 3:"➕ Bölüm 3 · Arıya Bal Topla", 4:"🐝 Bölüm 4 · Arıyı Kovaya Ulaştır"};
 
-const GOREVLER = [
-  { bolum:1, tip:'sirala', dizi:[3,1,5,2,4] },
-  { bolum:1, tip:'komsu', yon:'sonra', sayi:5, cevap:6, opts:[4,6,7] },
-  { bolum:1, tip:'sirala', dizi:[9,7,10,6,8] },
-
-  { bolum:2, tip:'kayip', dizi:[1,2,null,4,5], cevap:3, opts:[3,2,6] },
-  { bolum:2, tip:'kayip', dizi:[7,null,9], cevap:8, opts:[6,8,10] },
-  { bolum:2, tip:'kayip', dizi:[null,15,16], cevap:14, opts:[13,14,17] },
-
-  { bolum:3, tip:'topla', a:3, b:2, cevap:5, opts:[4,5,6] },
-  { bolum:3, tip:'topla', a:4, b:2, cevap:6, opts:[5,6,7] },
-  { bolum:3, tip:'topla', a:5, b:3, cevap:8, opts:[7,8,9] },
-
-  { bolum:4, tip:'parkur', soru:"6'dan önce hangi sayı gelir?", cevap:5, opts:[4,5,7] },
-  { bolum:4, tip:'parkur', soru:"8'e 1 eklersen kaç olur?", cevap:9, opts:[7,9,10] },
-  { bolum:4, tip:'parkur', soru:"10'dan 1 çıkarırsan kaç olur?", cevap:9, opts:[8,9,11] }
-];
+let GOREVLER = [];
+function rnd(a,b){ return a+Math.floor(Math.random()*(b-a+1)); }
+function opts3(c,lo,hi){ const set=new Set([c]); let g=0;
+  while(set.size<3 && g<60){ g++; let d=c+rnd(-3,3); if(d<lo)d=lo; if(d>hi)d=hi; if(d!==c) set.add(d); }
+  while(set.size<3){ const d=rnd(lo,hi); if(d!==c) set.add(d); }
+  return [...set]; }
+function sirDizi(){ const s=rnd(1,15); return karistir([s,s+1,s+2,s+3,s+4]); }
+function buildGorevler(){
+  const G=[];
+  // Bölüm 1: sırala · komşu · sırala
+  G.push({bolum:1,tip:'sirala',dizi:sirDizi()});
+  { const n=rnd(3,17), yon=Math.random()<0.5?'sonra':'once'; const c=yon==='sonra'?n+1:n-1;
+    G.push({bolum:1,tip:'komsu',yon,sayi:n,cevap:c,opts:opts3(c,1,20)}); }
+  G.push({bolum:1,tip:'sirala',dizi:sirDizi()});
+  // Bölüm 2: 3 kayıp petek
+  for(let k=0;k<3;k++){ const len=rnd(3,5), start=rnd(1,20-len+1); const seq=[]; for(let i=0;i<len;i++) seq.push(start+i);
+    const bp=rnd(0,len-1); const c=seq[bp]; const dizi=seq.slice(); dizi[bp]=null;
+    G.push({bolum:2,tip:'kayip',dizi,cevap:c,opts:opts3(c,1,20)}); }
+  // Bölüm 3: 3 toplama (sonuç ≤ 10)
+  for(let k=0;k<3;k++){ const a=rnd(1,5), b=rnd(1,Math.min(5,10-a)); const c=a+b;
+    G.push({bolum:3,tip:'topla',a,b,cevap:c,opts:opts3(c,2,12)}); }
+  // Bölüm 4: 3 parkur (önce/sonra/+1/−1)
+  for(let k=0;k<3;k++){ const t=rnd(0,3), n=rnd(2,10); let c,soru;
+    if(t===0){ c=n-1; soru=n+" sayısından önce hangi sayı gelir?"; }
+    else if(t===1){ c=n+1; soru=n+" sayısından sonra hangi sayı gelir?"; }
+    else if(t===2){ c=n+1; soru=n+" sayısına 1 eklersen kaç olur?"; }
+    else { c=n-1; soru=n+" sayısından 1 çıkarırsan kaç olur?"; }
+    G.push({bolum:4,tip:'parkur',soru,cevap:c,opts:opts3(c,1,12)}); }
+  return G;
+}
 
 let idx=0, bal=0, busy=false, siraDolu=null, parkurAdim=0;
 const stage=document.getElementById('stage'), burst=document.getElementById('burst');
-const PARKUR_TOP = GOREVLER.filter(g=>g.tip==='parkur').length;
+let PARKUR_TOP = 3;
 
 (function(){ const em=["🐝","🍯","🌸","🐝","🍯"]; let s='';
   for(let i=0;i<14;i++) s+=`<i style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*4}s">${em[i%em.length]}</i>`;
@@ -130,7 +143,7 @@ function showStart(){
     <button class="cta big" onclick="startGame()">Bala Başla ▶</button>
     <p class="adult">👩‍🏫 Yetişkin için: çocukla birlikte sesli sayın ve "kaç bal oldu?" diye sorun.</p>`;
 }
-function startGame(){ idx=0; bal=0; parkurAdim=0; startTask(); }
+function startGame(){ GOREVLER=buildGorevler(); PARKUR_TOP=GOREVLER.filter(g=>g.tip==='parkur').length; idx=0; bal=0; parkurAdim=0; startTask(); }
 function startTask(){ busy=false; const g=GOREVLER[idx]; if(g.tip==='sirala') siraDolu=new Set(); render(); }
 
 function header(){ const g=GOREVLER[idx];
@@ -148,7 +161,7 @@ function render(msg){
       <div class="petekler">${cells}</div>`;
   } else if(g.tip==='komsu'){
     body=`<div class="petekler"><div class="petek">${g.sayi}</div></div>
-      <div class="soru"><b>${g.sayi}</b>'${g.yon==='sonra'?'ten sonra':'dan önce'} hangi sayı gelir?</div>
+      <div class="soru"><b>${g.sayi}</b> sayısından ${g.yon==='sonra'?'sonra':'önce'} hangi sayı gelir?</div>
       ${optsHTML(g.opts)}`;
   } else if(g.tip==='kayip'){
     const cells=g.dizi.map(v=>`<div class="petek ${v===null?'bos hedef':''}">${v===null?'?':v}</div>`).join('');
